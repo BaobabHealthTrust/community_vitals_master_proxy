@@ -1,0 +1,277 @@
+<script language="javascript">
+  <!--
+  
+    tt_cancel_destination = '/';
+    tt_cancel_show = '/';
+    
+    var details = <%= @details.to_json %>
+    
+    function addSuccessButtons(){
+      var btnFilter = document.createElement("button");
+      btnFilter.id = "btnFilter";
+      btnFilter.className = "button blue";
+      btnFilter.style.cssFloat = "right";
+      btnFilter.innerHTML = "<span><%= Vocabulary.search("Filter these results") %></span>";
+            
+      __$("person_verification").setAttribute("condition", "true");
+      __$("filter_by").setAttribute("condition", "false");
+        
+      btnFilter.onmousedown = function(){
+        __$("person_verification").setAttribute("condition", "false");
+        __$("filter_by").setAttribute("condition", "true");
+        
+        __$("touchscreenInput" + tstCurrentPage).setAttribute("optional", true);
+        
+        document.forms[0].action = "/people/select";
+      
+        clearExtras();
+        
+        gotoNextPage();
+      }
+      
+      __$("buttons").appendChild(btnFilter);
+      
+      addNewSearchButton();
+    }
+  
+    function addNewSearchButton(){
+      var btnNew = document.createElement("button");
+      btnNew.id = "btnNew";
+      btnNew.className = "button blue";
+      btnNew.style.cssFloat = "right";
+      btnNew.innerHTML = "<span><%= Vocabulary.search("New Search") %></span>";
+      
+      btnNew.onmousedown = function(){
+        document.forms[0].action = "/people/search";
+        document.forms[0].submit();
+      }
+      
+      __$("buttons").appendChild(btnNew);
+      
+      var btnAdd = document.createElement("button");
+      btnAdd.id = "btnAdd";
+      btnAdd.className = "button blue";
+      btnAdd.style.cssFloat = "right";
+      btnAdd.innerHTML = "<span><%= Vocabulary.search("Create New Person") %></span>";
+      
+      btnAdd.onmousedown = function(){
+        document.forms[0].action = "/people/save_person";
+        
+        __$("touchscreenInput" + tstCurrentPage).setAttribute("optional", true);
+        __$("person_verification").setAttribute("condition", "false");
+        
+        __$("year_of_birth").setAttribute("condition", "true");
+        __$("month_of_birth").setAttribute("condition", "__$('year_of_birth').value.trim().toLowerCase() != 'unknown'");
+        __$("day_of_birth").setAttribute("condition", 
+              "__$('year_of_birth').value.trim().toLowerCase() != 'unknown' && " + 
+              "__$('month_of_birth').value.trim().toLowerCase() != 'unknown'");
+              
+        __$("age").setAttribute("condition", "__$('year_of_birth').value.trim().toLowerCase() == 'unknown'");
+        
+        clearExtras();
+        
+        gotoNextPage();
+      }
+      
+      __$("buttons").appendChild(btnAdd);      
+      
+    }  
+    
+    function loadPerson(){
+      if(__$("btnNew")){
+        __$("buttons").removeChild(__$("btnNew"));
+      }
+      
+      if(__$("btnFilter")){
+        __$("buttons").removeChild(__$("btnFilter"));
+      }
+      
+      if(__$("displayPanel")){
+        __$("inputFrame" + tstCurrentPage).removeChild(__$("displayPanel"));
+      }
+      
+      __$("helpText" + tstCurrentPage).innerHTML = "<%= Vocabulary.search("Details for ") %>" + 
+          details[__$("person").value.trim()]["<%= Vocabulary.search("Name") %>"] + 
+          " (" + details[__$("person").value.trim()]["<%= Vocabulary.search("National ID") %>"] + ")";
+      
+      var dspPanel = document.createElement("div");
+      dspPanel.id = "displayPanel";
+      dspPanel.style.display = "table";
+      dspPanel.style.borderSpacing = "0px";
+      dspPanel.style.width = "100%";
+      
+      __$("inputFrame" + tstCurrentPage).appendChild(dspPanel);
+      
+      var fields = [
+          "<%= Vocabulary.search("Name") %>",
+	        "<%= Vocabulary.search("First name") %>",
+	        "<%= Vocabulary.search("Middle name") %>",
+	        "<%= Vocabulary.search("Last name") %>",
+	        "<%= Vocabulary.search("Birthdate") %>",
+	        "<%= Vocabulary.search("Gender") %>",
+	        "<%= Vocabulary.search("National ID") %>",
+	        "<%= Vocabulary.search("Relations") %>"
+      ];
+      
+      for(var i = 1; i < fields.length; i++){
+        var row = document.createElement("div");
+        row.style.display = "table-row";
+        
+        if(i % 2 == 0)
+          row.style.backgroundColor = "#89B4EF";
+          
+        dspPanel.appendChild(row);
+        
+        var cell1 = document.createElement("div");
+        cell1.style.display = "table-cell";
+        cell1.style.fontSize = "1.8em";
+        cell1.style.padding = "8px";
+        cell1.style.verticalAlign = "top";
+        cell1.innerHTML = fields[i];
+        
+        row.appendChild(cell1);     
+        
+        var cell2 = document.createElement("div");
+        cell2.style.display = "table-cell";
+        cell2.style.fontSize = "2em";
+        cell2.style.padding = "8px";
+        cell2.style.fontStyle = "italic";
+        cell2.innerHTML = details[__$("person").value.trim()][fields[i]];
+        
+        row.appendChild(cell2); 
+        
+        if(i % 2 > 0){          
+          cell1.style.border = "1px solid #89B4EF";
+          cell2.style.border = "1px solid #89B4EF";
+        } else {         
+          cell1.style.border = "1px solid #eee";
+          cell2.style.border = "1px solid #eee";          
+        }
+                 
+      }
+      
+    }
+    
+    function initDOB(){
+    
+        __$("year_of_birth").setAttribute("condition", "__$('filter_by').value.trim() == 'Birthdate'");
+        
+        __$("month_of_birth").setAttribute("condition", "__$('year_of_birth').value.trim() != '<%= Vocabulary.search("Unknown") %>' && " + 
+          "__$('filter_by').value.trim() == 'Birthdate'");
+          
+        __$("day_of_birth").setAttribute("condition", "__$('month_of_birth').value.trim() != 'Unknown' && " + 
+          "__$('year_of_birth').value.trim() != '<%= Vocabulary.search("Unknown") %>' && " + 
+          "__$('filter_by').value.trim() == 'Birthdate'");
+          
+        __$("age").setAttribute("condition", "__$('year_of_birth').value.trim() == '<%= Vocabulary.search("Unknown") %>' && " + 
+          "__$('filter_by').value.trim() == 'Birthdate'");
+        
+    }
+    
+    function clearExtras(){
+      
+        if(__$("btnNew")){
+          __$("buttons").removeChild(__$("btnNew"));
+        }
+        
+        if(__$("btnFilter")){
+          __$("buttons").removeChild(__$("btnFilter"));
+        }
+      
+        if(__$("btnAdd")){
+          __$("buttons").removeChild(__$("btnAdd"));
+        }
+      
+    }
+    
+  //-->
+</script> 
+
+<form action="<%= params[:next_url] %>">
+  
+  <% if @people.length > 0 %>
+  
+    <%= select_tag "person", options_for_select(@people), {
+      :helpText => Vocabulary.search("Select person from this list"),
+      :tt_pageStyleClass => "longSelectList NoKeyboard",
+      :tt_onLoad => "addSuccessButtons(); initDOB();",
+      :tt_onUnLoad => "clearExtras()"
+    } %>
+      
+    <%= text_field_tag "person_verification", nil, {
+        :helpText => Vocabulary.search("Person details"),
+        :tt_pageStyleClass => "NoControls NoKeyboard",
+        :tt_onLoad => "loadPerson()",
+        :condition => "__$('person').value.trim().length > 0",
+        :optional => true
+    } %>
+  
+  <% else %>
+  
+    <%= text_field_tag "no_match_found", nil, {
+        :helpText => Vocabulary.search("No match found") + "!",
+        :tt_pageStyleClass => "NoControls NoKeyboard",
+        :tt_onLoad => "addNewSearchButton()"
+    } %>
+  
+  <% end %>
+
+  <%= select_tag "filter_by", options_for_select([
+      ["", ""],
+      [Vocabulary.search("Middle name"), "Middle name"],
+      [Vocabulary.search("Birthdate"), "Birthdate"]
+    ]), {:helpText => Vocabulary.search("Filter by"),
+    :condition => false} %>
+
+  <%= select_tag "year_of_birth", 
+      options_for_select(((Date.today.year - 120)..(Date.today.year)).collect{|y| y}.reverse + 
+      [Vocabulary.search("Unknown")]), :helpText => Vocabulary.search("Year of birth"), 
+      :field_type => "number", :tt_pageStyleClass => "NumbersOnlyWithUnknown",
+      :condition => "__$('filter_by').value.trim() == 'Birthdate'" %>
+
+  <% months = [
+      [Vocabulary.search("January"),1], 
+      [Vocabulary.search("February"),2], 
+      [Vocabulary.search("March"),3], 
+      [Vocabulary.search("April"),4], 
+      [Vocabulary.search("May"),5], 
+      [Vocabulary.search("June"),6], 
+      [Vocabulary.search("July"),7], 
+      [Vocabulary.search("August"),8], 
+      [Vocabulary.search("September"),9], 
+      [Vocabulary.search("October"),10], 
+      [Vocabulary.search("November"),11], 
+      [Vocabulary.search("December"),12],
+      [Vocabulary.search("Unknown"),"Unknown"]
+    ] 
+  %>
+
+  <%= select_tag "month_of_birth", options_for_select(months), :helpText => Vocabulary.search("Month of birth"),
+      :condition => "__$('year_of_birth').value.trim() != '#{Vocabulary.search("Unknown")}' && " + 
+          "__$('filter_by').value.trim() == 'Birthdate'", 
+      :tt_pageStyleClass => "NoKeyboard" %>
+
+  <%= text_field_tag "day_of_birth", nil, {:helpText => Vocabulary.search("Day of birth"),
+      :tt_onLoad => "getDayOfMonthPicker(__$('year_of_birth').value.trim(), __$('month_of_birth').value.trim())",
+      :condition => "__$('month_of_birth').value.trim() != 'Unknown' && " + 
+          "__$('year_of_birth').value.trim() != '#{Vocabulary.search("Unknown")}' && " + 
+          "__$('filter_by').value.trim() == 'Birthdate'"} %>
+
+  <%= text_field_tag "age", nil, {:helpText => Vocabulary.search("Age"),
+      :condition => "__$('year_of_birth').value.trim() == '#{Vocabulary.search("Unknown")}' && " + 
+      "__$('filter_by').value.trim() == 'Birthdate'", 
+      :field_type => "number", :tt_pageStyleClass => "NumbersOnlyWithUnknown"} %>
+  
+  <%= text_field_tag "middle_name", nil, {:helpText => Vocabulary.search("Middle Name"),
+    :condition => "__$('filter_by').value.trim() == 'Middle name'"} %>
+
+  <%= hidden_field_tag "first_name", params[:first_name] %>
+
+  <%= hidden_field_tag "last_name", params[:last_name] %>
+
+  <%= hidden_field_tag "gender", params[:gender] %>
+
+  <%= hidden_field_tag "next_url", params[:next_url] %>
+  <%= hidden_field_tag "page", params[:page] %>
+
+</form>

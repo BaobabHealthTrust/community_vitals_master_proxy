@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  person_national_id: MyString
+  relation_national_id: MyString
+  person_is_to_relation: 1
+
+two:
+  person_national_id: MyString
+  relation_national_id: MyString
+  person_is_to_relation: 1

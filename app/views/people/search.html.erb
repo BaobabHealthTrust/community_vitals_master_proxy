@@ -1,0 +1,24 @@
+<script language="javascript">
+  tt_cancel_destination = '/';
+  tt_cancel_show = '/';
+</script> 
+
+<% form_tag (:action => :select) do %>
+  
+  <%= text_field_tag "first_name", nil, {
+      :helpText => Vocabulary.search("First Name"),
+      :ajaxURL => "/people/find_first_name?search="
+  } %>
+
+  <%= text_field_tag "last_name", nil, {
+      :helpText => Vocabulary.search("Last Name"),
+      :ajaxURL => "/people/find_last_name?search="
+  } %>
+
+  <%= select_tag "gender", options_for_select([["#{Vocabulary.search("Male")}", "Male"], 
+    ["#{Vocabulary.search("Female")}", "Female"]]), {:helpText => Vocabulary.search("Gender")} %>
+
+  <%= hidden_field_tag "next_url", params[:next_url] %>
+  <%= hidden_field_tag "page", 1 %>
+
+<% end %>

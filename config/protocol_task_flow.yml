@@ -1,0 +1,3 @@
+associations:
+  people: update_outcome|2,add_person|0,update_person_relationships|1
+  message: messages|3

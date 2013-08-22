@@ -1,0 +1,53 @@
+<script language="javascript">
+  tt_cancel_destination = '/';
+  tt_cancel_show = '/';
+</script> 
+
+<% form_tag (:action => :save_person) do %>
+
+  <%= text_field_tag "first_name", nil, {:helpText => Vocabulary.search("First Name")} %>
+
+  <%= text_field_tag "middle_name", nil, {:helpText => Vocabulary.search("Middle Name"),
+    :optional => :true} %>
+
+  <%= text_field_tag "last_name", nil, {:helpText => Vocabulary.search("Last Name")} %>
+
+  <%= select_tag "gender", options_for_select([["#{Vocabulary.search("Male")}", "Male"], 
+    ["#{Vocabulary.search("Female")}", "Female"]]), {:helpText => Vocabulary.search("Gender")} %>
+
+  <%= select_tag "year_of_birth", 
+      options_for_select(((Date.today.year - 120)..(Date.today.year)).collect{|y| y}.reverse + 
+      [Vocabulary.search("Unknown")]), :helpText => Vocabulary.search("Year of birth"), 
+      :field_type => "number", :tt_pageStyleClass => "NumbersOnlyWithUnknown" %>
+
+  <% months = [
+      [Vocabulary.search("January"),1], 
+      [Vocabulary.search("February"),2], 
+      [Vocabulary.search("March"),3], 
+      [Vocabulary.search("April"),4], 
+      [Vocabulary.search("May"),5], 
+      [Vocabulary.search("June"),6], 
+      [Vocabulary.search("July"),7], 
+      [Vocabulary.search("August"),8], 
+      [Vocabulary.search("September"),9], 
+      [Vocabulary.search("October"),10], 
+      [Vocabulary.search("November"),11], 
+      [Vocabulary.search("December"),12],
+      [Vocabulary.search("Unknown"),"Unknown"]
+    ] 
+  %>
+
+  <%= select_tag "month_of_birth", options_for_select(months), :helpText => Vocabulary.search("Month of birth"),
+      :condition => "__$('year_of_birth').value.trim() != '#{Vocabulary.search("Unknown")}'", 
+      :tt_pageStyleClass => "NoKeyboard" %>
+
+  <%= text_field_tag "day_of_birth", nil, {:helpText => Vocabulary.search("Day of birth"),
+      :tt_onLoad => "getDayOfMonthPicker(__$('year_of_birth').value.trim(), __$('month_of_birth').value.trim())",
+      :condition => "__$('month_of_birth').value.trim() != 'Unknown' && " + 
+          "__$('year_of_birth').value.trim() != '#{Vocabulary.search("Unknown")}'"} %>
+
+  <%= text_field_tag "age", nil, {:helpText => Vocabulary.search("Age"),
+      :condition => "__$('year_of_birth').value.trim() == '#{Vocabulary.search("Unknown")}'", 
+      :field_type => "number", :tt_pageStyleClass => "NumbersOnlyWithUnknown"} %>
+  
+<% end %>

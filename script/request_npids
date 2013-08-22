@@ -1,0 +1,144 @@
+#!/usr/bin/env ruby
+
+require File.expand_path('../../config/environment.rb',  __FILE__)
+
+mode = YAML.load_file("#{Rails.root}/config/application.yml")["dde_mode"] rescue nil
+
+puts ".. Operating in #{mode} mode ..."
+
+if mode.to_s.downcase == "ta"
+
+  settings = YAML.load_file("#{Rails.root}/config/application.yml")["dde_ta"] rescue {}
+
+  if !settings.empty?
+  
+    username = settings["username"]
+    password = settings["password"]
+    target = settings["target_server"]
+    site_code = settings["site_code"]
+    count = settings["batch_count"]
+  
+    url = "http://#{username}:#{password}@#{target}/npid_requests/get_npids"
+    
+    ack_url = "http://#{username}:#{password}@#{target}/npid_requests/ack/"
+    
+    params = {
+        "site_code" => site_code,
+        "count" => count
+    }
+  
+    request = RestClient.post( url, { :npid_request => params } )
+    
+    npids = JSON.parse(request)["ids"] rescue []
+    
+    npids.each do |id|
+      NationalIdentifier.find_or_create_by_identifier_and_site_id({:identifier => id, :site_id => site_code})
+      
+      ack = RestClient.post(ack_url, "ids[]=#{id}")
+      
+      puts "#{id} : #{ack}"
+    end
+      
+  end
+  
+elsif mode.to_s.downcase == "gvh"
+
+  settings = YAML.load_file("#{Rails.root}/config/application.yml")["dde_gvh"] rescue {}
+
+  if !settings.empty?
+  
+    username = settings["username"]
+    password = settings["password"]
+    target = settings["target_server"]
+    site_code = settings["site_code"]
+    count = settings["batch_count"]
+    gvh = settings["gvh"]
+  
+    url = "http://#{username}:#{password}@#{target}/national_identifiers/request_gvh_ids"
+    
+    ack_url = "http://#{username}:#{password}@#{target}/national_identifiers/request_gvh_ids_ack/"
+    
+    params = {
+        :site_code => site_code,
+        :count => count,
+        :gvh => gvh
+    }
+  
+    request = RestClient.post( url, params )
+    
+    ids = JSON.parse(request)
+      
+    idCol = []
+      
+    ids.each do |key, value|
+
+      idCol << key
+      
+      NationalIdentifier.create({
+        :identifier => key,
+        :site_id => value["site_id"],
+        :assigned_gvh => value["assigned_gvh"],
+        :assigned_vh => value["assigned_vh"],
+        :requested_by_gvh => 1,
+        :requested_by_vh => value["requested_by_vh"]
+      })
+    end
+    
+    params[:ids] = idCol.to_json
+    
+    ack = RestClient.post(ack_url, params)
+    
+    puts "#{ack}"
+    
+  end
+
+elsif mode.to_s.downcase == "vh"
+
+  settings = YAML.load_file("#{Rails.root}/config/application.yml")["dde_vh"] rescue {}
+
+  if !settings.empty?
+  
+    username = settings["username"]
+    password = settings["password"]
+    target = settings["target_server"]
+    site_code = settings["site_code"]
+    count = settings["batch_count"]
+    gvh = settings["gvh"]
+    vh = settings["vh"]
+  
+    url = "http://#{username}:#{password}@#{target}/national_identifiers/request_village_ids"
+    
+    ack_url = "http://#{username}:#{password}@#{target}/national_identifiers/request_village_ids_ack/"
+    
+    params = {
+        :site_code => site_code,
+        :count => count,
+        :gvh => gvh,
+        :vh => vh
+    }
+  
+    request = RestClient.post( url, params )
+    
+    puts url.to_yaml
+    
+    ids = JSON.parse(request)
+      
+    ids.each do |id|
+      NationalIdentifier.create({
+        :identifier => id,
+        :site_id => site_code,
+        :assigned_gvh => params[:gvh],
+        :assigned_vh => params[:vh],
+        :requested_by_vh => 1
+      })
+    end
+    
+    params[:ids] = request
+    
+    ack = RestClient.post(ack_url, params)
+    
+    puts "#{ack}"
+    
+  end
+  
+end

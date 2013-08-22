@@ -1,0 +1,345 @@
+<html>
+  <head>
+    <title>Home</title>
+    <style type="text/css">
+      body {
+        background-color: #fff;
+        margin: 20px;
+        font-family: "Arial Narrow", "Nimbus Sans L", sans-serif;
+        overflow: hidden;
+        color: #000;
+        -moz-user-select: none;
+      }
+            
+      .menu_button {
+          margin: 0.5%;
+          cursor: pointer;
+          font-size: 16px;
+      }
+
+      .menu_button.blue {
+          color: #333;
+          -moz-transition: none 0s ease 0s;
+          border: 0 none;
+          border-radius: 15px;
+          box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 1px 5px rgba(0, 0, 0, 0.25);
+          padding: 14px 24px;
+          background-color: #006DCC;
+          background-image: -moz-linear-gradient(center top , #497ac4, #89b4ef);
+          background-repeat: repeat-x;
+          border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+          text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+      }
+
+      .menu_button.blue:hover {
+          color: #ffffee;
+          background-color: #006DCC;
+          background-image: -moz-linear-gradient(center top , #0088EE, #0044EE);
+          background-repeat: repeat-x;
+      }
+
+      .menu_button.blue:active {
+          -moz-user-select:none;
+          -moz-user-focus:disabled;
+          color: #ffffcc;
+          background-color: #006DCC;
+          background-image: -moz-linear-gradient(center top , #CC8800, #CC4400);
+          background-repeat: repeat-x;
+          border: 0px inset #000;
+      }
+
+      .menu:hover {
+        color: #666;
+        background-image: -moz-linear-gradient(center top , #FFFFFF, #ccc);
+      }
+
+      .menu:active {
+        color: white;
+        background-image: -moz-linear-gradient(center top , #FFFFFF, #CC4400);
+      }
+
+    </style>
+    
+    <script type="text/javascript">
+      <!--
+      
+        function __$(id){
+          return document.getElementById(id);
+        }
+        
+        function switchTab(tab){
+          var tabs = ["application", "reports", "my_activities", "administration"];
+          
+          for(var i = 0; i < tabs.length; i++){
+            __$(tabs[i]).style.borderBottom = "1px solid #5496ef";
+            __$(tabs[i]).style.paddingTop = "60px";
+          }
+          
+          __$(tab).style.borderBottom = "5px solid #5496ef";
+          __$(tab).style.paddingTop = "65px";
+          
+          switch(tab.toLowerCase()){
+            case "application":
+              loadApplicationMenu();
+              break;
+            case "reports":
+              loadReportsMenu();
+              break;
+            case "my_activities":
+              loadActivitiesMenu();
+              break;
+            case "administration":
+              loadAdministrationMenu();
+              break;
+          }
+        }
+      
+        function adjustView(){
+          __$("container").style.height = (__$("nav").offsetTop - 150) + "px";
+        }
+      
+        function loadApplicationMenu(){
+          __$("container").innerHTML = "";
+          
+          var fields = <%= @links.collect{|k, v| Vocabulary.search((v[:label]).gsub(/\_/, " ")).titleize}.to_json %>;
+          
+          var images = <%= @links.collect{|k, v| v[:image]}.to_json %>;
+          
+          var paths = <%= @links.collect{|k, v| "/#{v[:path]}/#{(v[:label]).gsub(/\s/, 
+              "_").gsub(/\-/, "").gsub(/\(/, "").gsub(/\)/, "").downcase}"}.to_json %>;
+          
+          for(var i = 0; i < fields.length; i++){
+            
+            var div = document.createElement("div");
+            div.style.width = "200px";
+            div.style.height = "160px";
+            div.style.textAlign = "center";
+            div.style.cssFloat = "left";
+            div.style.padding = "5px";
+            div.style.opacity = "1";
+            div.style.cursor = "pointer";
+            div.setAttribute("link", paths[i]);
+            div.className = "menu_button blue";
+            
+            /*div.onmouseover = function(){
+              this.style.opacity = "0.5";
+            }
+            
+            div.onmouseout = function(){
+              this.style.opacity = "1";
+            }*/
+            
+            div.onclick = function(){
+              window.location = this.getAttribute("link");
+            }
+            
+            __$("container").appendChild(div);
+            
+            var img = document.createElement("img");
+            img.src = "/images/" + images[i];
+            img.setAttribute("alt", fields[i]);
+            img.height = "90";
+            img.style.margin = "5px";
+            
+            div.appendChild(img);
+            
+            div.innerHTML += "<div style='padding: 5px; margin-top: 10px;'>" + fields[i] + "</div>";
+              
+          }
+        }
+      
+        function loadReportsMenu(){
+          __$("container").innerHTML = "";
+          
+          var fields = ["Parameter Review", "Report", "View Results"];
+          
+          var images = [
+              "<%= (File.exists?("#{Rails.root}/public/images/parameterreview.png") ? 
+                  "parameterreview.png" : "default.png") %>",              
+              "<%= (File.exists?("#{Rails.root}/public/images/report.png") ? 
+                  "report.png" : "default.png") %>",
+              "<%= (File.exists?("#{Rails.root}/public/images/viewresults.png") ? 
+                  "viewresults.png" : "default.png") %>"
+          ]
+          
+          for(var i = 0; i < fields.length; i++){
+            
+            var div = document.createElement("div");
+            div.style.width = "200px";
+            div.style.textAlign = "center";
+            div.style.cssFloat = "left";
+            div.style.padding = "10px";
+            div.style.opacity = "1";
+            div.style.cursor = "pointer";
+            
+            div.onmouseover = function(){
+              this.style.opacity = "0.5";
+            }
+            
+            div.onmouseout = function(){
+              this.style.opacity = "1";
+            }
+            
+            __$("container").appendChild(div);
+            
+            var img = document.createElement("img");
+            img.src = "/images/" + images[i];
+            img.setAttribute("alt", fields[i]);
+            img.height = "128";
+            
+            div.appendChild(img);
+            
+            div.innerHTML += "<div>" + fields[i] + "</div>";
+              
+          }
+        }
+      
+        function loadActivitiesMenu(){
+          __$("container").innerHTML = "";
+          
+          var fields = ["Keyboard", "Define Controls"];
+          
+          var images = [
+              "<%= (File.exists?("#{Rails.root}/public/images/keyboard.png") ? 
+                  "keyboard.png" : "default.png") %>",              
+              "<%= (File.exists?("#{Rails.root}/public/images/definecontrols.png") ? 
+                  "definecontrols.png" : "default.png") %>"
+          ];
+          
+          for(var i = 0; i < fields.length; i++){
+            
+            var div = document.createElement("div");
+            div.style.width = "200px";
+            div.style.textAlign = "center";
+            div.style.cssFloat = "left";
+            div.style.padding = "10px";
+            div.style.opacity = "1";
+            div.style.cursor = "pointer";
+            
+            div.onmouseover = function(){
+              this.style.opacity = "0.5";
+            }
+            
+            div.onmouseout = function(){
+              this.style.opacity = "1";
+            }
+            
+            __$("container").appendChild(div);
+            
+            var img = document.createElement("img");
+            img.src = "/images/" + images[i];
+            img.setAttribute("alt", fields[i]);
+            img.height = "128";
+            
+            div.appendChild(img);
+            
+            div.innerHTML += "<div>" + fields[i] + "</div>";
+              
+          }
+        }
+      
+        function loadAdministrationMenu(){
+          __$("container").innerHTML = "";
+          
+          var fields = ["Setup", "Settings", "Users"];
+          
+          var images = [
+              "<%= (File.exists?("#{Rails.root}/public/images/setup.png") ? 
+                  "setup.png" : "default.png") %>",              
+              "<%= (File.exists?("#{Rails.root}/public/images/settings.png") ? 
+                  "settings.png" : "default.png") %>",              
+              "<%= (File.exists?("#{Rails.root}/public/images/users.png") ? 
+                  "users.png" : "default.png") %>"
+          ]
+          
+          for(var i = 0; i < fields.length; i++){
+            
+            var div = document.createElement("div");
+            div.style.width = "200px";
+            div.style.textAlign = "center";
+            div.style.cssFloat = "left";
+            div.style.padding = "10px";
+            div.style.opacity = "1";
+            div.style.cursor = "pointer";
+            
+            div.onmouseover = function(){
+              this.style.opacity = "0.5";
+            }
+            
+            div.onmouseout = function(){
+              this.style.opacity = "1";
+            }
+            
+            __$("container").appendChild(div);
+            
+            var img = document.createElement("img");
+            img.src = "/images/" + images[i];
+            img.setAttribute("alt", fields[i]);
+            img.height = "128";
+            
+            div.appendChild(img);
+            
+            div.innerHTML += "<div>" + fields[i] + "</div>";
+              
+          }
+        }
+      
+      //-->
+    </script>
+  </head>
+  <body onresize="adjustView()" onload="adjustView(); loadApplicationMenu();">
+    <table width="100%" cellspacing="0" cellpadding="10">
+      <tr>
+        <td id="application" class="menu" style="border-bottom: 5px solid #5496ef; font-size: 18px; 
+            padding-top: 65px; width: 130px; cursor: pointer;" align="center"
+            onclick="switchTab(this.id)">
+          <%= Vocabulary.search("Application") %>
+        </td>
+        <td id="reports" class="menu" style="border-bottom: 1px solid #5496ef; font-size: 18px; 
+            padding-top: 60px; width: 130px; cursor: pointer;" align="center"
+            onclick="switchTab(this.id)">
+          <%= Vocabulary.search("Reports") %>
+        </td>
+        <td id="my_activities" class="menu" style="border-bottom: 1px solid #5496ef; font-size: 18px; 
+            padding-top: 60px; width: 130px; cursor: pointer;" align="center"
+            onclick="switchTab(this.id)">
+          <%= Vocabulary.search("My Activities") %>
+        </td>
+        <td id="administration" class="menu" style="border-bottom: 1px solid #5496ef; font-size: 18px; 
+            padding-top: 60px; width: 130px; cursor: pointer;" align="center"
+            onclick="switchTab(this.id)">
+          <%= Vocabulary.search("Administration") %>
+        </td>
+        <td style="border-bottom: 1px solid #5496ef;">
+          &nbsp;
+        </td>
+        <td style="width: 100px; border-bottom: 1px solid #5496ef;">
+          <img src="/images/<%= (File.exists?("#{Rails.root}/public/images/app.png") ? 
+              "app.png" : "baobab.png") %>" height="80" style="float: right;" />
+        </td>
+      </tr>
+      <tr>
+        <td colspan="6" style="padding: 0px;">
+          <div id="container" style="width: 100%; overflow: auto;">
+                          
+          <div>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="6" style="border-top: 1px solid #5496ef;">
+          &nbsp;
+        </td>
+      </tr>
+    </table>
+    
+    <div id="nav" style="width: 100%; height: 90px; 
+        left: 0px; position: absolute; bottom: 0px;">
+      <div style="float: left; margin-left: 20px; font-size: 42px; padding: 30px; color: #666; min-width: 50%; 
+          margin-top: -25px; background-image: -moz-linear-gradient(center right , #FFFFFF, #89b4ef);">
+        <%= Vocabulary.search("Village Register") %>
+      </div>
+      <img src="/images/close.png" height="65" style="margin-right: 20px; 
+          margin-top: 0px; cursor: pointer; float: right;" onclick="window.location='/logout'" />
+    </div>
+  </body>
+</html>
