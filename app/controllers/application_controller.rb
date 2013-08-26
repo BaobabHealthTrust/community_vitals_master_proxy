@@ -9,7 +9,17 @@ class ApplicationController < ActionController::Base
   
   before_filter :start_session
 
-
+  def print_and_redirect(print_url, redirect_url, 
+      message = Vocabulary.search("Printing, please wait..."), show_next_button = false, patient_id = nil)
+      
+    @print_url = print_url
+    @redirect_url = redirect_url
+    @message = message
+    @show_next_button = show_next_button
+    @patient_id = patient_id
+    render :template => 'print/print', :layout => nil
+  end
+  
   # Scrub sensitive parameters from your log
   # filter_parameter_logging :password
   

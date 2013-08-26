@@ -1,2 +1,171 @@
-<h1>People#update_outcome</h1>
-<p>Find me in app/views/people/update_outcome.html.erb</p>
+<script language="javascript">
+  <!--
+  
+  tt_cancel_destination = '/';
+  tt_cancel_show = '/';
+  
+  var details = [];
+  
+  function loadPeople(control, ctrl1, ctrl2, ctrl3){
+    var httpRequest = new XMLHttpRequest();
+    
+    httpRequest.onreadystatechange = function() {
+        if (!httpRequest) return;
+
+        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+            var result = httpRequest.responseText;
+
+            control.innerHTML = expand(JSON.parse(result));
+            
+        }
+    };
+    
+    try {
+        var url = "/people/load_people?first_name=" + ctrl1.value.trim() + 
+            "&last_name=" + ctrl2.value.trim() + "&gender=" + ctrl3.value.trim() + "&page=1"
+        
+        httpRequest.open('GET', url, true);
+        httpRequest.send(null);
+    } catch(e){
+    }
+  }
+  
+  function expand(json){
+    details = json["details"];
+    
+    var people = json["people"];
+   
+    var result = "<option></option>";
+    var display = "<li></li>";
+    
+    for(var i = 0; i < people.length; i++){
+       result = result + "<option value='" + people[i][1] + "'>" + people[i][0] + "</option>";
+       
+       display = display + "<li id='" + i + "' " + (i % 2 == 0 ? 'class="even" tag="even"' : "") + 
+            " tstvalue='" + people[i][1] + "' onclick='null; updateTouchscreenInputForSelect(this);'>" + people[i][0] + "</li>";
+    }    
+    
+    __$("tt_currentUnorderedListOptions").innerHTML = display;
+    
+    return result;
+  }
+  
+  function loadPerson(id){
+    if(__$("btnNew")){
+      __$("buttons").removeChild(__$("btnNew"));
+    }
+    
+    if(__$("btnFilter")){
+      __$("buttons").removeChild(__$("btnFilter"));
+    }
+    
+    if(__$("displayPanel")){
+      __$("inputFrame" + tstCurrentPage).removeChild(__$("displayPanel"));
+    }
+    
+    __$("helpText" + tstCurrentPage).innerHTML = "<%= Vocabulary.search("Details for ") %>" + 
+        details[__$(id).value.trim()]["<%= Vocabulary.search("Name") %>"] + 
+        " (" + details[__$(id).value.trim()]["<%= Vocabulary.search("National ID") %>"] + ")";
+    
+    var dspPanel = document.createElement("div");
+    dspPanel.id = "displayPanel";
+    dspPanel.style.display = "table";
+    dspPanel.style.borderSpacing = "0px";
+    dspPanel.style.width = "100%";
+    
+    __$("inputFrame" + tstCurrentPage).appendChild(dspPanel);
+    
+    var fields = [
+        "<%= Vocabulary.search("Name") %>",
+        "<%= Vocabulary.search("First name") %>",
+        "<%= Vocabulary.search("Middle name") %>",
+        "<%= Vocabulary.search("Last name") %>",
+        "<%= Vocabulary.search("Birthdate") %>",
+        "<%= Vocabulary.search("Gender") %>",
+        "<%= Vocabulary.search("National ID") %>",
+        "<%= Vocabulary.search("Relations") %>"
+    ];
+    
+    for(var i = 1; i < fields.length; i++){
+      var row = document.createElement("div");
+      row.style.display = "table-row";
+      
+      if(i % 2 == 0)
+        row.style.backgroundColor = "#89B4EF";
+        
+      dspPanel.appendChild(row);
+      
+      var cell1 = document.createElement("div");
+      cell1.style.display = "table-cell";
+      cell1.style.fontSize = "1.7em";
+      cell1.style.padding = "8px";
+      cell1.style.verticalAlign = "top";
+      cell1.innerHTML = fields[i];
+      
+      row.appendChild(cell1);     
+      
+      var cell2 = document.createElement("div");
+      cell2.style.display = "table-cell";
+      cell2.style.fontSize = "1.7em";
+      cell2.style.padding = "8px";
+      cell2.style.fontStyle = "italic";
+      cell2.innerHTML = details[__$(id).value.trim()][fields[i]];
+      
+      row.appendChild(cell2); 
+      
+      if(i % 2 > 0){          
+        cell1.style.border = "1px solid #89B4EF";
+        cell2.style.border = "1px solid #89B4EF";
+      } else {         
+        cell1.style.border = "1px solid #eee";
+        cell2.style.border = "1px solid #eee";          
+      }
+               
+    }
+    
+    __$("inputFrame" + tstCurrentPage).style.border = "none";
+    
+  }
+    
+  // -->
+</script> 
+
+<% form_tag (:action => :save_outcome) do %>
+
+  <%= text_field_tag "first_name", nil, {
+      :helpText => Vocabulary.search("First Name"),
+      :ajaxURL => "/people/find_first_name?search="
+  } %>
+
+  <%= text_field_tag "last_name", nil, {
+      :helpText => Vocabulary.search("Last Name"),
+      :ajaxURL => "/people/find_last_name?search="
+  } %>
+
+  <%= select_tag "gender", options_for_select([["#{Vocabulary.search("Male")}", "Male"], 
+    ["#{Vocabulary.search("Female")}", "Female"]]), {
+        :helpText => Vocabulary.search("Gender")
+    } %>
+
+  <%= select_tag "person", options_for_select([]), {
+    :helpText => Vocabulary.search("Select person from this list"),
+    :tt_pageStyleClass => "longSelectList NoKeyboard",
+    :tt_onLoad => "loadPeople(__$('person'), __$('first_name'), __$('last_name'), __$('gender'))"
+  } %>
+    
+  <%= text_field_tag "person_verification", nil, {
+      :helpText => Vocabulary.search("Person details"),
+      :tt_pageStyleClass => "NoControls NoKeyboard",
+      :tt_onLoad => "loadPerson('person')",
+      :condition => "__$('person').value.trim().length > 0",
+      :optional => true
+  } %>
+  
+  <%= select_tag "outcome", options_for_select(@outcomes), {:helpText => Vocabulary.search("Outcome")} %>
+
+  <%= text_field_tag "outcome_date", nil, {
+      :helpText => Vocabulary.search("Outcome Date"),
+      :field_type => :date
+  } %>
+
+<% end %>

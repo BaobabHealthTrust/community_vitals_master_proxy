@@ -1,1 +1,15 @@
-<h2 style="color: red"><%= Vocabulary.search("Sorry, no national IDs are available now") %>!</h2>
+<script language="javascript">
+  tt_cancel_destination = '/';
+  tt_cancel_show = '/';
+</script> 
+
+<form action="/">
+
+  <%= text_field_tag "first_name", nil, {
+      :helpText => "<h2 style='color: red; margin: 60px;'>#{Vocabulary.search("Sorry, no National IDs are available now")}</h2>",
+      :tt_pageStyleClass => "NoKeyboard NoControls",
+      :optional => :true,
+      :tt_onLoad => "__$('inputFrame' + tstCurrentPage).style.display = 'none'"
+  } %>
+
+</form>

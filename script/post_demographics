@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+require File.expand_path('../../config/environment.rb',  __FILE__)
+
+mode = YAML.load_file("#{Rails.root}/config/application.yml")["dde_mode"] rescue nil
+
+puts ".. Operating in #{mode} mode ..."
+
+if mode.to_s.downcase == "ta"
+  
+elsif mode.to_s.downcase == "gvh"
+
+  settings = YAML.load_file("#{Rails.root}/config/application.yml")["dde_ta"] rescue {}
+
+  if !settings.empty?
+  
+    username = settings["username"]
+    password = settings["password"]
+    target = settings["target_server"]
+    site_code = settings["site_code"]
+    count = settings["batch_count"]
+  
+    url = "http://#{username}:#{password}@#{target}/npid_requests/get_npids"
+    
+    ack_url = "http://#{username}:#{password}@#{target}/npid_requests/ack/"
+    
+    params = {
+        "site_code" => site_code,
+        "count" => count
+    }
+  
+    request = RestClient.post( url, { :npid_request => params } )
+    
+  end
+
+elsif mode.to_s.downcase == "vh"
+
+
+
+end

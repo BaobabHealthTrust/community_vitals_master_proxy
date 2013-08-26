@@ -124,7 +124,7 @@
         
         var cell1 = document.createElement("div");
         cell1.style.display = "table-cell";
-        cell1.style.fontSize = "1.8em";
+        cell1.style.fontSize = "1.7em";
         cell1.style.padding = "8px";
         cell1.style.verticalAlign = "top";
         cell1.innerHTML = fields[i];
@@ -133,7 +133,7 @@
         
         var cell2 = document.createElement("div");
         cell2.style.display = "table-cell";
-        cell2.style.fontSize = "2em";
+        cell2.style.fontSize = "1.7em";
         cell2.style.padding = "8px";
         cell2.style.fontStyle = "italic";
         cell2.innerHTML = details[__$("person").value.trim()][fields[i]];
@@ -149,6 +149,8 @@
         }
                  
       }
+      
+      __$("inputFrame" + tstCurrentPage).style.border = "none";
       
     }
     

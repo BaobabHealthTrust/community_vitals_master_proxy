@@ -121,14 +121,6 @@
             div.setAttribute("link", paths[i]);
             div.className = "menu_button blue";
             
-            /*div.onmouseover = function(){
-              this.style.opacity = "0.5";
-            }
-            
-            div.onmouseout = function(){
-              this.style.opacity = "1";
-            }*/
-            
             div.onclick = function(){
               window.location = this.getAttribute("link");
             }
@@ -162,22 +154,23 @@
                   "viewresults.png" : "default.png") %>"
           ]
           
+          var paths = ["", "", ""];
+          
           for(var i = 0; i < fields.length; i++){
             
             var div = document.createElement("div");
             div.style.width = "200px";
+            div.style.height = "160px";
             div.style.textAlign = "center";
             div.style.cssFloat = "left";
-            div.style.padding = "10px";
+            div.style.padding = "5px";
             div.style.opacity = "1";
             div.style.cursor = "pointer";
+            div.setAttribute("link", paths[i]);
+            div.className = "menu_button blue";
             
-            div.onmouseover = function(){
-              this.style.opacity = "0.5";
-            }
-            
-            div.onmouseout = function(){
-              this.style.opacity = "1";
+            div.onclick = function(){
+              window.location = this.getAttribute("link");
             }
             
             __$("container").appendChild(div);
@@ -185,11 +178,12 @@
             var img = document.createElement("img");
             img.src = "/images/" + images[i];
             img.setAttribute("alt", fields[i]);
-            img.height = "128";
+            img.height = "90";
+            img.style.margin = "5px";
             
             div.appendChild(img);
             
-            div.innerHTML += "<div>" + fields[i] + "</div>";
+            div.innerHTML += "<div style='padding: 5px; margin-top: 10px;'>" + fields[i] + "</div>";
               
           }
         }
@@ -206,22 +200,23 @@
                   "definecontrols.png" : "default.png") %>"
           ];
           
+          var paths = ["", "", ""];
+          
           for(var i = 0; i < fields.length; i++){
             
             var div = document.createElement("div");
             div.style.width = "200px";
+            div.style.height = "160px";
             div.style.textAlign = "center";
             div.style.cssFloat = "left";
-            div.style.padding = "10px";
+            div.style.padding = "5px";
             div.style.opacity = "1";
             div.style.cursor = "pointer";
+            div.setAttribute("link", paths[i]);
+            div.className = "menu_button blue";
             
-            div.onmouseover = function(){
-              this.style.opacity = "0.5";
-            }
-            
-            div.onmouseout = function(){
-              this.style.opacity = "1";
+            div.onclick = function(){
+              window.location = this.getAttribute("link");
             }
             
             __$("container").appendChild(div);
@@ -229,11 +224,12 @@
             var img = document.createElement("img");
             img.src = "/images/" + images[i];
             img.setAttribute("alt", fields[i]);
-            img.height = "128";
+            img.height = "90";
+            img.style.margin = "5px";
             
             div.appendChild(img);
             
-            div.innerHTML += "<div>" + fields[i] + "</div>";
+            div.innerHTML += "<div style='padding: 5px; margin-top: 10px;'>" + fields[i] + "</div>";
               
           }
         }
@@ -252,22 +248,23 @@
                   "users.png" : "default.png") %>"
           ]
           
+          var paths = ["", "", ""];
+          
           for(var i = 0; i < fields.length; i++){
             
             var div = document.createElement("div");
             div.style.width = "200px";
+            div.style.height = "160px";
             div.style.textAlign = "center";
             div.style.cssFloat = "left";
-            div.style.padding = "10px";
+            div.style.padding = "5px";
             div.style.opacity = "1";
             div.style.cursor = "pointer";
+            div.setAttribute("link", paths[i]);
+            div.className = "menu_button blue";
             
-            div.onmouseover = function(){
-              this.style.opacity = "0.5";
-            }
-            
-            div.onmouseout = function(){
-              this.style.opacity = "1";
+            div.onclick = function(){
+              window.location = this.getAttribute("link");
             }
             
             __$("container").appendChild(div);
@@ -275,11 +272,12 @@
             var img = document.createElement("img");
             img.src = "/images/" + images[i];
             img.setAttribute("alt", fields[i]);
-            img.height = "128";
+            img.height = "90";
+            img.style.margin = "5px";
             
             div.appendChild(img);
             
-            div.innerHTML += "<div>" + fields[i] + "</div>";
+            div.innerHTML += "<div style='padding: 5px; margin-top: 10px;'>" + fields[i] + "</div>";
               
           }
         }
