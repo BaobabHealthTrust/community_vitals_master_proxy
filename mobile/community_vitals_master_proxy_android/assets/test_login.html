@@ -1,0 +1,184 @@
+<html>
+    <head>
+        <title>Test Login</title>
+        <script type="text/javascript">
+            <!--
+
+            function __$(id){
+                return document.getElementById(id);
+            }
+
+            function show(msg){
+                if(navigator.userAgent.toLowerCase().match(/android/)){
+                    Android.showMsg(msg);
+                } else {
+                    alert(msg);
+                }
+            }
+
+            function clickPost(){
+
+                var username = __$("uname").value;
+
+                var pass = __$("pass").value;
+
+                var date = new Date();
+
+                var date_created = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
+
+                Android.addUser(username, pass, date_created);
+
+            }
+
+            function displayUsers(){
+                var people = JSON.parse(Android.getUsers());
+
+                __$("dispArea").innerHTML = "";
+
+                var table = document.createElement("div");
+                table.style.display = "table";
+                table.style.borderSpacing = "2px";
+
+                __$("dispArea").appendChild(table);
+
+                var initialized = false;
+                for(var row in people){
+
+                    if(!initialized){
+                        var grouprow = document.createElement("div");
+                        grouprow.style.display = "table-row";
+
+                        table.appendChild(grouprow);
+                    }
+
+                    var tblrow = document.createElement("div");
+                    tblrow.style.display = "table-row";
+
+                    table.appendChild(tblrow);
+
+                    for(var cell in people[row]){
+                        if(!initialized){
+                            var gtblcell = document.createElement("div");
+                            gtblcell.style.display = "table-cell";
+                            gtblcell.style.fontWeight = "bold";
+                            gtblcell.innerHTML = cell;
+                            gtblcell.style.backgroundColor = "#eee";
+                            gtblcell.style.padding = "10px";
+
+                            grouprow.appendChild(gtblcell);
+                        }
+
+                        var tblcell = document.createElement("div");
+                        tblcell.style.display = "table-cell";
+                        tblcell.innerHTML = people[row][cell];
+                        tblcell.style.border = "#ccc 1px solid";
+                        tblcell.style.padding = "10px";
+
+                        tblrow.appendChild(tblcell);
+                    }
+
+                    var tblcell = document.createElement("div");
+                    tblcell.style.display = "table-cell";
+                    tblcell.innerHTML = "X";
+                    tblcell.style.border = "#ccc 1px solid";
+                    tblcell.style.padding = "10px";
+                    tblcell.style.color = "white";
+                    tblcell.style.fontWeight = "bold";
+                    tblcell.style.backgroundColor = "red";
+                    tblcell.setAttribute("id", row);
+
+                    tblcell.onclick = function(){
+                        Android.confirmDeletion("Delete this user " + parseInt(this.getAttribute("id")) +
+                            "?", parseInt(this.getAttribute("id")), 2);
+                    }
+
+                    tblrow.appendChild(tblcell);
+
+                    initialized = true;
+                }
+
+                var gtblcell = document.createElement("div");
+                gtblcell.style.display = "table-cell";
+                gtblcell.style.fontWeight = "bold";
+                gtblcell.innerHTML = "&nbsp;";
+                gtblcell.style.backgroundColor = "#eee";
+                gtblcell.style.padding = "10px";
+
+                grouprow.appendChild(gtblcell);
+            }
+
+            function login(){
+                __$("token").value = Android.doLogin(__$("uname").value, __$("pass").value);
+            }
+
+            function logout(){
+                Android.doLogout(__$("token").value);
+                __$("token").value = ""
+            }
+
+            function echoToken(){
+                __$("etoken").value = Android.getToken();
+            }
+
+            setTimeout("displayUsers()", 100);
+            //-->
+        </script>
+    </head>
+    <body>
+
+        <table>
+            <tr>
+                <td>
+                    Username
+                </td>
+                <td>
+                    <input type="text" id="uname" value="" />
+                </td>
+                <td>
+                    Token
+                </td>
+                <td>
+                    <input type="text" id="token" value="" disabled />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Password
+                </td>
+                <td>
+                    <input type="password" id="pass" value="" />
+                </td>
+                <td>
+                    Token Echo
+                </td>
+                <td>
+                    <input type="text" id="etoken" value="" disabled />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="button" onclick="displayUsers()" value="View" />
+                </td>
+                <td>
+                    <input type="button" onclick="clickPost()" value="Post" />
+                </td>
+                <td>
+                    <input type="button" onclick="login()" value="Login" />
+                </td>
+                <td>
+                    <input type="button" onclick="logout()" value="Logout" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" style="text-align: center;">
+                    <input type="button" onclick="echoToken()" value="Echo Token" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <div id="dispArea" style="border: 1px solid #000;">&nbsp;</div>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

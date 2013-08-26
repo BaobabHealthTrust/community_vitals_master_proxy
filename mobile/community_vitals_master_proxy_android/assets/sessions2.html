@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <title>Sessions 2</title>
+        <script type="text/javascript">
+            <!--
+
+            function __$(id){
+                return document.getElementById(id);
+            }
+
+            function setVariable(){
+                localStorage.setItem("fld1", __$("fld1").value);
+
+                __$("fld2").value = localStorage.getItem("fld1");
+            }
+
+            function getFields(){
+                __$("fld1").value = window.location.href;
+            }
+
+            //-->
+        </script>
+    </head>
+    <body>
+        <h1>Session 2</h1><br />
+        
+        Field 1 <input type="text" id="fld1" value="" /><br>
+        Field 2 <input type="text" id="fld2" value="" disabled /><br><br>
+
+        <input type="button" value="Set variable" onclick="setVariable()" /><br><br>
+
+        <input type="button" value="Get variable" onclick="getFields()" /><br><br>
+
+        <a href="sessions1.html" >Session 1</a>
+    </body>
+</html>
