@@ -1,0 +1,136 @@
+<html>
+    <head>
+        <title>Login</title>
+        <link rel="stylesheet" type="text/css" href="css/main.css" />
+
+        <script type="text/javascript" src="js/md5.js"></script>
+        <script type="text/javascript" src="js/vocab.js"></script>
+        <script type="text/javascript" src="js/main.js" defer></script>
+
+        <script type="text/javascript" defer>
+            <!--
+
+            var users = {};
+
+            var params = window.location.href.match(/\?(.+)/);
+
+            if(params != null){
+                var paramslist = params[1].split("&");
+                for(var i = 0; i < paramslist.length; i++){
+                    var fld = paramslist[i].split("=");
+
+                    if(fld[0].toLowerCase() == "logout" && fld[1].toLowerCase().trim() == "true"){
+                        var lang = (typeof(sessionStorage["locale"]) != "undefined" ?
+                            sessionStorage["locale"] : "en");
+
+                        sessionStorage.clear();
+
+                        sessionStorage["locale"] = lang;
+                        break;
+                    }
+                }
+            }
+
+            //-->
+        </script>
+    </head>
+    <body>
+        <form action="javascript:doLogin()" method="post">
+            <div class="table">
+                <div class="row">
+                    <div id="lbl_login" class="cell heading right">
+                        Login
+                    </div>
+                    <div class="cell right">
+                        &nbsp;
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="lbl_change_lang" class="cell right">
+                        Change Language
+                    </div>
+                    <div class="cell left">
+                        <select id="language" class="fill bluetext" onchange="changeLang()">
+                            <option value="en">English</option>
+                            <option value="ny">Chichewa</option>
+                            <option value="tu">Tumbuka</option>
+                            <option value="yo">Yao</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="lbl_username" class="cell right">
+                        Username
+                    </div>
+                    <div class="cell left">
+                        <input type="text" id="fld_username" value="" class="fill" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="lbl_password" class="cell right">
+                        Password
+                    </div>
+                    <div class="cell left">
+                        <input type="password" id="fld_password" value="" class="fill" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="lbl_user_type" class="cell right">
+                        User Type
+                    </div>
+                    <div class="cell left">
+                        <select id="fld_user_type" class="fill">
+                            <option></option>
+                            <option>Traditional Authority</option>
+                            <option>Group Village Headman</option>
+                            <option>Village Headman</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="lbl_location" class="cell right">
+                        Location
+                    </div>
+                    <div class="cell left">
+                        <input type="text" id="fld_location" value="" class="fill" />
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="table">
+            <div class="row">
+                <div class="cell center">
+                    <button onmousedown="doLogin()" class="menu_button blue"
+                            style="padding: 10px; cursor: pointer; padding-left: 50px; padding-right: 50px;">
+                        <div class='table'>
+                            <div class='row'>
+                                <div class='cell'>
+                                    <img src='images/login.png' />
+                                </div>
+                            </div>
+                            <div class='row'>
+                                <div id="fld_submit" class='cell'>
+                                    Submit
+                                </div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            <!--
+
+            if(navigator.userAgent.toLowerCase().match(/android/)){
+                document.getElementById("language").value = Android.getPref("locale");
+            } else {
+                document.getElementById("language").value = (typeof(sessionStorage["locale"]) != "undefined" ?
+                    sessionStorage["locale"] : "en");
+            }
+
+            //-->
+        </script>
+    </body>
+</html>

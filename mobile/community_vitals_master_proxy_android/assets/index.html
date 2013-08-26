@@ -1,0 +1,274 @@
+<html>
+    <head>
+        <title>CVR</title>
+        <link rel="stylesheet" type="text/css" href="css/main.css" />
+
+        <script type="text/javascript" src="db/seed.js"></script>
+        <script type="text/javascript" src="js/md5.js"></script>
+        <script type="text/javascript" src="js/vocab.js"></script>
+        <script type="text/javascript" src="js/main.js" defer></script>
+        <style type="text/css">
+            .blue {
+                min-width: 20em;
+            }
+        </style>
+    </head>
+    <body>       
+
+        <div class="table" style="border-spacing: 0px;">
+            <div class="row">
+                <div id="lbl_welcome" class="cell center heading">
+                    Welcome!
+                </div>
+            </div>
+            <div class="row">
+                <div class="cell center">
+
+                    <div style="position: absolute; top: 10px; right: 10px;">
+                        <a href="javascript:doLogout()" style="float: right;">
+                            <img src="images/logout.png" alt="Logout" style="margin-right: 15px;" height="80" />
+                        </a>
+                    </div>
+
+                    <div style="position: absolute; top: 10px; left: 10px;">
+                        <sup id="lbl_lang" class="bluetext">English</sup><br/><br/>
+                        <sub id="lbl_usertype" class="bluetext" style="float: left">T/A</sub>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="cell center">
+                    <div id="ta" class="table" style="width: 60%; margin: auto;">
+                        <div class="row">
+                            <div class="cell center middle" style="width: 50%; padding: 10px;">
+                                <button class="menu_button blue"
+                                        onclick="window.location='reports.html?c=vh'">
+                                    <div class='table'>
+                                        <div class='row'>
+                                            <div class='cell'>
+                                                <img src='images/report.png' height="64" />
+                                            </div>
+                                        </div>
+                                        <div class='row'>
+                                            <div id="lbl_vh_reports" class='cell'>
+                                                Reports
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="cell center middle" style="width: 50%; padding: 10px;">
+                                <button class="menu_button blue"
+                                        onclick="window.location='post_demographics.html?c=vh'">
+                                    <div class='table'>
+                                        <div class='row'>
+                                            <div class='cell'>
+                                                <img src='images/post.png' height="64" />
+                                            </div>
+                                        </div>
+                                        <div class='row'>
+                                            <div id="lbl_vh_post_demographics" class='cell'>
+                                                Post Demographics
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="cell center middle" style="width: 50%; padding: 10px;">
+                                <button class="menu_button blue"
+                                        onclick="window.location='messages.html?c=vh'">
+                                    <div class='table'>
+                                        <div class='row'>
+                                            <div class='cell'>
+                                                <img src='images/messages.png' height="64" />
+                                            </div>
+                                        </div>
+                                        <div class='row'>
+                                            <div id="lbl_vh_messages" class='cell'>
+                                                Messages
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="gvh" class="table" style="width: 60%; margin: auto;">
+                        <div class="row">
+                            <div class="cell center middle" style="width: 50%; padding: 10px;">
+                                <button class="menu_button blue"
+                                        onclick="window.location='reports.html?c=vh'">
+                                    <div class='table'>
+                                        <div class='row'>
+                                            <div class='cell'>
+                                                <img src='images/report.png' height="64" />
+                                            </div>
+                                        </div>
+                                        <div class='row'>
+                                            <div id="lbl_vh_reports" class='cell'>
+                                                Reports
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="cell center middle" style="width: 50%; padding: 10px;">
+                                <button class="menu_button blue"
+                                        onclick="window.location='post_demographics.html?c=vh'">
+                                    <div class='table'>
+                                        <div class='row'>
+                                            <div class='cell'>
+                                                <img src='images/post.png' height="64" />
+                                            </div>
+                                        </div>
+                                        <div class='row'>
+                                            <div id="lbl_vh_post_demographics" class='cell'>
+                                                Post Demographics
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="cell center middle" style="width: 50%; padding: 10px;">
+                                <button class="menu_button blue"
+                                        onclick="window.location='messages.html?c=vh'">
+                                    <div class='table'>
+                                        <div class='row'>
+                                            <div class='cell'>
+                                                <img src='images/messages.png' height="64" />
+                                            </div>
+                                        </div>
+                                        <div class='row'>
+                                            <div id="lbl_vh_messages" class='cell'>
+                                                Messages
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="vh" class="table" style="width: 60%; margin: auto;">
+                        <div class="row">
+                            <div class="cell center middle" style="width: 50%; padding: 10px;">
+                                <button class="menu_button blue"
+                                        onclick="window.location='reports.html?c=vh'">
+                                    <div class='table'>
+                                        <div class='row'>
+                                            <div class='cell'>
+                                                <img src='images/report.png' height="64" />
+                                            </div>
+                                        </div>
+                                        <div class='row'>
+                                            <div id="lbl_vh_reports" class='cell'>
+                                                Reports
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="cell center middle" style="width: 50%; padding: 10px;">
+                                <button class="menu_button blue"
+                                        onclick="window.location='post_demographics.html?c=vh'">
+                                    <div class='table'>
+                                        <div class='row'>
+                                            <div class='cell'>
+                                                <img src='images/post.png' height="64" />
+                                            </div>
+                                        </div>
+                                        <div class='row'>
+                                            <div id="lbl_vh_post_demographics" class='cell'>
+                                                Post Demographics
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="cell center middle" style="width: 50%; padding: 10px;">
+                                <button class="menu_button blue"
+                                        onclick="window.location='add_person.html?c=vh'">
+                                    <div class='table'>
+                                        <div class='row'>
+                                            <div class='cell'>
+                                                <img src='images/addperson.ico' height="64" />
+                                            </div>
+                                        </div>
+                                        <div class='row'>
+                                            <div id="lbl_vh_add_person" class='cell'>
+                                                Add Person
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="cell center middle" style="width: 50%; padding: 10px;">
+                                <button class="menu_button blue"
+                                        onclick="window.location='relationships.html?c=vh'">
+                                    <div class='table'>
+                                        <div class='row'>
+                                            <div class='cell'>
+                                                <img src='images/relate.png' height="64" />
+                                            </div>
+                                        </div>
+                                        <div class='row'>
+                                            <div id="lbl_vh_relationships" class='cell'>
+                                                Relationships
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="cell center middle" style="width: 50%; padding: 10px;">
+                                <button class="menu_button blue"
+                                        onclick="window.location='update_outcome.html?c=vh'">
+                                    <div class='table'>
+                                        <div class='row'>
+                                            <div class='cell'>
+                                                <img src='images/update.png' height="64" />
+                                            </div>
+                                        </div>
+                                        <div class='row'>
+                                            <div id="lbl_vh_update_outcome" class='cell'>
+                                                Update Outcome
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="cell center middle" style="width: 50%; padding: 10px;">
+                                <button class="menu_button blue"
+                                        onclick="window.location='messages.html?c=vh'">
+                                    <div class='table'>
+                                        <div class='row'>
+                                            <div class='cell'>
+                                                <img src='images/messages.png' height="64" />
+                                            </div>
+                                        </div>
+                                        <div class='row'>
+                                            <div id="lbl_vh_messages" class='cell'>
+                                                Messages
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

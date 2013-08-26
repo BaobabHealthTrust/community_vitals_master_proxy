@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <title>CVR</title>
+        <link rel="stylesheet" type="text/css" href="css/main.css" />
+
+        <script type="text/javascript" src="js/md5.js"></script>
+        <script type="text/javascript" src="js/vocab.js"></script>
+        <script type="text/javascript" src="js/datasrc.js"></script>
+        <script type="text/javascript" src="js/main.js" defer></script>
+
+        <script type="text/javascript" defer>
+            <!--
+
+            setTimeout("loadPage('spec/reports.spec')", 200);
+
+            //-->
+        </script>
+
+        <style type="text/css">
+
+        </style>
+    </head>
+    <body>
+
+        <div class="table" style="border-spacing: 0px; width: 100%;">            
+            <div class="row">
+                <div class="cell center" style="position: relative; width: 100%; height: 80%;">
+                    <div id="parent" style="background-color: #f1f1f1; min-height: 128px; border-radius: 10px;
+                         width: 100%;">
+
+                    </div>
+                    <div id="keyboard_container" style="position: absolute; bottom: 91px;
+                         width: 100%; left: 0px;">
+                    </div>
+                    <div class="nav" style="position: absolute; bottom: 1px; border: 1px #fff solid; height: 90px;
+                         width: 100%; left: 0px;">
+
+                        <a href="index.html" style="float: left;">
+                            <img src="images/home.png" alt="Home" style="margin: 5px;
+                                 margin-right: 15px;" height="80" />
+                        </a>
+                        <a id="next" href="javascript:goForward()" style="float: right;">
+                            <img src="images/bt_right.png" alt="Next" style="margin: 5px;
+                                 margin-right: 15px;" height="80" />
+                        </a>
+                        <a id="prev" href="javascript:goBackwards()" style="float: right;">
+                            <img src="images/bt_left.png" alt="Back" style="margin: 5px;
+                                 margin-right: 15px;" height="80" />
+                        </a>
+
+                        <a href="login.html?logout=true" style="float: left;">
+                            <img src="images/logout.png" alt="Logout"
+                                 style="margin: 5px; margin-left: 15px;" height="80" />
+                        </a>
+
+                        <a href="javascript:clear()" style="float: left;">
+                            <img src="images/clear.png" alt="Clear" style="margin: 5px;
+                                 margin-right: 15px;" height="80" />
+                        </a>
+
+                        <img id="btnKeyboard" src="images/hp_keyboard.png" alt="Keyboard"
+                             onmousedown="showKeyboard(kybdnumeric, (__$('keyboard') ? false : true))"
+                                 style="margin: 5px; margin-left: 15px; float: left; display: block;" height="80" />
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

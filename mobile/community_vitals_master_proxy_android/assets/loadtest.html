@@ -1,0 +1,566 @@
+<html>
+    <head>
+        <title>Load Test</title>
+    </head>
+    <body>
+        <div id="parent" style="border: 1px solid #ccc;">
+
+        </div>
+
+        <div style="position: absolute; bottom: 10px; padding: 10px; right: 10px;">
+            <button id="next" onclick="if(__$('inputField').getAttribute('optional') == null &&
+                    __$('inputField').value.trim().length == 0){
+                    alert('This field is required. Please enter a value!');
+                    return;
+                } else if(__$('inputField').getAttribute('validationRule') != null){
+                    if(!__$('inputField').value.trim().match(__$('inputField').getAttribute('validationRule'))){
+                        if(__$('inputField').getAttribute('validationMessage') != null){
+                            alert(__$('inputField').getAttribute('validationMessage'));
+                        } else {
+                            alert('Wrong value!');
+                        }
+                        return;
+                    }
+                };
+                if(current_question + 1 < order.length){
+                    __$(__$('inputField').getAttribute('srcControl')).value = __$('inputField').value;
+                    current_question += 1;
+                    showPage(current_question);
+                    if(current_question > 0){
+                        __$('prev').style.display = 'block';
+                    } else {
+                        __$('prev').style.display = 'none';
+                    }
+                } else {
+                    alert('Finishing!');
+                }" style="height: 50px; font-size: 1.5em; float: right; min-width: 150px;
+                    margin: 20px; cursor: pointer;">
+                Next
+            </button>
+            <button id="prev" onclick="if(current_question - 1 >= 0){
+                __$(__$('inputField').getAttribute('srcControl')).value = __$('inputField').value;
+                current_question -= 1;
+                showPage(current_question, true);
+                if(current_question > 0){
+                    __$('prev').style.display = 'block';
+                } else {
+                    __$('prev').style.display = 'none';
+                }
+            }" style="height: 50px; font-size: 1.5em; float: right; min-width: 150px;
+                    margin: 20px; display: none; cursor: pointer;">
+                Previous
+            </button>
+        </div>
+
+        <script type="text/javascript">
+        <!--
+
+        var current_question = 0;
+        var order = [];
+        var options = {};
+            
+        function loadPage(){
+            ajaxGeneralRequest("spec/add_person.spec", "expandSpec()");
+        }
+
+        function __$(id){
+            return document.getElementById(id);
+        }
+
+        function expandSpec(){
+            var lines = ajaxGeneralRequestResult.split("\n");
+
+            order = [];
+
+            // ["Q.1.3. Last Name [pos => 2", "1.3.", "Last Name ", "[pos => 2", "pos => 2"]
+            for(var i = 0; i < lines.length; i++){
+                if(lines[i].trim().match(/^Q./i)){
+                    var label = lines[i].trim().match(/^Q\.([^\s]+)\s([^\[]+)(\[([^\]]+))?/);
+
+                    if(label){
+                        var id = "lbl_" + label[1].trim().substr(0, label[1].trim().length - 1);
+                        var lbl = label[2].trim();
+                        var params = {};
+
+                        if(typeof(label[4]) != "undefined"){
+                            var inputs = label[4].trim().split("|");
+
+                            for(var k = 0; k < inputs.length; k++){
+                                var terms = inputs[k].split("=>");
+
+                                params[terms[0].trim()] = terms[1].trim().replace(/"/g, "'");
+                            }
+                        }
+
+                        var pos = (typeof(params["pos"]) != "undefined" ? parseInt(params["pos"]) : 0);
+                            
+                        order.push([pos, id, lbl, params]);
+                    }
+                } else if(lines[i].trim().match(/^O./i)){
+                    var opts = lines[i].trim().match(/^O\.([^\s]+)\s(.+)/);
+
+                    // O.1.4.1. Male,1.4.1.,Male
+                    if(opts){
+                        var id = opts[1].trim().replace(/\.$/, "");
+                        var parent_id = "lbl_" + opts[1].trim().replace(/\.\d+\.$/, "");
+                            
+                        if(typeof(options[parent_id]) == "undefined"){
+                            options[parent_id] = [opts[2].trim()];
+                        } else {
+                            options[parent_id].push(opts[2].trim());
+                        }
+
+                    }
+                }
+            }
+
+            order = order.sort();
+
+            showPage(current_question);
+
+            var frm = document.createElement("form");
+            document.body.appendChild(frm);
+        
+            for(var s = 0; s < order.length; s++){
+                var div = document.createElement("div");
+                div.style.padding = "10px";
+                div.style.border = "solid 1px #ccc";
+                div.style.margin = "5px";
+                div.style.display = "table";
+                div.style.borderSpacing = "10px";
+
+                frm.appendChild(div);
+
+                var row = document.createElement("div");
+                row.style.display = "table-row";
+
+                div.appendChild(row);
+
+                var cell1 = document.createElement("div");
+                cell1.style.display = "table-cell";
+                cell1.innerHTML = order[s][2];
+                    
+                row.appendChild(cell1);
+
+                var cell2 = document.createElement("div");
+                cell2.style.display = "table-cell";
+
+                if(typeof(options[order[s][1]]) != "undefined"){
+                    var select = document.createElement("select");
+                    select.id = order[s][1];
+                    select.setAttribute("helpText", order[s][2]);
+
+                    cell2.appendChild(select);
+
+                    for(var o = 0; o < options[order[s][1]].length; o++){
+                        var opt = document.createElement("option");
+                        opt.innerHTML = options[order[s][1]][o];
+
+                        select.appendChild(opt);
+                    }
+                } else {
+                    var input = document.createElement("input");
+                    input.type = "input";
+                    input.id = order[s][1];
+                    input.setAttribute("helpText", order[s][2]);
+
+                    cell2.appendChild(input);
+                }
+
+                row.appendChild(cell2);
+
+            }
+        }
+
+        function showPage(s, back){
+                
+            if(typeof(order[s][3]["condition"]) != "undefined"){
+                if(eval(order[s][3]["condition"]) == false){
+                    if((typeof(back) != "undefined" ? back : false) == false){
+                        current_question += 1;
+                    } else {
+                        current_question -= 1;
+                    }
+                    return showPage(current_question, (typeof(back) != "undefined" ? back : false));
+                }
+            }
+
+            __$("parent").innerHTML = "";
+
+            var div = document.createElement("div");
+            // div.style.padding = "10px";
+            div.style.border = "solid 1px #ccc";
+            div.style.margin = "5px";
+            div.style.display = "table";
+            div.style.borderSpacing = "10px";
+            div.style.backgroundColor = "#f1f1f1";
+            div.style.minHeight = "128px";
+            div.style.borderRadius = "10px";
+            div.style.width = "97.5%";
+
+            __$("parent").appendChild(div);
+
+            var row = document.createElement("div");
+            row.style.display = "table-row";
+
+            div.appendChild(row);
+
+            var row2 = document.createElement("div");
+            row2.style.display = "table-row";
+
+            div.appendChild(row2);
+
+            var row3 = document.createElement("div");
+            row3.style.display = "table-row";
+
+            div.appendChild(row3);
+
+            var cell3 = document.createElement("div");
+            cell3.style.display = "table-cell";
+            cell3.style.color = "#254061";
+            cell3.style.fontSize = "1.5em";
+            cell3.style.padding = "10px";
+            cell3.style.paddingTop = "0px";
+            cell3.id = "dropdowns"
+
+            row3.appendChild(cell3);
+
+            var cell1 = document.createElement("div");
+            cell1.style.display = "table-cell";
+            cell1.innerHTML = order[s][2];
+            cell1.style.color = "#254061";
+            cell1.style.fontSize = "1.8em";
+            cell1.style.padding = "10px";
+
+            row.appendChild(cell1);
+
+            var cell2 = document.createElement("div");
+            cell2.style.display = "table-cell";
+            cell2.style.color = "#6281A7";
+            cell2.style.padding = "10px";
+            cell2.style.paddingTop = "0px";
+            cell2.style.paddingBottom = "0px";
+
+            var input;
+            
+            if(typeof(options[order[s][1]]) != "undefined"){
+                input = document.createElement("input");
+                input.setAttribute("srcControl", order[s][1]);
+                input.setAttribute("helpText", order[s][2]);
+                input.id = "inputField";
+
+                for(var a in order[s][3]){
+                    input.setAttribute(a, order[s][3][a]);
+                }
+
+                cell2.appendChild(input);
+
+                /*for(var o = 0; o < options[order[s][1]].length; o++){
+                    var opt = document.createElement("option");
+                    opt.innerHTML = options[order[s][1]][o];
+
+                    input.appendChild(opt);
+                }*/
+
+                loadSingleSelect(options[order[s][1]]);
+                
+            } else {
+                input = document.createElement("input");
+                input.type = "input";
+                input.setAttribute("srcControl", order[s][1]);
+                input.setAttribute("helpText", order[s][2]);
+                input.id = "inputField";
+
+                for(var a in order[s][3]){
+                    input.setAttribute(a, order[s][3][a]);
+                }
+
+                cell2.appendChild(input);
+            }
+
+            input.onkeydown = function(event){
+                if (event.keyCode == 13)
+                    document.getElementById('next').click()
+            }
+
+            input.style.color = "#254061";
+            input.style.fontSize = "1.5em";
+            input.style.padding = "10px";
+            input.style.borderRadius = "10px";
+            input.style.border = "1px solid #6281A7";
+            input.style.width = "100%";
+
+            row2.appendChild(cell2);
+
+            if(input.getAttribute("tt_onLoad") != null){
+                eval(input.getAttribute("tt_onLoad"));
+            }
+
+            if(__$(input.getAttribute('srcControl')))
+                input.value = __$(input.getAttribute('srcControl')).value;
+
+            input.focus();
+        }
+
+        function ajaxGeneralRequest(aUrl, method) {
+            var httpRequest = new XMLHttpRequest();
+            httpRequest.onreadystatechange = function() {
+                handleGeneralResult(httpRequest, method);
+            };
+            try {
+                httpRequest.open('GET', aUrl, true);
+                httpRequest.send(null);
+            } catch(e){
+            }
+        }
+
+        function handleGeneralResult(aXMLHttpRequest, method) {
+            if (!aXMLHttpRequest) return "error";
+
+            if (aXMLHttpRequest.readyState == 4 && (aXMLHttpRequest.status == 200 || aXMLHttpRequest.status == 304)) {
+                var result = aXMLHttpRequest.responseText;
+
+                ajaxGeneralRequestResult = result;
+
+                eval(method);
+
+                return ajaxGeneralRequestResult;
+            }
+            return "";
+        }
+
+        function generateDays(year, month){
+            if(__$("calendar")){
+                __$("parent").removeChild(__$("calendar"));
+            }
+            
+            var calendar = document.createElement("div");
+            calendar.id = "calendar";
+            calendar.style.position = "absolute";
+            calendar.style.bottom = "200px";
+            calendar.style.width = "98%";
+
+            __$("parent").appendChild(calendar);
+
+            var keyboard = document.createElement("div");
+            keyboard.style.margin = "auto";
+            keyboard.style.display = "table";
+            keyboard.style.backgroundColor = "#fff";
+            keyboard.style.border = "1px solid #ccc";
+            keyboard.style.borderRadius = "10px";
+            keyboard.style.padding = "10px";
+
+            calendar.appendChild(keyboard);
+
+            var months = {
+                "January":[31, 0],
+                "February":[(parseInt(__$(year).value) % 4 > 0 ? 28 : 29), 1],
+                "March":[31, 2],
+                "April":[30, 3],
+                "May":[31, 4],
+                "June":[30, 5],
+                "July":[31, 6],
+                "August":[31, 7],
+                "September":[30, 8],
+                "October":[31, 9],
+                "November":[30, 10],
+                "December":[31, 11]
+            }
+            
+            var date = new Date(parseInt(__$(year).value), parseInt(months[__$(month).value][1]), 1);
+
+            var row1 = document.createElement("div");
+            row1.style.display = "table-row";
+
+            keyboard.appendChild(row1);
+
+            var days = ["S", "M", "T", "W", "T", "F", "S"];
+
+            for(var d = 0; d < days.length; d++){
+                var day = document.createElement("div");
+                day.style.display = "table-cell";
+                day.style.padding = "20px";
+                day.innerHTML = days[d];
+
+                row1.appendChild(day);
+            }
+
+            var p = date.getDay();
+            var count = 1;
+            
+            for(var w = 0; w <= 6; w++){
+                var row = document.createElement("div");
+                row.style.display = "table-row";
+
+                keyboard.appendChild(row);
+
+                for(var d = 0; d < days.length; d++){
+                    var day = document.createElement("div");
+                    day.style.display = "table-cell";
+
+                    if((p == d || count > 1) && count <= months[__$(month).value][0]){
+                        // day.innerHTML = count;
+                        var btn = document.createElement("button");
+                        btn.innerHTML = count;
+                        btn.style.padding = "20px";
+                        btn.style.minWidth = "70px";
+                        btn.style.cursor = "pointer";
+
+                        btn.onclick = function(){
+                            if(__$("inputField")){
+                                __$("inputField").value = this.innerHTML;
+                            }
+                        }
+
+                        day.appendChild(btn);
+                        
+                        p++;
+                        count++;
+                    }
+
+                    row.appendChild(day);
+                }
+                if(count > months[__$(month).value][0]){
+                    break;
+                }
+            }
+            
+        }
+
+        function loadNumbers(startYr, endYr){
+            var panel = document.createElement("div");
+            panel.id = "panel";
+            panel.style.width = "100%";
+
+            __$("dropdowns").appendChild(panel);
+
+            var contain = document.createElement("div");
+            contain.style.width = "100%";
+            contain.style.height = "350px";
+            contain.style.overflow = "auto";
+            contain.style.border = "1px solid #6281A7"
+            contain.style.borderRadius = "10px";
+            contain.style.backgroundColor = "#fff";
+
+            panel.appendChild(contain);
+
+            var ul = document.createElement("ul");
+            ul.style.padding = "0px";
+            ul.id = "ulOptions";
+
+            contain.appendChild(ul);
+
+            for(var y = endYr; y >= startYr; y--){
+                var li = document.createElement("li");
+                // li.innerHTML = y;
+                li.innerHTML = "<div style='display: table;'><div style='display: table-row;'>" +
+                    "<div style='display: table-cell;'><img src='images/unchecked.png' height='32' /></div>" +
+                    "<div style='display: table-cell; vertical-align: middle; padding-left: 10px;'><span>" + y +
+                    "</span></div></div></div>";
+                li.setAttribute("tag", (y % 2 > 0 ? "odd" : "even"));
+                li.style.padding = "10px";
+                li.style.color = "#333";
+                li.style.cursor = "pointer";
+                
+                if(y % 2 > 0){
+                    li.style.backgroundColor = "#eee";
+                } else {
+                    li.style.backgroundColor = "#ccc";
+                }
+
+                li.onclick = function(){
+                    if(__$("inputField"))
+                        __$("inputField").value = this.getElementsByTagName("span")[0].innerHTML;
+
+                    var lis = __$("ulOptions").getElementsByTagName("li");
+
+                    for(var l = 0; l < lis.length; l++){
+                        lis[l].style.color = "#333";
+                        lis[l].getElementsByTagName("img")[0].src = "images/unchecked.png";
+                        if(lis[l].getAttribute("tag") == "odd"){
+                            lis[l].style.backgroundColor = "#eee";
+                        } else {
+                            lis[l].style.backgroundColor = "#ccc";
+                        }
+                    }
+
+                    this.style.backgroundColor = "steelblue";
+                    this.style.color = "#fff";
+                    this.getElementsByTagName("img")[0].src = "images/checked.png";
+                }
+
+                ul.appendChild(li);
+            }
+        }
+
+        function loadSingleSelect(values, selected){
+            var panel = document.createElement("div");
+            panel.id = "panel";
+            panel.style.width = "100%";
+
+            __$("dropdowns").appendChild(panel);
+
+            var contain = document.createElement("div");
+            contain.style.width = "100%";
+            contain.style.height = "350px";
+            contain.style.overflow = "auto";
+            contain.style.border = "1px solid #6281A7"
+            contain.style.borderRadius = "10px";
+            contain.style.backgroundColor = "#fff";
+
+            panel.appendChild(contain);
+
+            var ul = document.createElement("ul");
+            ul.style.padding = "0px";
+            ul.id = "ulOptions";
+
+            contain.appendChild(ul);
+
+            for(var y = 0; y < values.length; y++){
+                var li = document.createElement("li");
+                li.innerHTML = "<div style='display: table;'><div style='display: table-row;'>" +
+                    "<div style='display: table-cell;'><img src='images/unchecked.png' height='32' /></div>" +
+                    "<div style='display: table-cell; vertical-align: middle; padding-left: 10px;'><span>" + 
+                    values[y] + "</span></div></div></div>";
+                li.setAttribute("tag", (y % 2 > 0 ? "odd" : "even"));
+                li.style.padding = "10px";
+                li.style.color = "#333";
+                li.style.cursor = "pointer";
+
+                if(y % 2 > 0){
+                    li.style.backgroundColor = "#eee";
+                } else {
+                    li.style.backgroundColor = "#ccc";
+                }
+
+                li.onclick = function(){
+                    if(__$("inputField"))
+                        __$("inputField").value = this.getElementsByTagName("span")[0].innerHTML;
+
+                    var lis = __$("ulOptions").getElementsByTagName("li");
+
+                    for(var l = 0; l < lis.length; l++){
+                        lis[l].style.color = "#333";
+                        lis[l].getElementsByTagName("img")[0].src = "images/unchecked.png";
+                        if(lis[l].getAttribute("tag") == "odd"){
+                            lis[l].style.backgroundColor = "#eee";
+                        } else {
+                            lis[l].style.backgroundColor = "#ccc";
+                        }
+                    }
+
+                    this.style.backgroundColor = "steelblue";
+                    this.style.color = "#fff";
+                    this.getElementsByTagName("img")[0].src = "images/checked.png";
+                }
+
+                ul.appendChild(li);
+            }
+        }
+
+        loadPage();
+            
+        //-->
+        </script>
+    </body>
+</html>
