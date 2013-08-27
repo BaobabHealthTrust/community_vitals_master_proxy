@@ -7,34 +7,102 @@ mode = YAML.load_file("#{Rails.root}/config/application.yml")["dde_mode"] rescue
 puts ".. Operating in #{mode} mode ..."
 
 if mode.to_s.downcase == "ta"
-  
+
 elsif mode.to_s.downcase == "gvh"
 
-  settings = YAML.load_file("#{Rails.root}/config/application.yml")["dde_ta"] rescue {}
+  settings = YAML.load_file("#{Rails.root}/config/application.yml")["dde_gvh"] rescue {}
 
   if !settings.empty?
-  
+
     username = settings["username"]
     password = settings["password"]
     target = settings["target_server"]
     site_code = settings["site_code"]
-    count = settings["batch_count"]
-  
-    url = "http://#{username}:#{password}@#{target}/npid_requests/get_npids"
-    
-    ack_url = "http://#{username}:#{password}@#{target}/npid_requests/ack/"
-    
+    gvh = settings["gvh"]
+
+    url = "http://#{username}:#{password}@#{target}/national_identifiers/gvh_request_demographics"
+
+    ack_url = "http://#{username}:#{password}@#{target}/national_identifiers/gvh_acknowledge_demographics/"
+
     params = {
-        "site_code" => site_code,
-        "count" => count
+        :site_code => site_code,
+        :gvh => gvh
     }
-  
-    request = RestClient.post( url, { :npid_request => params } )
-    
+
+    request = RestClient.post( url, params )
+
+    raise JSON.parse(request).inspect
+
+
   end
 
 elsif mode.to_s.downcase == "vh"
 
+  settings = YAML.load_file("#{Rails.root}/config/application.yml")["dde_vh"] rescue {}
 
+  if !settings.empty?
+
+    username = settings["username"]
+    password = settings["password"]
+    target = settings["target_server"]
+  end
+
+  url = "http://#{username}:#{password}@#{target}/national_identifiers/receive_village_demographics"
+
+  to_post = {}
+
+  new_people = NationalIdentifier.find(:all, :conditions => ['person_id IS NOT NULL AND posted_by_vh = 0 AND voided = 0'])
+
+  (new_people || []).each do |identifier|
+
+    person = identifier.person
+    person_details = {
+      'fname' => person.given_name,
+      'middle_name' => person.middle_name,
+      'lname' => person.family_name,
+      'gender' => person.gender,
+      'dob' => person.birthdate,
+      'outcome' => person.outcome,
+      'outcome_date' => person.outcome_date,
+      'village' => person.village,
+      'gvh' => person.gvh,
+      'ta' => person.ta
+    }
+
+    outcomes = []
+    (person.outcomes || []).each do |outcome|
+
+       person_outcome = {
+          'outcome'=> outcome.outcome_type,
+          'outcome_date' => outcome.outcome_date
+       }
+
+      outcomes << person_outcome
+    end
+
+    relationships = []
+    (person.relationships || []).each do |relation|
+
+      relative = {
+          'person' => relation.person_national_id,
+          'relative' => relation.relation_national_id,
+          'relationship' => relation.person_is_to_relation
+      }
+      relationships << relative
+    end
+
+    to_post[identifier.identifier] = { 'person_details' => person_details, 'relationships' => relationships, 'outcomes' => outcomes }
+
+  end
+
+  post = RestClient.post (url,{:details => to_post.to_json})
+
+  if (JSON.parse(post).length == to_post.length)
+    (JSON.parse(post) || []).each do |id|
+      NationalIdentifier.find_by_identifier(id).update_attributes({:posted_by_vh => 1 })
+
+    end
+  end
 
 end
+
