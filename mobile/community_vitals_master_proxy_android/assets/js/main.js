@@ -7,6 +7,8 @@ var options = {};
 var kybdnumeric = false;
 var showKeys = true;
 var selected = "";
+
+var ajaxGeneralRequestResult = "";
          
 function html5_storage_support() {
     try {
@@ -32,15 +34,14 @@ function doLogin(){
 
     if(navigator.userAgent.toLowerCase().match(/android/)){
         
-        var token = Android.doLogin(__$("1.2").value.trim(), __$("1.3").value.trim());
+        var token = Android.doLogin(__$("1.1").value.trim(), __$("1.2").value.trim());
 
         if(token.trim().length > 0){
-            Android.setPref("username", __$("1.2").value.trim());
-            Android.setPref("usertype", __$("1.4").value.trim());
-            Android.setPref("location", __$("1.5").value.trim());
-            Android.setPref("locale", __$("1.1").value.trim());
+            Android.setPref("username", __$("1.1").value.trim());
+            Android.setPref("usertype", __$("1.3").value.trim());
+            Android.setPref("location", __$("1.4").value.trim());
 
-            Android.setPref("current_category", __$("1.4").selectedIndex);
+            Android.setPref("current_category", __$("1.3").selectedIndex);
 
             window.location = "index.html";
             
@@ -103,6 +104,8 @@ function checkLogin(){
         if(navigator.userAgent.toLowerCase().match(/android/)){
             var token = Android.getToken();
 
+            Android.debugPrint(token);
+        
             if(token.trim().length > 0){
                 window.location = "index.html";
             }
@@ -376,9 +379,29 @@ function showKeyboard(numeric, showAgain){
                     btn.innerHTML = groups[j][i];
                     btn.style.minWidth = "120px";
                 }
+                
+                cell.appendChild(btn);
+                
+                new FastButton(document.getElementById(btn.id), function() {
+					        if(this.innerHTML == "Del"){
+                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
+                            __$("inputField").value = "";
+                        } else {
+                            __$("inputField").value = __$("inputField").value.trim().substr(0,
+                                __$("inputField").value.trim().length - 1);
+                        }
+                    } else {
+                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
+                            __$("inputField").value = this.innerHTML;
+                        } else if(this.innerHTML.trim().toLowerCase() == "unknown"){
+                            __$("inputField").value = this.innerHTML;
+                        } else {
+                            __$("inputField").value += this.innerHTML;
+                        }
+                    }					        
+					      });
 
-
-                btn.onmousedown = function(){
+                /*btn.onmousedown = function(){
                     if(this.innerHTML == "Del"){
                         if(__$("inputField").value.trim().toLowerCase() == "unknown"){
                             __$("inputField").value = "";
@@ -395,9 +418,8 @@ function showKeyboard(numeric, showAgain){
                             __$("inputField").value += this.innerHTML;
                         }
                     }
-                }
+                }*/
 
-                cell.appendChild(btn);
             }
         }
     } else {
@@ -448,7 +470,73 @@ function showKeyboard(numeric, showAgain){
                     btn.style.minWidth = "120px";
                 }
 
-                btn.onmousedown = function(){
+                cell.appendChild(btn);
+                
+                var b = new FastButton(document.getElementById(btn.id), function() {
+					        
+                    if(this.innerHTML == "Del"){
+                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
+                            __$("inputField").value = "";
+                        } else {
+                            __$("inputField").value = __$("inputField").value.trim().substr(0,
+                                __$("inputField").value.trim().length - 1);
+                        }
+                    } else if(this.innerHTML.toLowerCase() == "cap"){
+                        current_case_upper = !current_case_upper;
+
+                        showKeyboard(false, true);
+                    } else if(this.innerHTML.toLowerCase() == "abc"){
+                        if(navigator.userAgent.toLowerCase().match(/android/)){
+                            Android.setPref("prefered_keyboard", "abc");
+                        } else {
+                            sessionStorage.prefered_keyboard = "abc";
+                        }
+
+                        showKeyboard(false, true);
+                    } else if(this.innerHTML.toLowerCase() == "qwerty"){
+                        if(navigator.userAgent.toLowerCase().match(/android/)){
+                            Android.setPref("prefered_keyboard", "qwerty");
+                        } else {
+                            sessionStorage.prefered_keyboard = "qwerty";
+                        }
+
+                        showKeyboard(false, true);
+                    } else if(this.getAttribute("tag") == "space") {
+                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
+                            __$("inputField").value = "";
+                        } else {
+                            __$("inputField").value +=  " ";
+                        }
+                    } else if(this.getAttribute("tag") == "enter") {
+                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
+                            __$("inputField").value = "";
+                        } else {
+                            __$("inputField").value +=  "\n";
+                        }
+                    } else {
+                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
+                            __$("inputField").value = this.innerHTML;
+                        } else if(this.innerHTML.trim().toLowerCase() == "unknown"){
+                            __$("inputField").value = this.innerHTML;
+                        } else {
+                            __$("inputField").value += this.innerHTML;
+                        }
+                    }
+
+                    if(current_case_upper && this.id != "lbl_cap"){
+                        current_case_upper = !current_case_upper;
+
+                        showKeyboard(false, true);
+                    }
+
+                    var dynamicLoader = __$("inputField").getAttribute("dynamicLoader");
+                    
+                    if(dynamicLoader){
+                        eval(dynamicLoader);
+                    }	 
+					      });				
+					
+                /*btn.onmousedown = function(){
 
                     if(this.innerHTML == "Del"){
                         if(__$("inputField").value.trim().toLowerCase() == "unknown"){
@@ -510,16 +598,15 @@ function showKeyboard(numeric, showAgain){
                     if(dynamicLoader){
                         eval(dynamicLoader);
                     }
-                }
+                }*/
 
-                cell.appendChild(btn);
             }
         }
 
     }
 }
 
-function expandSpec(){
+function expandSpec(){    
     var lines = ajaxGeneralRequestResult.split("\n");
 
     order = [];
