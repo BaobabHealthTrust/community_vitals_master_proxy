@@ -87,5 +87,9 @@ class Person < ActiveRecord::Base
         
     direct + indirect + others
   end
-  
+
+  def outcomes
+    Outcome.all(:conditions => ["person_id = ? AND voided = ?", self.id, 0])
+  end
+
 end
