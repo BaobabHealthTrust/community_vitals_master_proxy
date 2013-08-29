@@ -22,6 +22,7 @@ public class NationalIdentifiers{
 	int _request_gvh_notified;
 	String _void_reason;
 	int _posted_by_gvh;
+	String _blank_id;
 	
 	// Empty constructor
 	public NationalIdentifiers() {
@@ -243,5 +244,12 @@ public class NationalIdentifiers{
 		this._posted_by_gvh = posted_by_gvh;
 	}
 
+	// setting posted_by_gvh
+	public void setBlankId(String npid) {
+		this._blank_id = npid;
+	}
 	
+	public String getBlankId(){		
+		return this._blank_id;	
+	}
 }

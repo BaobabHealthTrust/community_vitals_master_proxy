@@ -291,14 +291,15 @@ function showKeyboard(numeric, showAgain){
 
         if(!showAgain)
             return;
-    } else {        
+    } /*else {        
         if(!showAgain)
             return;
-    }
+    }*/
  
     var keyboard = document.createElement("div");
     keyboard.className = "keyboard";
     keyboard.id = "keyboard";
+    keyboard.style.display = "block";
 
     __$("keyboard_container").appendChild(keyboard);
 
@@ -400,25 +401,6 @@ function showKeyboard(numeric, showAgain){
                         }
                     }					        
 					      });
-
-                /*btn.onmousedown = function(){
-                    if(this.innerHTML == "Del"){
-                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
-                            __$("inputField").value = "";
-                        } else {
-                            __$("inputField").value = __$("inputField").value.trim().substr(0,
-                                __$("inputField").value.trim().length - 1);
-                        }
-                    } else {
-                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
-                            __$("inputField").value = this.innerHTML;
-                        } else if(this.innerHTML.trim().toLowerCase() == "unknown"){
-                            __$("inputField").value = this.innerHTML;
-                        } else {
-                            __$("inputField").value += this.innerHTML;
-                        }
-                    }
-                }*/
 
             }
         }
@@ -534,71 +516,7 @@ function showKeyboard(numeric, showAgain){
                     if(dynamicLoader){
                         eval(dynamicLoader);
                     }	 
-					      });				
-					
-                /*btn.onmousedown = function(){
-
-                    if(this.innerHTML == "Del"){
-                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
-                            __$("inputField").value = "";
-                        } else {
-                            __$("inputField").value = __$("inputField").value.trim().substr(0,
-                                __$("inputField").value.trim().length - 1);
-                        }
-                    } else if(this.innerHTML.toLowerCase() == "cap"){
-                        current_case_upper = !current_case_upper;
-
-                        showKeyboard(false, true);
-                    } else if(this.innerHTML.toLowerCase() == "abc"){
-                        if(navigator.userAgent.toLowerCase().match(/android/)){
-                            Android.setPref("prefered_keyboard", "abc");
-                        } else {
-                            sessionStorage.prefered_keyboard = "abc";
-                        }
-
-                        showKeyboard(false, true);
-                    } else if(this.innerHTML.toLowerCase() == "qwerty"){
-                        if(navigator.userAgent.toLowerCase().match(/android/)){
-                            Android.setPref("prefered_keyboard", "qwerty");
-                        } else {
-                            sessionStorage.prefered_keyboard = "qwerty";
-                        }
-
-                        showKeyboard(false, true);
-                    } else if(this.getAttribute("tag") == "space") {
-                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
-                            __$("inputField").value = "";
-                        } else {
-                            __$("inputField").value +=  " ";
-                        }
-                    } else if(this.getAttribute("tag") == "enter") {
-                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
-                            __$("inputField").value = "";
-                        } else {
-                            __$("inputField").value +=  "\n";
-                        }
-                    } else {
-                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
-                            __$("inputField").value = this.innerHTML;
-                        } else if(this.innerHTML.trim().toLowerCase() == "unknown"){
-                            __$("inputField").value = this.innerHTML;
-                        } else {
-                            __$("inputField").value += this.innerHTML;
-                        }
-                    }
-
-                    if(current_case_upper && this.id != "lbl_cap"){
-                        current_case_upper = !current_case_upper;
-
-                        showKeyboard(false, true);
-                    }
-
-                    var dynamicLoader = __$("inputField").getAttribute("dynamicLoader");
-                    
-                    if(dynamicLoader){
-                        eval(dynamicLoader);
-                    }
-                }*/
+					      });									
 
             }
         }
@@ -790,9 +708,9 @@ function showPage(s, back){
     __$("parent").innerHTML = "";
 
     var div = document.createElement("div");
-    div.style.margin = "5px";
+    div.style.margin = "0px";
     div.style.display = "table";
-    div.style.borderSpacing = "10px";
+    div.style.borderSpacing = "1px";
     div.style.width = "100%";
 
     __$("parent").appendChild(div);
@@ -940,12 +858,32 @@ function showPage(s, back){
         eval(input.getAttribute("tt_onLoad"));
     }
 
+    if(input.getAttribute("tt_showToggleKeyboard") != null){
+        if(eval(input.getAttribute("tt_showToggleKeyboard"))){
+          if(__$("showKeyboard")){
+            __$("showKeyboard").style.display = "block";
+          }
+        } else {
+          if(__$("showKeyboard")){
+            __$("showKeyboard").style.display = "none";
+          }
+        }
+    } else if(__$("showKeyboard")){
+      __$("showKeyboard").style.display = "none";
+    }
+
     if(__$(input.getAttribute('srcControl')))
         input.value = __$(input.getAttribute('srcControl')).value;
 
     input.focus();
 
-    showKeyboard(kybdnumeric, showKeys);
+    if(typeof(input.getAttribute("tt_customKeyboard")) != "undefined"){
+      if(!input.getAttribute("tt_customKeyboard")){
+        showKeyboard(kybdnumeric, showKeys);  
+      }
+    } else {
+      showKeyboard(kybdnumeric, showKeys);
+    }
     
     return "";
 }
@@ -996,7 +934,7 @@ function generateDays(year, month){
     var calendar = document.createElement("div");
     calendar.id = "calendar";
     calendar.style.position = "absolute";
-    calendar.style.bottom = "95px";
+    calendar.style.bottom = "25px";
     calendar.style.width = "98%";
 
     __$("parent").appendChild(calendar);
@@ -1234,7 +1172,7 @@ function loadSingleSelect(values, selected, initialtext){
 
     var contain = document.createElement("div");
     contain.style.width = "100%";
-    contain.style.height = "250px";
+    contain.style.height = "380px";
     contain.style.overflow = "auto";
     contain.style.border = "1px solid #6281A7"
     contain.style.borderRadius = "10px";
@@ -1282,16 +1220,24 @@ function loadSingleSelect(values, selected, initialtext){
         this.getElementsByTagName("img")[0].src = "images/checked.png";
     }
 
-    ul.appendChild(li);
+    // ul.appendChild(li);
+        
+    var selectedControl = null;    
         
     for(var y = 0; y < values.length; y++){
         var li = document.createElement("li");
+        li.id = y;
+        
         li.innerHTML = "<div style='display: table;'><div style='display: table-row;'>" +
         "<div style='display: table-cell;'><img src='images/unchecked.png' height='32' /></div>" +
         "<div style='display: table-cell; vertical-align: middle; padding-left: 10px;'><span>" +
         values[y][0] + "</span></div></div></div>";
         li.setAttribute("tag", (y % 2 > 0 ? "odd" : "even"));
         li.setAttribute("tstValue", (values[y][1] ? values[y][1] : values[y][0]));
+
+        if(initialtext == values[y][0]){
+          selectedControl = y;
+        }
 
         if(y % 2 > 0){
             li.style.backgroundColor = "#eee";
@@ -1304,7 +1250,10 @@ function loadSingleSelect(values, selected, initialtext){
                 document.getElementById('next').click()
         }
 
-        li.onmousedown = function(){
+        ul.appendChild(li);
+        
+	      new FastButton(document.getElementById(li.id), function() {
+	        
             if(__$("inputField")){
                 __$("inputField").value = this.getElementsByTagName("span")[0].innerHTML;
                 __$("inputField").setAttribute("tstValue", this.getAttribute("tstValue"));
@@ -1325,14 +1274,16 @@ function loadSingleSelect(values, selected, initialtext){
             this.style.backgroundColor = "steelblue";
             this.style.color = "#fff";
             this.getElementsByTagName("img")[0].src = "images/checked.png";
-        }
+        			 
+	      });
 
-        ul.appendChild(li);
     }
 
-    if(typeof(initialtext) == "undefined"){
-// setTimeout("clear()", 10);
-}
+    if(selectedControl != null) {
+      if(__$(selectedControl)){
+        __$(selectedControl).click();
+      }
+    }
 }
 
 function loadMultipleSelect(values, selected){
@@ -1346,7 +1297,7 @@ function loadMultipleSelect(values, selected){
 
     var contain = document.createElement("div");
     contain.style.width = "100%";
-    contain.style.height = "250px";
+    contain.style.height = "380px";
     contain.style.overflow = "auto";
     contain.style.border = "1px solid #6281A7"
     contain.style.borderRadius = "10px";
@@ -1367,7 +1318,7 @@ function loadMultipleSelect(values, selected){
 
     li.style.backgroundColor = "#eee";
 
-    ul.appendChild(li);
+    // ul.appendChild(li);
 
     for(var y = 0; y < values.length; y++){
         var li = document.createElement("li");
@@ -1494,6 +1445,26 @@ function displayMessage(){
 
 function clear(){
     __$("inputField").value = "";
+    
+    var dynamicLoader = __$("inputField").getAttribute("dynamicLoader");
+    
+    if(dynamicLoader){
+        eval(dynamicLoader);
+    }	 
+    
+    if(__$("ulOptions")){
+      var lis = __$("ulOptions").getElementsByTagName("li");
+
+        for(var l = 0; l < lis.length; l++){
+            lis[l].style.color = "#254061";
+            lis[l].getElementsByTagName("img")[0].src = "images/unchecked.png";
+            if(lis[l].getAttribute("tag") == "odd"){
+                lis[l].style.backgroundColor = "#eee";
+            } else {
+                lis[l].style.backgroundColor = "#ccc";
+            }
+        }
+    }
 }
 
 function loadPage(file){

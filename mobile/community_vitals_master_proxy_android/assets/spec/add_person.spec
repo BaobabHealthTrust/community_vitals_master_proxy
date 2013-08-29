@@ -4,11 +4,11 @@ C.1. Special characters are:
 C.1. "=>" for association
 C.1. "$$" for separation of entries
 
-Q.1.1. First Name [pos => 0]
+Q.1.1. First Name [pos => 0 $$ dynamicLoader => listFirstNames(__$('inputField').value.trim()) $$ tt_onLoad => listFirstNames('') $$ tt_showToggleKeyboard => true]
 
-Q.1.2. Middle Name [pos => 1 $$ condition => (typeof(localStorage.askMiddleName) != "undefined" ? (localStorage.askMiddleName.toLowerCase() == "true" ? true : false ) : false ) == true]
+Q.1.2. Middle Name [pos => 1 $$ dynamicLoader => listFirstNames(__$('inputField').value.trim()) $$ tt_onLoad => listFirstNames('') $$ tt_showToggleKeyboard => true $$ condition => (typeof(localStorage.askMiddleName) != "undefined" ? (localStorage.askMiddleName.toLowerCase() == "true" ? true : false ) : false ) == true]
 
-Q.1.3. Last Name [pos => 2]
+Q.1.3. Last Name [pos => 2 $$ dynamicLoader => listLastNames(__$('inputField').value.trim()) $$ tt_onLoad => listLastNames('') $$ tt_showToggleKeyboard => true]
 
 Q.1.4. Gender [pos => 3]
 O.1.4.1. Male
@@ -33,9 +33,9 @@ O.1.7.11. November
 O.1.7.12. December
 O.1.7.13. Unknown
 
-Q.1.8. Date of birth [pos => 7 $$ condition => __$("1.7").value.trim().toLowerCase() != "unknown" && __$("1.5").value.trim().toLowerCase() != "unknown" $$ tt_onLoad => generateDays('1.5', '1.7') ]
+Q.1.8. Date of birth [pos => 7 $$ tt_customKeyboard => true $$ condition => __$("1.7").value.trim().toLowerCase() != "unknown" && __$("1.5").value.trim().toLowerCase() != "unknown" $$ tt_onLoad => generateDays('1.5', '1.7') ]
 
-Q.1.9. Occupation [pos => 8]
+Q.1.9. Occupation [pos => 8 $$ tt_showToggleKeyboard => true]
 O.1.9.1. Driver
 O.1.9.2. Housewife
 O.1.9.3. Messenger

@@ -134,9 +134,9 @@ public class Home extends Activity {
 			File data = Environment.getDataDirectory();
 
 			if (sd.canWrite()) {
-				String currentDBPath = "//data//" + "org.baobabhealthtrust.appwebview"
-						+ "//databases//" + "peopleDemographics";
-				String backupDBPath = "/BackupFolder/peopleDemographics";
+				String currentDBPath = "//data//" + "org.baobabhealthtrust.cvr"
+						+ "//databases//" + "userDemographics";
+				String backupDBPath = "/BackupFolder/userDemographics.db";
 				File backupDB = new File(data, currentDBPath);
 				File currentDB = new File(sd, backupDBPath);
 
@@ -166,14 +166,29 @@ public class Home extends Activity {
 			File data = Environment.getDataDirectory();
 
 			if (sd.canWrite()) {
-				String currentDBPath = "//data//" + "org.baobabhealthtrust.appwebview"
-						+ "//databases//" + "peopleDemographics";
-				String backupDBPath = "/BackupFolder/peopleDemographics";
+				// User DB
+				String currentDBPath = "//data//" + "org.baobabhealthtrust.cvr"
+						+ "//databases//" + "userDemographics";
+				String backupDBPath = "/BackupFolder/userDemographics.db";
 				File currentDB = new File(data, currentDBPath);
 				File backupDB = new File(sd, backupDBPath);
 
 				FileChannel src = new FileInputStream(currentDB).getChannel();
 				FileChannel dst = new FileOutputStream(backupDB).getChannel();
+				dst.transferFrom(src, 0, src.size());
+				src.close();
+				dst.close();
+				
+				// General DB
+
+				currentDBPath = "//data//" + "org.baobabhealthtrust.cvr"
+						+ "//databases//" + "cvr";
+				backupDBPath = "/BackupFolder/cvr.db";
+				currentDB = new File(data, currentDBPath);
+				backupDB = new File(sd, backupDBPath);
+
+				src = new FileInputStream(currentDB).getChannel();
+				dst = new FileOutputStream(backupDB).getChannel();
 				dst.transferFrom(src, 0, src.size());
 				src.close();
 				dst.close();

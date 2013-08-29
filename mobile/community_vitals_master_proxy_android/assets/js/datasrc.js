@@ -13,15 +13,32 @@ function savePerson(){
     var lName = __$("1.3").value;
     var gender = __$("1.4").value;
     var yob = (__$("1.5").value.trim().toLowerCase() == "unknown" ?
-        (new Date()).getFullYear() - parseInt(__$("1.6").value) : __$("1.5").value);
-    var mob = (__$("1.5").value.trim().toLowerCase() == "unknown" ? "Unknown" : __$("1.7").value);
+        "Unknown" : __$("1.5").value);
+    var age = (__$("1.5").value.trim().toLowerCase() == "unknown" ?
+        parseInt(__$("1.6").value) : "0");
+        
+    var months = {
+      "January":"1",
+      "February":"2",
+      "March":"3",
+      "April":"4",
+      "May":"5",
+      "June":"6",
+      "July":"7",
+      "August":"8",
+      "September":"9",
+      "October":"10",
+      "November":"11",
+      "December":"12"
+    };
+    
+    var mob = (__$("1.5").value.trim().toLowerCase() == "unknown" ? "Unknown" : months[__$("1.7").value]);
     var dob = (__$("1.5").value.trim().toLowerCase() == "unknown" ? "Unknown" : __$("1.8").value);
     var occ = __$("1.9").value;
     var success = "Person saved!";
     var failed = "Person save failed!";
 
-    Android.savePerson(fName, mName, lName, gender,
-        (yob + "-" + (mob.replace(/unknown/i,"?")) + "-" + (dob.replace(/unknown/i,"?"))),
+    Android.savePerson(fName, mName, lName, gender, age,
         occ, yob, mob, dob, success, failed);
 
     window.location = "index.html";
