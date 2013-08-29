@@ -34,14 +34,14 @@ function savePerson(){
     
     var mob = (__$("1.5").value.trim().toLowerCase() == "unknown" ? "Unknown" : months[__$("1.7").value]);
     var dob = (__$("1.5").value.trim().toLowerCase() == "unknown" ? "Unknown" : __$("1.8").value);
-    var occ = __$("1.9").value;
+    var occ = ""; // __$("1.9").value;
     var success = "Person saved!";
     var failed = "Person save failed!";
 
-    Android.savePerson(fName, mName, lName, gender, age,
+    var result = Android.savePerson(fName, mName, lName, gender, age,
         occ, yob, mob, dob, success, failed);
 
-    window.location = "index.html";
+    window.location = "person_summary.html";
 }
 
 function listFirstNames(fname){
@@ -436,4 +436,177 @@ function loadAllGirls(){
     var list = JSON.parse(result);
 
     loadPanel(list, "All People");
+}
+
+function loadMonths(value){
+    var list = {
+      "January":"January",
+      "February":"February",
+      "March":"March",
+      "April":"April",
+      "May":"May",
+      "June":"June",
+      "July":"July",
+      "August":"August",
+      "September":"September",
+      "October":"October",
+      "November":"November",
+      "December":"December",
+      "Unknown":"Unknown"
+    };
+    
+    var arr = [];
+
+    value = search(value);
+
+    for(var el in list){
+      var word = search(list[el]);
+      
+      if(word.trim().toLowerCase().match(value.toLowerCase().trim())){
+        arr.push([word, el]);
+      } else if (value.toLowerCase().trim().length == 0){
+        arr.push([word, el]);
+      }
+    }
+
+    loadSingleSelect(arr);
+}
+
+function loadGender(value){
+    var list = {
+      "Male":"Male",
+      "Female":"Female"
+    };
+    
+    var arr = [];
+
+    for(var el in list){
+      if(list[el].trim().toLowerCase().match(value.toLowerCase().trim())){
+        arr.push([search(list[el]), el]);
+      } else if (value.toLowerCase().trim().length == 0){
+        arr.push([search(list[el]), el]);
+      }
+    }
+
+    loadSingleSelect(arr);
+}
+
+function loadJobs(value){
+    var list = {
+      "Driver":"Driver",
+      "Housewife":"Housewife",
+      "Messenger":"Messenger",
+      "Business":"Business",
+      "Farmer":"Farmer",
+      "Salesperson":"Salesperson",
+      "Teacher":"Teacher",
+      "Student":"Student",
+      "Security guard":"Security guard",
+      "Domestic worker":"Domestic worker",
+      "Police":"Police",
+      "Office worker":"Office worker",
+      "Preschool child":"Preschool child",
+      "Mechanic":"Mechanic",
+      "Prisoner":"Prisoner",
+      "Craftsman":"Craftsman",
+      "Healthcare Worker":"Healthcare Worker",
+      "Soldier":"Soldier",
+      "Other":"Other",
+      "Unknown":"Unknown"
+    };
+    
+    var arr = [];
+
+    for(var el in list){
+      if(list[el].trim().toLowerCase().match(value.toLowerCase().trim())){
+        arr.push([search(list[el]), el]);
+      } else if (value.toLowerCase().trim().length == 0){
+        arr.push([search(list[el]), el]);
+      }
+    }
+
+    loadSingleSelect(arr);
+}
+
+function listTAs(value){
+    var list = {
+      "Mtema":"Mtema",
+      "Mphonde":"Mphonde",
+      "Thandazya":"Thandazya",
+      "Maselero":"Maselero"
+    };
+    
+    var arr = [];
+
+    for(var el in list){
+      if(list[el].trim().toLowerCase().match(value.toLowerCase().trim())){
+        arr.push([list[el], el]);
+      } else if (value.toLowerCase().trim().length == 0){
+        arr.push([list[el], el]);
+      }
+    }
+
+    loadSingleSelect(arr);
+}
+
+function listGVHs(value){
+    var list = {
+      "Mtema":"Mtema",
+      "Mphonde":"Mphonde",
+      "Thandazya":"Thandazya",
+      "Maselero":"Maselero"
+    };
+    
+    var arr = [];
+
+    for(var el in list){
+      if(list[el].trim().toLowerCase().match(value.toLowerCase().trim())){
+        arr.push([list[el], el]);
+      } else if (value.toLowerCase().trim().length == 0){
+        arr.push([list[el], el]);
+      }
+    }
+
+    loadSingleSelect(arr);
+}
+
+function listVH(value){
+    var list = {
+      "Mtema":"Mtema",
+      "Mphonde":"Mphonde",
+      "Thandazya":"Thandazya",
+      "Maselero":"Maselero"
+    };
+    
+    var arr = [];
+
+    for(var el in list){
+      if(list[el].trim().toLowerCase().match(value.toLowerCase().trim())){
+        arr.push([list[el], el]);
+      } else if (value.toLowerCase().trim().length == 0){
+        arr.push([list[el], el]);
+      }
+    }
+
+    loadSingleSelect(arr);
+}
+
+function loadChiefs(value){
+    var list = {
+      0:"Traditional Authority",
+      1:"Group Village Headman",
+      2:"Village Headman"
+    };
+    
+    var arr = [];
+
+    for(var el in list){
+      if(list[el].trim().toLowerCase().match(value.toLowerCase().trim())){
+        arr.push([search(list[el]), el]);
+      } else if (value.toLowerCase().trim().length == 0){
+        arr.push([search(list[el]), el]);
+      }
+    }
+
+    loadSingleSelect(arr);
 }

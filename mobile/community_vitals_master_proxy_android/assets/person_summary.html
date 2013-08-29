@@ -12,34 +12,23 @@
         <script type="text/javascript" defer>
             <!--
 
-            setTimeout("loadPage('spec/add_person.spec')", 200);
+            // setTimeout("loadPage('spec/add_person.spec')", 200);
 
             function load(){
             
-                __$("parent").innerHTML = "<h2 style='margin-top: 200px; color: blue; " + 
-                    "font-style: italic; font-size: 2em; font-weight: normal;'>" + 
-                    search("Loading. Please Wait") + "...</h2>";
+                __$("parent").innerHTML = "<div style='color: blue; position: absolute; top: 250px; " + 
+                    "font-style: italic; font-size: 2em; font-weight: normal; width: 100%; text-align: center;'>" + 
+                    search("Loading. Please Wait") + "...</div>";
             
-					      new FastButton(document.getElementById('next'), function() {
-					        goForward();				 
-					      });
-					
-					      new FastButton(document.getElementById('prev'), function() {
-					        goBackwards();				 
-					      });
-					
 					      new FastButton(document.getElementById('home'), function() {
-					        window.location = "index.html";				 
+					        window.location = "index.html";					 
 					      });
 					
-					      new FastButton(document.getElementById('clear'), function() {
-					        clear();				 
-					      });
-					
-					      new FastButton(document.getElementById('showKeyboard'), function() {					        
-					        showKeyboard(kybdnumeric);				 
-					      });
-					
+					      __$("parent").innerHTML = "<div style='position: absolute; top: 150px; " + 
+                    "font-size: 3em; font-weight: normal; width: 100%; text-align: center;'>" + 
+                    Android.getPref("first name") + " " + Android.getPref("last name") + 
+                    "<br /><br /><img src='images/barcode.jpg' height='60' /> <span style='color: blue; font-size: 2em;'>" + 
+                    Android.getPref("npid") + "</span></div>";
 					  }
             //-->
         </script>
@@ -69,24 +58,6 @@
                                  margin-left: 15px;" height="60" />
                         </a>                                                
 
-                        <a id="next" style="float: right;">
-                            <img src="images/bt_right.png" alt="Next" style="margin: 2px;
-                                 margin-right: 15px;" height="60" />
-                        </a>
-                        <a id="prev" style="float: right;">
-                            <img src="images/bt_left.png" alt="Back" style="margin: 2px;
-                                 margin-right: 15px;" height="60" />
-                        </a>
-                        
-                        <a id="clear" style="float: right;">
-                            <img src="images/clear.png" alt="Clear" style="margin: 0px;
-                                 margin-right: 15px;" height="60" />
-                        </a>
-                        
-                        <a id="showKeyboard" style="float: right;">
-                            <img src="images/hp_keyboard.png" alt="Keyboard"
-                                 style="margin: 0px; margin-right: 15px;" height="60" />
-                        </a>
                     </div>
                 </div>
             </div>

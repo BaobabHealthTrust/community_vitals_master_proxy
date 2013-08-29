@@ -224,7 +224,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		db.close();
 	}
 
-	void addPeople(People people) {
+	String[] addPeople(People people) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
@@ -260,21 +260,39 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		// Insert Row
 		db.insert(TABLE_PEOPLE, null, values);
 		db.close();
+
+		// int id = assignNationalId(Integer.parseInt(people.getNationalId()));
+
+		int npid = Integer.parseInt(people.getNationalId());
+
+		NationalIdentifiers identifier = getNationalIdentifiers(npid);
 		
-		assignNationalId(Integer.parseInt(people.getNationalId()));
+		identifier.setPersonId(npid);
+
+		updateNationalIdentifiers(identifier);
+		
+		String result[] = { people.getId() + "", people.getGivenName(),
+				people.getFamilyName(), identifier.getIdentifier()};
+
+		return result;
 	}
 
-	void assignNationalId(int id){
-		People person = getPersonByNpid(id);				
-		
-		String selectQuery = "UPDATE " + TABLE_NATIONAL_IDENTIFIERS + " SET " + 
-				KEY_PERSON_ID + " = '" + person.getId() + "' WHERE " + KEY_ID + " = " + id;
+	int assignNationalId(int id) {
+		People person = getPersonByNpid(id);
+
+		String selectQuery = "UPDATE " + TABLE_NATIONAL_IDENTIFIERS + " SET "
+				+ KEY_PERSON_ID + " = '" + person.getId() + "' WHERE " + KEY_ID
+				+ " = " + id;
 
 		SQLiteDatabase db = this.getWritableDatabase();
-		
+
 		db.execSQL(selectQuery);
+
+		int pid = person.getId();
+
+		return pid;
 	}
-	
+
 	People getPersonByNpid(int id) {
 		SQLiteDatabase db = this.getReadableDatabase();
 
@@ -286,9 +304,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				KEY_CELL_PHONE_NUMBER, KEY_FAMILY_NAME, KEY_COUNTY_DISTRICT,
 				KEY_OCCUPATION, KEY_STATE_PROVINCE, KEY_BIRTHDATE_ESTIMATED,
 				KEY_GIVEN_NAME, KEY_NATIONAL_ID, KEY_VOID_REASON,
-				KEY_OUTCOME_DATE, KEY_ADDRESS2, KEY_MIDDLE_NAME }, KEY_NATIONAL_ID
-				+ "=?", new String[] { String.valueOf(id) }, null, null, null,
-				null);
+				KEY_OUTCOME_DATE, KEY_ADDRESS2, KEY_MIDDLE_NAME },
+				KEY_NATIONAL_ID + "=?", new String[] { String.valueOf(id) },
+				null, null, null, null);
 
 		if (cursor != null)
 			cursor.moveToFirst();
@@ -312,6 +330,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		// return people
 		return people;
 	}
+
 	void addNationalIdentifiers(NationalIdentifiers national_identifiers) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
@@ -508,12 +527,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getReadableDatabase();
 
 		Cursor cursor = db.query(TABLE_NATIONAL_IDENTIFIERS, new String[] {
-				KEY_CREATED_AT, KEY_REQUESTED_BY_GVH, KEY_ASSIGNED_VH,
-				KEY_SITE_ID, KEY_REQUEST_VH_NOTIFIED, KEY_POST_VH_NOTIFIED,
-				KEY_PERSON_ID, KEY_UPDATED_AT, KEY_DATE_VOIDED,
-				KEY_REQUESTED_BY_VH, KEY_POSTED_BY_VH, KEY_IDENTIFIER,
-				KEY_ASSIGNED_GVH, KEY_ID, KEY_VOIDED, KEY_POST_GVH_NOTIFIED,
-				KEY_REQUEST_GVH_NOTIFIED, KEY_VOID_REASON, KEY_POSTED_BY_GVH },
+				KEY_CREATED_AT, "COALESCE(" + KEY_REQUESTED_BY_GVH + ",0)",
+				KEY_ASSIGNED_VH, KEY_SITE_ID,
+				"COALESCE(" + KEY_REQUEST_VH_NOTIFIED + ",0)",
+				"COALESCE(" + KEY_POST_VH_NOTIFIED + ",0)",
+				"COALESCE(" + KEY_PERSON_ID + ",0)", KEY_UPDATED_AT,
+				KEY_DATE_VOIDED, "COALESCE(" + KEY_REQUESTED_BY_VH + ",0)",
+				"COALESCE(" + KEY_POSTED_BY_VH + ",0)", KEY_IDENTIFIER,
+				"COALESCE(" + KEY_ASSIGNED_GVH + ",0)",
+				"COALESCE(" + KEY_ID + ",0)", "COALESCE(" + KEY_VOIDED + ",0)",
+				"COALESCE(" + KEY_POST_GVH_NOTIFIED + ",0)",
+				"COALESCE(" + KEY_REQUEST_GVH_NOTIFIED + ",0)",
+				KEY_VOID_REASON, "COALESCE(" + KEY_POSTED_BY_GVH + ",0)" },
 				KEY_ID + "=?", new String[] { String.valueOf(id) }, null, null,
 				null, null);
 
@@ -521,21 +546,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			cursor.moveToFirst();
 
 		NationalIdentifiers national_identifiers = new NationalIdentifiers(
-				cursor.getString(0), 
-				Integer.parseInt(cursor.getString(1)),
-				cursor.getString(2), 
-				cursor.getString(3),
-				Integer.parseInt(cursor.getString(4)), 
-				Integer.parseInt(cursor.getString(5)), 
-				Integer.parseInt(cursor.getString(6)),
+				cursor.getString(0), Integer.parseInt(cursor.getString(1)),
+				cursor.getString(2), cursor.getString(3),
+				Integer.parseInt(cursor.getString(4)), Integer.parseInt(cursor
+						.getString(5)), Integer.parseInt(cursor.getString(6)),
 				cursor.getString(7), cursor.getString(8),
-				Integer.parseInt(cursor.getString(9)), 
-				Integer.parseInt(cursor
+				Integer.parseInt(cursor.getString(9)), Integer.parseInt(cursor
 						.getString(10)), cursor.getString(11),
-				cursor.getString(12), 
-				Integer.parseInt(cursor.getString(13)),
-				Integer.parseInt(cursor.getString(14)), 
-				Integer.parseInt(cursor
+				cursor.getString(12), Integer.parseInt(cursor.getString(13)),
+				Integer.parseInt(cursor.getString(14)), Integer.parseInt(cursor
 						.getString(15)),
 				Integer.parseInt(cursor.getString(16)), cursor.getString(17),
 				Integer.parseInt(cursor.getString(18)));
@@ -1375,6 +1394,35 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		}
 
 		return namesList;
+	}
+
+	public String search(String word, String locale) {
+		SQLiteDatabase db = this.getReadableDatabase();
+
+		String selectQuery = "SELECT w." + KEY_VALUE + " FROM "
+				+ TABLE_VOCABULARIES + " v LEFT OUTER JOIN " + TABLE_WORDS
+				+ " w ON w." + KEY_VOCABULARY_ID + " = v." + KEY_ID
+				+ " WHERE v." + KEY_VALUE + " = '" + word + "' AND w."
+				+ KEY_LOCALE + " = '" + locale + "'";
+
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		String term = word;
+
+		if (cursor != null) {
+			if (cursor.moveToFirst()) {
+				Log.i("DEBUGGING", "Moved to first");
+
+				Log.i("DEBUGGING", "locale: " + locale + "; word: " + word
+						+ "; result: " + cursor.getString(0));
+
+				term = cursor.getString(0);
+			} else {
+				Log.i("DEBUGGING", selectQuery);
+			}
+		}
+
+		return term;
 	}
 
 }
