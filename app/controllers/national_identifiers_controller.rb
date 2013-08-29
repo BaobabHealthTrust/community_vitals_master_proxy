@@ -91,19 +91,40 @@ class NationalIdentifiersController < ApplicationController
 
       ActiveRecord::Base.transaction do
 
+        nat_id = NationalIdentifier.find_by_identifier(pnid)
+        if nat_id.person_id.blank?
           person = Person.create(
-              :national_id => NationalIdentifier.find_by_identifier(pnid).id,
+              :national_id => nat_id.id,
               :given_name => records[pnid]["person_details"]['fname'],
               :middle_name => records[pnid]["person_details"]['middle_name'],
               :family_name => records[pnid]["person_details"]['lname'],
               :gender => records[pnid]["person_details"]['gender'],
               :birthdate => records[pnid]["person_details"]['dob'],
+              :birthdate_estimated => records[pnid]["person_details"]['dob_estimated'],
               :outcome => records[pnid]["person_details"]['outcome'],
               :outcome_date =>  records[pnid]["person_details"]['outcome_date'],
               :village => records[pnid]["person_details"]['village'],
               :gvh => records[pnid]["person_details"]['gvh'],
               :ta => records[pnid]["person_details"]['ta']
-            )
+          )
+          nat_id.update_attributes(:person_id => person.id, :assigned_at => records[pnid]["person_details"]['assigned_at'])
+        else
+          nat_id.person.update_attributes(
+              :given_name => records[pnid]["person_details"]['fname'],
+              :middle_name => records[pnid]["person_details"]['middle_name'],
+              :family_name => records[pnid]["person_details"]['lname'],
+              :gender => records[pnid]["person_details"]['gender'],
+              :birthdate => records[pnid]["person_details"]['dob'],
+              :birthdate_estimated => records[pnid]["person_details"]['dob_estimated'],
+              :outcome => records[pnid]["person_details"]['outcome'],
+              :outcome_date =>  records[pnid]["person_details"]['outcome_date'],
+              :village => records[pnid]["person_details"]['village'],
+              :gvh => records[pnid]["person_details"]['gvh'],
+              :ta => records[pnid]["person_details"]['ta']
+          )
+          person = nat_id.person
+        end
+
           (records[pnid]["relationships"] || []).each do |relationship|
             Relationship.create(
                 :person_national_id => relationship['person'],
@@ -119,7 +140,7 @@ class NationalIdentifiersController < ApplicationController
               :outcome_date => outcome["outcome_date"]
             )
           end
-        NationalIdentifier.find_by_identifier(pnid).update_attributes(:person_id => person.id)
+
         ids << pnid
       end
     end
@@ -145,11 +166,12 @@ class NationalIdentifiersController < ApplicationController
           'outcome_date' => person.outcome_date,
           'village' => person.village,
           'gvh' => person.gvh,
-          'ta' => person.ta
+          'ta' => person.ta,
+          'assigned_at' => identifier.assigned_at
       }
 
       outcomes = []
-      (person.outcomes || []).each do |outcome|
+      (person.new_outcomes("GVH") || []).each do |outcome|
 
         person_outcome = {
             'outcome'=> outcome.outcome_type,
@@ -160,7 +182,7 @@ class NationalIdentifiersController < ApplicationController
       end
 
       relationships = []
-      (person.relationships || []).each do |relation|
+      (person.new_relationships("GVH") || []).each do |relation|
 
         relative = {
             'person' => relation.person_national_id,
@@ -183,7 +205,14 @@ class NationalIdentifiersController < ApplicationController
     ids = JSON.parse(params[:ids])
 
     (ids["acknowledged"] || []).each do |id|
-      NationalIdentifier.find_by_identifier(id).update_attributes({:posted_by_gvh => 1 })
+      nat_id = NationalIdentifier.find_by_identifier(id)
+      nat_id.update_attributes({:posted_by_gvh => 1 })
+      (nat_id.person.new_outcomes("GVH") || []).each do |x|
+        x.update_attributes(:posted_by_gvh => 1)
+      end
+      (nat_id.person.new_relationships("GVH") || []).each do |x|
+        x.update_attributes(:posted_by_gvh => 1)
+      end
     end
 
     render :text => "Successfully done"

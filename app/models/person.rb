@@ -40,6 +40,18 @@ class Person < ActiveRecord::Base
     Relationship.all(:conditions => ["person_national_id = ?", self.identifier.identifier])
   end
 
+  def new_relationships(type)
+    case type
+      when "VH"
+        Relationship.all(:conditions => ["person_national_id = ? AND posted_by_vh = 0", self.identifier.identifier])
+      when "GVH"
+        Relationship.all(:conditions => ["person_national_id = ? AND posted_by_gvh = 0", self.identifier.identifier])
+      when "TA"
+        Relationship.all(:conditions => ["person_national_id = ? AND posted_by_ta = 0", self.identifier.identifier])
+    end
+
+  end
+
   def npid
     self.identifier.identifier
   end
@@ -90,6 +102,18 @@ class Person < ActiveRecord::Base
 
   def outcomes
     Outcome.all(:conditions => ["person_id = ? AND voided = ?", self.id, 0])
+  end
+
+  def new_outcomes(type)
+    case type
+      when "VH"
+        Outcome.all(:conditions => ["person_id = ? AND posted_by_vh = 0 AND voided = ?", self.id, 0])
+      when "GVH"
+        Outcome.all(:conditions => ["person_id = ? AND posted_by_gvh = 0 AND voided = ?", self.id, 0])
+      when "TA"
+        Outcome.all(:conditions => ["person_id = ? AND posted_by_ta = 0 AND voided = ?", self.id, 0])
+    end
+
   end
 
 end

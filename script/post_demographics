@@ -8,6 +8,80 @@ puts ".. Operating in #{mode} mode ..."
 
 if mode.to_s.downcase == "ta"
 
+  settings = YAML.load_file("#{Rails.root}/config/application.yml")["dde_ta"] rescue {}
+
+  if !settings.empty?
+
+    username = settings["username"]
+    password = settings["password"]
+    target = settings["target_server"]
+    site_code = settings["site_code"]
+    count = settings["batch_count"]
+
+    url = "http://#{username}:#{password}@#{target}/people/create_for_sub_proxy"
+
+    #ack_url = "http://#{username}:#{password}@#{target}/npid_requests/ack/"
+
+    to_post = {}
+
+    new_people = NationalIdentifier.find(:all, :conditions => ['person_id IS NOT NULL AND posted_by_ta = 0 AND voided = 0'])
+
+    (new_people || []).each do |identifier|
+
+      person = identifier.person
+      person_details = {
+          'given_name' => person.given_name,
+          'middle_name' => person.middle_name,
+          'family_name' => person.family_name,
+          'gender' => person.gender,
+          'birthdate' => person.birthdate,
+          'birthdate_estimated' => person.birthdate_estimated,
+          'outcome' => person.outcome,
+          'outcome_date' => person.outcome_date,
+          'village' => person.village,
+          'gvh' => person.gvh,
+          'ta' => person.ta
+      }
+
+      relationships = []
+      (person.new_relationships("TA") || []).each do |relation|
+
+        relative = {
+            'person' => relation.person_national_id,
+            'relative' => relation.relation_national_id,
+            'relationship' => relation.relation
+        }
+        relationships << relative
+      end
+
+      person_details["relationship"] = relationships
+
+      to_post[identifier.identifier] = { 'person' => person_details, 'npid' => {'value' => identifier.identifier ,'assigned_at' => identifier.assigned_at}}
+
+    end
+
+    if !to_post.blank?
+      post = RestClient.post (url,{:demographics => to_post.to_json})
+
+      if post == "OK"
+        (to_post || []).each do |key, id|
+
+          nat_id = NationalIdentifier.find_by_identifier(key)
+          nat_id.update_attributes({:posted_by_ta => 1 })
+          (nat_id.person.new_relationships("TA") || []).each do |x|
+            x.update_attributes(:posted_by_ta => 1)
+          end
+        end
+      end
+
+
+
+    end
+
+
+  end
+
+
 elsif mode.to_s.downcase == "gvh"
 
   settings = YAML.load_file("#{Rails.root}/config/application.yml")["dde_gvh"] rescue {}
@@ -32,48 +106,71 @@ elsif mode.to_s.downcase == "gvh"
     request = RestClient.post( url, params )
 
     new_demographics = JSON.parse(request)
-    received_ids = {"acknowledged" => []}
-    (new_demographics || {}).each do |pnid, records|
+    if !new_demographics.blank?
+      received_ids = {"acknowledged" => []}
+      (new_demographics || {}).each do |pnid, records|
 
-      ActiveRecord::Base.transaction do
+        ActiveRecord::Base.transaction do
 
-        person = Person.create(
-            :national_id => NationalIdentifier.find_by_identifier(pnid).id,
-            :given_name => records["person_details"]['fname'],
-            :middle_name => records["person_details"]['middle_name'],
-            :family_name => records["person_details"]['lname'],
-            :gender => records["person_details"]['gender'],
-            :birthdate => records["person_details"]['dob'],
-            :outcome => records["person_details"]['outcome'],
-            :outcome_date =>  records["person_details"]['outcome_date'],
-            :village => records["person_details"]['village'],
-            :gvh => records["person_details"]['gvh'],
-            :ta => records["person_details"]['ta']
-        )
-        (records["relationships"] || []).each do |relationship|
-          Relationship.create(
-              :person_national_id => relationship['person'],
-              :relation_national_id => relationship['relative'],
-              :person_is_to_relation => relationship['relationship']
-          )
+          nat_id = NationalIdentifier.find_by_identifier(pnid)
+          if nat_id.person_id.blank?
+            person = Person.create(
+                :national_id => nat_id.id,
+                :given_name => records["person_details"]['fname'],
+                :middle_name => records["person_details"]['middle_name'],
+                :family_name => records["person_details"]['lname'],
+                :gender => records["person_details"]['gender'],
+                :birthdate => records["person_details"]['dob'],
+                :birthdate_estimated => records["person_details"]['dob_estimated'],
+                :outcome => records["person_details"]['outcome'],
+                :outcome_date =>  records["person_details"]['outcome_date'],
+                :village => records["person_details"]['village'],
+                :gvh => records["person_details"]['gvh'],
+                :ta => records["person_details"]['ta']
+            )
+            nat_id.update_attributes(:person_id => person.id, :assigned_at => records["person_details"]['assigned_at'])
+          else
+            nat_id.person.update_attributes(
+                :given_name => records["person_details"]['fname'],
+                :middle_name => records["person_details"]['middle_name'],
+                :family_name => records["person_details"]['lname'],
+                :gender => records["person_details"]['gender'],
+                :birthdate => records["person_details"]['dob'],
+                :birthdate_estimated => records["person_details"]['dob_estimated'],
+                :outcome => records["person_details"]['outcome'],
+                :outcome_date =>  records["person_details"]['outcome_date'],
+                :village => records["person_details"]['village'],
+                :gvh => records["person_details"]['gvh'],
+                :ta => records["person_details"]['ta']
+            )
+            person = nat_id.person
+          end
+          (records["relationships"] || []).each do |relationship|
+            Relationship.create(
+                :person_national_id => relationship['person'],
+                :relation_national_id => relationship['relative'],
+                :person_is_to_relation => relationship['relationship']
+            )
+          end
+
+          (records["outcomes"] || []).each do |outcome|
+            Outcome.create(
+                :person_id => person.id,
+                :outcome_type => outcome["outcome"],
+                :outcome_date => outcome["outcome_date"]
+            )
+          end
+
+          received_ids["acknowledged"] << pnid
         end
-
-        (records["outcomes"] || []).each do |outcome|
-          Outcome.create(
-              :person_id => person.id,
-              :outcome_type => outcome["outcome"],
-              :outcome_date => outcome["outcome_date"]
-          )
-        end
-        NationalIdentifier.find_by_identifier(pnid).update_attributes(:person_id => person.id)
-        received_ids["acknowledged"] << pnid
       end
-    end
-    puts "saved now to acknowledge"
-    params[:ids] = received_ids.to_json
-    acknowledge = RestClient.post( ack_url,params )
+      puts "saved now to acknowledge"
+      params[:ids] = received_ids.to_json
+      acknowledge = RestClient.post( ack_url,params )
 
-    puts "#{acknowledge}"
+      puts "#{acknowledge}"
+    end
+
   end
 
 elsif mode.to_s.downcase == "vh"
@@ -102,15 +199,17 @@ elsif mode.to_s.downcase == "vh"
       'lname' => person.family_name,
       'gender' => person.gender,
       'dob' => person.birthdate,
+      'dob_estimated' => person.birthdate_estimated,
       'outcome' => person.outcome,
       'outcome_date' => person.outcome_date,
       'village' => person.village,
       'gvh' => person.gvh,
-      'ta' => person.ta
+      'ta' => person.ta,
+      'assigned_at' => identifier.assigned_at
     }
 
     outcomes = []
-    (person.outcomes || []).each do |outcome|
+    (person.new_outcomes("VH") || []).each do |outcome|
 
        person_outcome = {
           'outcome'=> outcome.outcome_type,
@@ -121,7 +220,7 @@ elsif mode.to_s.downcase == "vh"
     end
 
     relationships = []
-    (person.relationships || []).each do |relation|
+    (person.new_relationships("VH") || []).each do |relation|
 
       relative = {
           'person' => relation.person_national_id,
@@ -135,13 +234,22 @@ elsif mode.to_s.downcase == "vh"
 
   end
 
-  post = RestClient.post (url,{:details => to_post.to_json})
+  if !to_post.blank?
+    post = RestClient.post (url,{:details => to_post.to_json})
 
-  if (JSON.parse(post).length == to_post.length)
-    (JSON.parse(post) || []).each do |id|
-      NationalIdentifier.find_by_identifier(id).update_attributes({:posted_by_vh => 1 })
-
+    if (JSON.parse(post).length == to_post.length)
+      (JSON.parse(post) || []).each do |id|
+        nat_id = NationalIdentifier.find_by_identifier(id)
+        nat_id.update_attributes({:posted_by_vh => 1 })
+        (nat_id.person.new_outcomes("VH") || []).each do |x|
+          x.update_attributes(:posted_by_vh => 1)
+        end
+        (nat_id.person.new_relationships("VH") || []).each do |x|
+          x.update_attributes(:posted_by_vh => 1)
+        end
+      end
     end
+
   end
 
 end

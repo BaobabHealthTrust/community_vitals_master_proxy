@@ -23,11 +23,13 @@ ActiveRecord::Schema.define(:version => 20130820141851) do
     t.integer  "request_vh_notified",  :default => 0
     t.integer  "posted_by_gvh",        :default => 0
     t.integer  "posted_by_vh",         :default => 0
+    t.integer  "posted_by_ta",         :default => 0
     t.integer  "post_gvh_notified",    :default => 0
     t.integer  "post_vh_notified",     :default => 0
-    t.integer  "voided"
+    t.integer  "voided",               :default => 0
     t.string   "void_reason"
     t.date     "date_voided"
+    t.datetime "assigned_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -43,7 +45,10 @@ ActiveRecord::Schema.define(:version => 20130820141851) do
     t.integer  "person_id"
     t.integer  "outcome_type"
     t.datetime "outcome_date"
-    t.integer  "voided"
+    t.integer  "posted_by_vh",  :default => 0
+    t.integer  "posted_by_gvh", :default => 0
+    t.integer  "posted_by_ta",  :default => 0
+    t.integer  "voided",        :default => 0
     t.string   "void_reason"
     t.date     "date_voided"
     t.string   "uuid"
@@ -93,6 +98,9 @@ ActiveRecord::Schema.define(:version => 20130820141851) do
     t.string   "person_national_id"
     t.string   "relation_national_id"
     t.integer  "person_is_to_relation"
+    t.integer  "posted_by_vh",          :default => 0
+    t.integer  "posted_by_gvh",         :default => 0
+    t.integer  "posted_by_ta",          :default => 0
     t.integer  "voided"
     t.string   "void_reason"
     t.date     "date_voided"
