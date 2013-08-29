@@ -58,7 +58,7 @@
             }
           
             function adjustView(){
-              __$("container").style.height = (__$("nav").offsetTop - 110) + "px";
+              __$("container").style.height = (__$("nav").offsetTop - 100) + "px";
             }
           
             function loadApplicationMenu(){
@@ -286,7 +286,8 @@
           &nbsp;
         </td>
         <td style="width: 100px; border-bottom: 1px solid #5496ef;">
-          <img src="images/baobab.png" height="80" style="float: right;" />
+          <img id="logout" src="images/close.png" height="65" style="margin-right: -10px;
+              margin-top: 5px; cursor: pointer; float: right;" />
         </td>
       </tr>
       <tr>
@@ -305,12 +306,11 @@
     
     <div id="nav" style="width: 100%; height: 90px; 
         left: 0px; position: absolute; bottom: 0px;">
-      <div style="float: left; margin-left: 20px; font-size: 42px; padding: 30px; color: #666; min-width: 50%; 
-          margin-top: -20px; background-image: -moz-linear-gradient(center right , #FFFFFF, #89b4ef);">
+      <div style="float: left; margin-left: 0px; font-size: 42px; padding: 30px; color: #666; min-width: 50%; 
+          margin-top: -15px; background-image: -moz-linear-gradient(center right , #FFFFFF, #89b4ef);">
         Village Register
       </div>
-      <img id="logout" src="images/close.png" height="65" style="margin-right: 20px;
-          margin-top: 5px; cursor: pointer; float: right;" />
+      <img src="images/baobab.png" height="80" style="margin-right: 20px; float: right;" />
     </div>
   </body>
 </html>

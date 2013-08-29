@@ -1,6 +1,7 @@
 body {
     font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
     overflow: hidden;
+    padding: 0px;
 }
 .table {
     display: table;
@@ -69,7 +70,7 @@ a:active {
 }
    
 .menu_button {
-    margin: 0.5%;
+    margin: 1%;
     cursor: pointer;
     font-size: 16px;
     color: white;
@@ -179,14 +180,12 @@ ul li {
 
 .keyboard {
     border: 1px solid #6281A7;
-    bottom: 120px;
     margin: auto;
     display: table;
     border-spacing: 5px;
-    margin-bottom: 10px;
     border-radius: 10px;
     padding: 5px;
-    background-color: #fff;
+    background-color: rgba(255,255,255,0.6);
 }
 
 .keyboard.row {

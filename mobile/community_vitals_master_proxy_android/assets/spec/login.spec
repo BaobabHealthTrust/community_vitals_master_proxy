@@ -1,7 +1,7 @@
 P.1. Login [program => COMMUNITY VITALS REGISTRATION $$ action => javascript:doLogin()]
-Q.1.1. Username [pos => 0 $$ tt_onLoad => current_case_upper = false]
-Q.1.2. Password [pos => 1 $$ field_type => password $$ tt_onLoad => current_case_upper = false]
-Q.1.3. User Type [pos => 2]
+Q.1.1. Username [pos => 0 $$ tt_onLoad => current_case_upper = false $$ tt_showToggleKeyboard => false]
+Q.1.2. Password [pos => 1 $$ field_type => password $$ tt_onLoad => current_case_upper = false $$ tt_showToggleKeyboard => false]
+Q.1.3. User Type [pos => 2 $$ tt_showToggleKeyboard => true]
 O.1.3.1. Traditional Authority {0}
 O.1.3.2. Group Village Headman {1}
 O.1.3.3. Village Headman {2}

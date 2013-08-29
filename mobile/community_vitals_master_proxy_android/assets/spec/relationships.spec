@@ -4,9 +4,9 @@ C.1. Special characters are:
 C.1. "=>" for association
 C.1. "$$" for separation of entries
 
-Q.1.1. Person First Name [pos => 0 $$ dynamicLoader => listFirstNames(__$('inputField').value.trim()) $$ tt_onLoad => listFirstNames(''); showKeys = false]
+Q.1.1. Person First Name [pos => 0 $$ dynamicLoader => listFirstNames(__$('inputField').value.trim()) $$ tt_onLoad => listFirstNames('') $$ showKeys = false]
 
-Q.1.2. Person Last Name [pos => 1 $$ dynamicLoader => listLastNames(__$('inputField').value.trim()) $$ tt_onLoad => listLastNames(''); showKeys = false]
+Q.1.2. Person Last Name [pos => 1 $$ dynamicLoader => listLastNames(__$('inputField').value.trim()) $$ tt_onLoad => listLastNames('') $$ showKeys = false]
 
 Q.1.3. Person Gender [pos => 2]
 O.1.3.1. Male
