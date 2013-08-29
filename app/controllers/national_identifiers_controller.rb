@@ -128,9 +128,9 @@ class NationalIdentifiersController < ApplicationController
 
   def gvh_request_demographics
 
-    unsent_demographics = NationalIdentifier.find(:all, :conditions => ['person_id IS NOT NULL AND site_id = ?
-                                                      AND posted_by_gvh = 0 AND voided = 0 AND assigned_gvh = ?',
-                                                      params[:site_code], params[:gvh]])
+    unsent_demographics = NationalIdentifier.find(:all, :conditions => ['person_id IS NOT NULL AND site_id = ? AND
+                                                      requested_by_gvh = 1 AND posted_by_gvh = 0 AND voided = 0
+                                                      AND assigned_gvh = ?', params[:site_code], params[:gvh]])
 
     to_post = {}
     (unsent_demographics || []).each do |identifier|
@@ -176,6 +176,17 @@ class NationalIdentifiersController < ApplicationController
 
     render :text => to_post.to_json
 
+  end
+
+  def gvh_acknowledge_demographics
+
+    ids = JSON.parse(params[:ids])
+
+    (ids["acknowledged"] || []).each do |id|
+      NationalIdentifier.find_by_identifier(id).update_attributes({:posted_by_gvh => 1 })
+    end
+
+    render :text => "Successfully done"
   end
 
 end

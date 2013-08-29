@@ -31,9 +31,49 @@ elsif mode.to_s.downcase == "gvh"
 
     request = RestClient.post( url, params )
 
-    raise JSON.parse(request).inspect
+    new_demographics = JSON.parse(request)
+    received_ids = {"acknowledged" => []}
+    (new_demographics || {}).each do |pnid, records|
 
+      ActiveRecord::Base.transaction do
 
+        person = Person.create(
+            :national_id => NationalIdentifier.find_by_identifier(pnid).id,
+            :given_name => records["person_details"]['fname'],
+            :middle_name => records["person_details"]['middle_name'],
+            :family_name => records["person_details"]['lname'],
+            :gender => records["person_details"]['gender'],
+            :birthdate => records["person_details"]['dob'],
+            :outcome => records["person_details"]['outcome'],
+            :outcome_date =>  records["person_details"]['outcome_date'],
+            :village => records["person_details"]['village'],
+            :gvh => records["person_details"]['gvh'],
+            :ta => records["person_details"]['ta']
+        )
+        (records["relationships"] || []).each do |relationship|
+          Relationship.create(
+              :person_national_id => relationship['person'],
+              :relation_national_id => relationship['relative'],
+              :person_is_to_relation => relationship['relationship']
+          )
+        end
+
+        (records["outcomes"] || []).each do |outcome|
+          Outcome.create(
+              :person_id => person.id,
+              :outcome_type => outcome["outcome"],
+              :outcome_date => outcome["outcome_date"]
+          )
+        end
+        NationalIdentifier.find_by_identifier(pnid).update_attributes(:person_id => person.id)
+        received_ids["acknowledged"] << pnid
+      end
+    end
+    puts "saved now to acknowledge"
+    params[:ids] = received_ids.to_json
+    acknowledge = RestClient.post( ack_url,params )
+
+    puts "#{acknowledge}"
   end
 
 elsif mode.to_s.downcase == "vh"
