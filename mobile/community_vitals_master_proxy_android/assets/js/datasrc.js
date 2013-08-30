@@ -101,12 +101,12 @@ function updateOutcome(){
     };
     switch(__$("1.5").value.trim().toLowerCase()){
         case "dead":
-            var yoe = (__$("1.6").value.trim().toLowerCase() == "unknown" ?
-                "?" : __$("1.6").value);
-            var moe = (__$("1.7").value.trim().toLowerCase() == "unknown" ? 
-                "?" : months[__$("1.7").value.trim()]);
-            var doe = (__$("1.8").value.trim().toLowerCase() == "unknown" ?
-                "?" : __$("1.8").value);
+            var yoe = (__$("1.6").value.trim().toLowerCase() == "unknown" || __$("1.6").value.trim().length == 0 ?
+                "0000" : __$("1.6").value);
+            var moe = (__$("1.7").value.trim().toLowerCase() == "unknown" || __$("1.7").value.trim().length == 0 ? 
+                "00" : months[__$("1.7").value.trim()]);
+            var doe = (__$("1.8").value.trim().toLowerCase() == "unknown" || __$("1.8").value.trim().length == 0 ?
+                "00" : __$("1.8").value);
 
             var date = yoe + "-" + moe + "-" + doe;
 
@@ -114,12 +114,12 @@ function updateOutcome(){
             
             break;
         case "transfer out":
-            var yoe = (__$("1.10").value.trim().toLowerCase() == "unknown" ?
-                "?" : __$("1.10").value);
-            var moe = (__$("1.11").value.trim().toLowerCase() == "unknown" ?
-                "?" : months[__$("1.11").value.trim()]);
-            var doe = (__$("1.12").value.trim().toLowerCase() == "unknown" ?
-                "?" : __$("1.12").value);
+            var yoe = (__$("1.10").value.trim().toLowerCase() == "unknown" || __$("1.10").value.trim().length == 0 ?
+                "0000" : __$("1.10").value);
+            var moe = (__$("1.11").value.trim().toLowerCase() == "unknown" || __$("1.11").value.trim().length == 0 ?
+                "00" : months[__$("1.11").value.trim()]);
+            var doe = (__$("1.12").value.trim().toLowerCase() == "unknown" || __$("1.12").value.trim().length == 0 ?
+                "00" : __$("1.12").value);
 
             var date = yoe + "-" + moe + "-" + doe;
 
@@ -127,12 +127,12 @@ function updateOutcome(){
             
             break;
         case "transfer back":
-            var yoe = (__$("1.13").value.trim().toLowerCase() == "unknown" ?
-                "?" : __$("1.13").value);
-            var moe = (__$("1.14").value.trim().toLowerCase() == "unknown" ?
-                "?" : months[__$("1.14").value.trim()]);
-            var doe = (__$("1.15").value.trim().toLowerCase() == "unknown" ?
-                "?" : __$("1.15").value);
+            var yoe = (__$("1.13").value.trim().toLowerCase() == "unknown" || __$("1.13").value.trim().length == 0 ?
+                "0000" : __$("1.13").value);
+            var moe = (__$("1.14").value.trim().toLowerCase() == "unknown" || __$("1.14").value.trim().length == 0 ?
+                "00" : months[__$("1.14").value.trim()]);
+            var doe = (__$("1.15").value.trim().toLowerCase() == "unknown" || __$("1.15").value.trim().length == 0 ?
+                "00" : __$("1.15").value);
 
             var date = yoe + "-" + moe + "-" + doe;
 
@@ -147,10 +147,12 @@ function updateOutcome(){
 }
 
 function savePersonRelationship(){
-    Android.savePersonRelationship(parseInt(__$("1.4").value.trim()),
-        parseInt(__$("1.8").value.trim()), __$("1.9").value.trim());
+    Android.savePersonRelationship(__$("1.4").value.trim(),
+        __$("1.8").value.trim(), __$("1.9").value.trim());
     
-    showMessage("Relationship Saved!");
+    var msg = search("Relationship Saved!");
+    
+    showMessage(msg);
 
     window.location = "index.html";
 }
@@ -610,3 +612,70 @@ function loadChiefs(value){
 
     loadSingleSelect(arr);
 }
+
+function listPeopleNames(fname, lname, gender, bynpid){
+    var result = Android.listPeopleNames(fname, lname, gender);
+
+    var list = JSON.parse(result);
+    var arr = [];
+
+    for(var el in list){
+      if(typeof(bynpid) != "undefined"){
+        arr.push([list[el]["details"], list[el]["npid"]]);
+      } else {
+        arr.push([list[el]["details"], el]);
+      }
+    }
+
+    loadSingleSelect(arr);
+}
+
+function searchPerson(){
+  var id = parseInt(__$("1.4").value);
+  
+  if(id > 0){
+    var result = Android.searchPerson(id);
+    
+    if(result){
+      window.location = "person_summary.html";
+    } else {
+      window.location = "index.html";
+    }
+  } else {
+    window.location = "index.html";
+  }
+  
+}
+
+function listRelationshipTypes(){
+    var list = {
+      "parent":"Parent",
+      "child":"Child",
+      "spouse":"Spouse"
+    };
+    
+    var arr = [];
+
+    for(var el in list){
+      arr.push([search(list[el].toLowerCase()), el]);
+    }
+
+    loadSingleSelect(arr);
+}
+
+function listOutcomeTypes(){
+    var list = {
+      "Dead":"Dead",
+      "Transfer Out":"Transfer Out",
+      "Transfer Back":"Transfer Back"
+    };
+    
+    var arr = [];
+
+    for(var el in list){
+      arr.push([search(list[el]), el]);
+    }
+
+    loadSingleSelect(arr);
+}
+

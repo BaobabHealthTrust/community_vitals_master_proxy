@@ -307,7 +307,7 @@ public class WebAppInterface {
 	public void savePerson(String fname, String mname, String lname,
 			String gender, String age, String occupation, String yob,
 			String mob, String dob, String success, String failed) {
-		
+
 		People person = new People();
 
 		int identifier = mDB.getBlankNPID();
@@ -322,30 +322,33 @@ public class WebAppInterface {
 			int birthdate_estimated = 0;
 
 			if (yob.toLowerCase().equals("unknown")) {
-				int yr = Calendar.getInstance().get(Calendar.YEAR) - Integer.parseInt(age);
-	
+				int yr = Calendar.getInstance().get(Calendar.YEAR)
+						- Integer.parseInt(age);
+
 				birthdate = yr + "-07-15";
 				birthdate_estimated = 1;
 
 			} else {
-				
+
 				birthdate = yob;
-				
-				if(mob.trim().toLowerCase() != "unknown"){					
-					birthdate = birthdate + "-" + String.format("%02d", Integer.parseInt(mob));
-					
-					if(dob.trim().toLowerCase() != "unknown"){
-						birthdate = birthdate + "-" + String.format("%02d", Integer.parseInt(dob));
-						
+
+				if (mob.trim().toLowerCase() != "unknown") {
+					birthdate = birthdate + "-"
+							+ String.format("%02d", Integer.parseInt(mob));
+
+					if (dob.trim().toLowerCase() != "unknown") {
+						birthdate = birthdate + "-"
+								+ String.format("%02d", Integer.parseInt(dob));
+
 						birthdate_estimated = 0;
 					} else {
 						birthdate = birthdate + "-15";
-						
+
 						birthdate_estimated = 1;
 					}
 				} else {
 					birthdate = birthdate + "-07-15";
-					
+
 					birthdate_estimated = 1;
 				}
 			}
@@ -359,9 +362,9 @@ public class WebAppInterface {
 			person.setFamilyName(lname);
 			person.setGender(gender);
 			person.setNationalId(identifier + "");
-			
+
 			person.setBirthdate(birthdate);
-			
+
 			person.setBirthdateEstimated(birthdate_estimated);
 
 			person.setVillage(vh);
@@ -375,7 +378,17 @@ public class WebAppInterface {
 					+ "-"
 					+ String.format("%02d",
 							Calendar.getInstance().get(Calendar.DATE))
-					+ " 00:00:00.000000";
+					+ " "
+					+ String.format("%02d",
+							Calendar.getInstance().get(Calendar.HOUR_OF_DAY))
+					+ ":"
+					+ String.format("%02d",
+							Calendar.getInstance().get(Calendar.MINUTE))
+					+ ":"
+					+ String.format("%02d",
+							Calendar.getInstance().get(Calendar.SECOND))
+					+ ".000000";
+			;
 
 			person.setCreatedAt(date);
 
@@ -384,13 +397,19 @@ public class WebAppInterface {
 			String result[] = mDB.addPeople(person);
 
 			setPref("person id", result[0]);
-			
+
 			setPref("first name", result[1]);
-			
+
 			setPref("last name", result[2]);
-			
+
 			setPref("npid", result[3]);
-			
+
+			setPref("gender", result[4]);
+
+			setPref("dob", result[5]);
+
+			setPref("dobest", result[6]);
+
 			showMsg(success);
 		}
 	}
@@ -434,20 +453,34 @@ public class WebAppInterface {
 	}
 
 	@JavascriptInterface
-	public void updateOutcome(int person_id, int outcome, String date_of_event,
-			String explanation) {
+	public void updateOutcome(int person_id, String outcome,
+			String date_of_event, String explanation) {
 
-		OutcomeTypes outcomtype = mDB.getOutcomeTypes(outcome);
+		int outcomtype = mDB.getOutcomeByType(outcome);
 
 		Outcomes ocome = new Outcomes();
 
-		String date_created = Calendar.getInstance().get(Calendar.YEAR) + "-"
-				+ (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-"
-				+ Calendar.getInstance().get(Calendar.DATE);
+		String date_created = Calendar.getInstance().get(Calendar.YEAR)
+				+ "-"
+				+ String.format("%02d",
+						(Calendar.getInstance().get(Calendar.MONTH) + 1))
+				+ "-"
+				+ String.format("%02d",
+						Calendar.getInstance().get(Calendar.DATE))
+				+ " "
+				+ String.format("%02d",
+						Calendar.getInstance().get(Calendar.HOUR_OF_DAY))
+				+ ":"
+				+ String.format("%02d",
+						Calendar.getInstance().get(Calendar.MINUTE))
+				+ ":"
+				+ String.format("%02d",
+						Calendar.getInstance().get(Calendar.SECOND))
+				+ ".000000";
 
 		ocome.setCreatedAt(date_created);
 		ocome.setOutcomeDate(date_of_event);
-		ocome.setOutcomeType(outcomtype.getId());
+		ocome.setOutcomeType(outcomtype);
 		ocome.setPersonId(person_id);
 
 		mDB.addOutcomes(ocome);
@@ -455,14 +488,14 @@ public class WebAppInterface {
 
 	@JavascriptInterface
 	public void savePersonRelationship(String person_a_id, String person_b_id,
-			int relation) {
+			String relation) {
 
 		debugPrint("person_a: " + person_a_id + "; person_b_id: " + person_b_id
 				+ "; relation: " + relation);
 
-		RelationshipTypes rtype = mDB.getRelationshipTypes(relation);
+		int rtype = mDB.getRelationByType(relation);
 
-		debugPrint(rtype.getRelation());
+		debugPrint("Returned with relation type id: " + rtype);
 
 		Relationships relationship = new Relationships();
 
@@ -472,7 +505,7 @@ public class WebAppInterface {
 
 		relationship.setPersonNationalId(person_a_id);
 		relationship.setRelationNationalId(person_b_id);
-		relationship.setPersonIsToRelation(rtype.getId());
+		relationship.setPersonIsToRelation(rtype);
 		relationship.setCreatedAt(date_created);
 
 		mDB.addRelationships(relationship);
@@ -485,16 +518,72 @@ public class WebAppInterface {
 		String term = word;
 
 		String locale = getPref("locale");
-		
-		if(locale.trim().length() == 0){
+
+		if (locale.trim().length() == 0) {
 			locale = "en";
 		}
-		
-		Log.i("DEBUGGING", "locale: " + locale + "; word: " + word);
-		
+
 		term = mDB.search(word, locale);
-		
+
 		return term;
+	}
+
+	@JavascriptInterface
+	public String listPeopleNames(String fname, String lname, String gender) {
+		JSONObject json = new JSONObject();
+
+		List<People> people = mDB.getPeopleNames(fname, lname, gender);
+
+		for (int i = 0; i < people.size(); i++) {
+			JSONObject pjson = new JSONObject();
+
+			People person = people.get(i);
+
+			try {
+				String detail = person.getGivenName() + " "
+						+ person.getFamilyName() + " ("
+						+ person.getNationalId() + " - "
+						+ search(person.getGender()) + " - DOB: "
+						+ person.getBirthdate() + ")";
+
+				pjson.put("details", detail);
+
+				pjson.put("npid", person.getNationalId());
+
+				json.put(person.getId() + "", pjson);
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				showMsg("Sorry, there was an error!");
+			}
+
+		}
+
+		return json.toString();
+	}
+
+	@JavascriptInterface
+	public boolean searchPerson(int id) {
+		debugPrint("Searching with id " + id);
+
+		String result[] = mDB.getPersonById(id);
+
+		setPref("person id", result[0]);
+
+		setPref("first name", result[1]);
+
+		setPref("last name", result[2]);
+
+		setPref("npid", result[3]);
+
+		setPref("gender", result[4]);
+
+		setPref("dob", result[5]);
+
+		setPref("dobest", result[6]);
+
+		return true;
 	}
 
 }

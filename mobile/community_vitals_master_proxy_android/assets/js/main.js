@@ -105,8 +105,6 @@ function checkLogin(){
         if(navigator.userAgent.toLowerCase().match(/android/)){
             var token = Android.getToken();
 
-            Android.debugPrint(token);
-        
             if(token.trim().length > 0){
                 window.location = "index.html";
             }
@@ -1543,8 +1541,6 @@ function showMessage(msg){
 function search(word){
   if(navigator.userAgent.toLowerCase().match(/android/)){
       var result = Android.search(word);
-      
-      Android.debugPrint(result);
       
       return result;
   } else {

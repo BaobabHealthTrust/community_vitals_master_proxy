@@ -24,10 +24,17 @@
 					        window.location = "index.html";					 
 					      });
 					
-					      __$("parent").innerHTML = "<div style='position: absolute; top: 150px; " + 
+					      __$("parent").innerHTML = "<div style='position: absolute; top: 30px; " + 
                     "font-size: 3em; font-weight: normal; width: 100%; text-align: center;'>" + 
                     Android.getPref("first name") + " " + Android.getPref("last name") + 
-                    "<br /><br /><img src='images/barcode.jpg' height='60' /> <span style='color: blue; font-size: 2em;'>" + 
+                    "<br /><br /><img height='40' style='border-radius: 50px; border: 2px " +
+                    (Android.getPref("gender").match(/f/i) ? "magenta" : "blue") + " solid; " + 
+                    "padding: 10px;' src='images/" + (Android.getPref("gender").match(/f/i) ? 
+                    "female" : "male") + ".gif' /><br /><br />" +
+                    (parseInt(Android.getPref("dobest")) != 0 ? "~" : "") + " " +
+                    search("DOB") + ": " + Android.getPref("dob") +
+                    "<br /><br /><img src='images/barcode.jpg' height='60' /> <span style='color: " + 
+                    (Android.getPref("gender").match(/f/i) ? "magenta" : "blue") + "; font-size: 2em;'>" + 
                     Android.getPref("npid") + "</span></div>";
 					  }
             //-->

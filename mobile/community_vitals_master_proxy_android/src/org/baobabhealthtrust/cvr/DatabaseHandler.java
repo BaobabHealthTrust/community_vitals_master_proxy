@@ -266,13 +266,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		int npid = Integer.parseInt(people.getNationalId());
 
 		NationalIdentifiers identifier = getNationalIdentifiers(npid);
-		
+
 		identifier.setPersonId(npid);
 
 		updateNationalIdentifiers(identifier);
-		
+
 		String result[] = { people.getId() + "", people.getGivenName(),
-				people.getFamilyName(), identifier.getIdentifier()};
+				people.getFamilyName(), identifier.getIdentifier(),
+				people.getGender(), people.getBirthdate(),
+				people.getBirthdateEstimated() + "" };
 
 		return result;
 	}
@@ -1411,18 +1413,101 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		if (cursor != null) {
 			if (cursor.moveToFirst()) {
-				Log.i("DEBUGGING", "Moved to first");
-
-				Log.i("DEBUGGING", "locale: " + locale + "; word: " + word
-						+ "; result: " + cursor.getString(0));
-
 				term = cursor.getString(0);
 			} else {
-				Log.i("DEBUGGING", selectQuery);
+				Log.i("SEARCH DEBUGGING", selectQuery);
 			}
 		}
 
 		return term;
 	}
 
+	public List<People> getPeopleNames(String fname, String lname, String gender) {
+		List<People> namesList = new ArrayList<People>();
+		// Select All Query
+		String selectQuery = "SELECT " + KEY_ID + ", " + KEY_GIVEN_NAME + ", "
+				+ KEY_FAMILY_NAME + ", " + KEY_GENDER + ", " + KEY_BIRTHDATE
+				+ " FROM " + TABLE_PEOPLE + " WHERE " + KEY_GIVEN_NAME
+				+ " LIKE '" + fname + "%' AND " + KEY_FAMILY_NAME + " LIKE '"
+				+ lname + "%' AND " + KEY_GENDER + " = '" + gender + "' "
+				+ " LIMIT 0,20";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			do {
+				People person = new People();
+
+				NationalIdentifiers identifier = getNationalIdentifiers(Integer
+						.parseInt(cursor.getString(0)));
+
+				person.setId(Integer.parseInt(cursor.getString(0)));
+				person.setGivenName(cursor.getString(1));
+				person.setFamilyName(cursor.getString(2));
+				person.setGender(cursor.getString(3));
+				person.setBirthdate(cursor.getString(4));
+				person.setNationalId(identifier.getIdentifier());
+
+				// Adding person
+				namesList.add(person);
+			} while (cursor.moveToNext());
+		}
+
+		// return relationship_type list
+		return namesList;
+	}
+
+	public int getRelationByType(String relation) {
+		int result = 0;
+
+		// Select All Query
+		String selectQuery = "SELECT " + KEY_ID + " FROM "
+				+ TABLE_RELATIONSHIP_TYPES + " WHERE UPPER(" + KEY_RELATION
+				+ ") = UPPER('" + relation + "')";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			result = Integer.parseInt(cursor.getString(0));
+		}
+
+		return result;
+	}
+
+	public String[] getPersonById(int id) {
+		Log.i("SEARCHING", "Got in with " + id);
+
+		People people = getPeople(id);
+
+		int npid = Integer.parseInt(people.getNationalId());
+
+		NationalIdentifiers identifier = getNationalIdentifiers(npid);
+
+		String result[] = { people.getId() + "", people.getGivenName(),
+				people.getFamilyName(), identifier.getIdentifier(),
+				people.getGender(), people.getBirthdate(),
+				people.getBirthdateEstimated() + "" };
+
+		return result;
+	}
+
+	public int getOutcomeByType(String relation) {
+		int result = 0;
+
+		// Select All Query
+		String selectQuery = "SELECT " + KEY_ID + " FROM "
+				+ TABLE_OUTCOME_TYPES + " WHERE UPPER(" + KEY_NAME
+				+ ") = UPPER('" + relation + "')";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			result = Integer.parseInt(cursor.getString(0));
+		}
+
+		return result;
+	}
 }
