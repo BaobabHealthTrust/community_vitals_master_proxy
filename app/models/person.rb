@@ -116,4 +116,7 @@ class Person < ActiveRecord::Base
 
   end
 
+  def outcome_by_date(date)
+    Outcome.find(:first, :conditions => ["DATE(outcome_date) <= ? AND person_id = ?", date, self.id], :order => "outcome_date DESC").name rescue nil
+  end
 end

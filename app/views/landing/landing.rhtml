@@ -97,7 +97,17 @@
         function adjustView(){
           __$("container").style.height = (__$("nav").offsetTop - 150) + "px";
         }
-      
+
+        function load_menu()
+        {
+            <% if @mode == "vh"  %>
+                loadApplicationMenu();
+            <%else%>
+                document.getElementById('application').style.display='none'
+                loadReportsMenu();
+            <%end%>
+        }
+
         function loadApplicationMenu(){
           __$("container").innerHTML = "";
           
@@ -142,20 +152,63 @@
       
         function loadReportsMenu(){
           __$("container").innerHTML = "";
-          
-          var fields = ["Parameter Review", "Report", "View Results"];
-          
-          var images = [
-              "<%= (File.exists?("#{Rails.root}/public/images/parameterreview.png") ? 
-                  "parameterreview.png" : "default.png") %>",              
-              "<%= (File.exists?("#{Rails.root}/public/images/report.png") ? 
-                  "report.png" : "default.png") %>",
-              "<%= (File.exists?("#{Rails.root}/public/images/viewresults.png") ? 
-                  "viewresults.png" : "default.png") %>"
-          ]
-          
-          var paths = ["", "", ""];
-          
+
+          <% if @mode == "ta" %>
+            var fields = ["Cohort Report","Monthly Outcomes Report","Monthly Birth Report", "Daily Summary", "Villages Summary" ];
+
+            var images = [
+                "<%= (File.exists?("#{Rails.root}/public/images/cohort.png") ?
+                      "cohort.png" : "default.png") %>",
+                "<%= (File.exists?("#{Rails.root}/public/images/death.png") ?
+                      "death.png" : "default.png") %>",
+                "<%= (File.exists?("#{Rails.root}/public/images/birth.png") ?
+                      "birth.png" : "default.png") %>",
+                "<%= (File.exists?("#{Rails.root}/public/images/daysummary.png") ?
+                      "daysummary.png" : "default.png") %>",
+                "<%= (File.exists?("#{Rails.root}/public/images/villagessummary.png") ?
+                      "villagessummary.png" : "default.png") %>"
+            ]
+
+            var paths = [ "demographics/cohort_index","demographics/report_index?type=ta_outcomes_by_gvh",
+                "demographics/report_index?type=village_births_by_month","demographics/report_index?type=daily_summary", "demographics/ta_statistics"];
+          <% elsif @mode == "gvh" %>
+            var fields = ["Cohort Report","Monthly Outcomes Report","Monthly Birth Report", "Daily Summary", "Villages Summary" ];
+
+            var images = [
+                "<%= (File.exists?("#{Rails.root}/public/images/cohort.png") ?
+                      "cohort.png" : "default.png") %>",
+                "<%= (File.exists?("#{Rails.root}/public/images/death.png") ?
+                      "death.png" : "default.png") %>",
+                "<%= (File.exists?("#{Rails.root}/public/images/birth.png") ?
+                      "birth.png" : "default.png") %>",
+                "<%= (File.exists?("#{Rails.root}/public/images/daysummary.png") ?
+                      "daysummary.png" : "default.png") %>",
+                "<%= (File.exists?("#{Rails.root}/public/images/villagessummary.png") ?
+                      "villagessummary.png" : "default.png") %>"
+            ]
+
+            var paths = [ "demographics/cohort_index","demographics/report_index?type=gvh_outcomes_by_village",
+                "demographics/report_index?type=village_births_by_month","demographics/report_index?type=daily_summary", "demographics/gvh_statistics"];
+          <%else %>
+            var fields = ["Cohort Report","Monthly Outcomes Report","Monthly Birth Report", "Daily Summary", "Village Summary" ];
+
+            var images = [
+                "<%= (File.exists?("#{Rails.root}/public/images/cohort.png") ?
+                      "cohort.png" : "default.png") %>",
+                "<%= (File.exists?("#{Rails.root}/public/images/death.png") ?
+                      "death.png" : "default.png") %>",
+                "<%= (File.exists?("#{Rails.root}/public/images/birth.png") ?
+                      "birth.png" : "default.png") %>",
+                "<%= (File.exists?("#{Rails.root}/public/images/daysummary.png") ?
+                      "daysummary.png" : "default.png") %>",
+                "<%= (File.exists?("#{Rails.root}/public/images/villagesummary.png") ?
+                      "villagesummary.png" : "default.png") %>"
+            ]
+
+            var paths = [ "demographics/cohort_index","demographics/report_index?type=village_outcomes_by_month",
+                "demographics/report_index?type=village_births_by_month","demographics/report_index?type=daily_summary", "demographics/village_statistics"];
+          <%end%>
+
           for(var i = 0; i < fields.length; i++){
             
             var div = document.createElement("div");
@@ -285,15 +338,15 @@
       //-->
     </script>
   </head>
-  <body onresize="adjustView()" onload="adjustView(); loadApplicationMenu();">
+  <body onresize="adjustView()" onload="adjustView(); load_menu()">
     <table width="100%" cellspacing="0" cellpadding="10">
       <tr>
-        <td id="application" class="menu" style="border-bottom: 5px solid #5496ef; font-size: 18px; 
+        <td id="application" class="menu" style="border-bottom: 5px solid #5496ef; font-size: 18px;
             padding-top: 65px; width: 130px; cursor: pointer;" align="center"
             onclick="switchTab(this.id)">
           <%= Vocabulary.search("Application") %>
         </td>
-        <td id="reports" class="menu" style="border-bottom: 1px solid #5496ef; font-size: 18px; 
+        <td id="reports" class="menu" style="border-bottom: 1px solid #5496ef; font-size: 18px;
             padding-top: 60px; width: 130px; cursor: pointer;" align="center"
             onclick="switchTab(this.id)">
           <%= Vocabulary.search("Reports") %>
@@ -320,7 +373,7 @@
         <td colspan="6" style="padding: 0px;">
           <div id="container" style="width: 100%; overflow: auto;">
                           
-          <div>
+          </div>
         </td>
       </tr>
       <tr>

@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <% @title = "#{controller.controller_name.humanize} #{controller.action_name.humanize}" rescue ""  %>
+  <script language="javascript" defer="true">
+      <!--
+      tstUsername = "<%= "" %>";
+      tstUserKeyboardPref = "<%= "abc" %>";
+
+      tstLocaleWords = {<%=
+        ["Cancel", "Logout", "Finish", "Clear", "Back", "OK", "Save", "Loading. Please Wait",
+          "Delete", "Space", "cap", "Yes", "No", "Unknown", "Next", "Processing. Please Wait",
+          "Please enter a valid value", "You must enter a value to continue", "Authorise",
+          "Value bigger than maximum", "Value smaller than minimum", "Value out of Range",
+          "Please select value from list (not",
+          "Are you sure you want to Cancel"].collect{|e| "\"#{e.downcase}\":\"#{Vocabulary.search(e)}\""}.join(",")
+       %>};
+
+      tstCurrentDate = "<%= (session[:datetime] ? session[:datetime].to_date.strftime("%Y-%m-%d") :
+        Date.today.strftime("%Y-%m-%d")) %>";
+
+      function addHereButton(){
+          var button = document.createElement("button");
+          button.id = "addHere";
+          button.innerHTML = "<span>Here</span>";
+          button.style.cssFloat = "right";
+
+          button.onclick = function(){
+              __$("touchscreenInput" + tstCurrentPage).value = "<%= Location.current_health_center.name rescue "" %>"
+          }
+
+          if(__$("buttons")){
+              __$("buttons").appendChild(button);
+          }
+      }
+
+      function removeHereButton(){
+          if(__$("addHere")){
+              __$("buttons").removeChild(__$("addHere"));
+          }
+      }
+
+      function getSelected(){
+          var choices = "";
+
+          for(var o = 0; o < __$('choice').options.length; o++){
+              if(__$('choice').options[o].selected == true){
+                  choices += __$('choice').options[o].innerHTML + " ";
+              }
+          }
+
+          return choices;
+      }
+
+      //-->
+  </script>
+
+  <script language="javascript" type="text/javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+
+  <%= javascript_include_tag "dateselector" %>
+
+</head>
+<body>
+
+  <div id="content">
+
+    <% unless flash[:notice].nil? %>
+        <script type="text/javascript">
+            <!--
+            setTimeout("showMessage('<%= flash[:notice] %>')", 300);
+            //-->
+        </script>
+        <!--p id="flash_notice" style="color: green"><%= flash[:notice] %></p-->
+    <% end %>
+    <% unless flash[:error].nil? %>
+        <script type="text/javascript">
+            <!--
+            setTimeout("showMessage('<%= flash[:error] %>')", 200);
+            //-->
+        </script>
+        <!--p id="flash_error" style="color: red"><%= flash[:error] %></p-->
+    <% end %>
+    <%= yield %>
+   <div id="footer">
+    <div id="buttons" class="buttonsDiv" style="">
+*      <button id="finishButton" class="button navButton green" onclick="window.location='/'"><span>Finish</span></button>
+      <button id="graphs" class="button navButton blue" style="display:none" onclick="window.location='/'"><span>Graphs</span></button>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
