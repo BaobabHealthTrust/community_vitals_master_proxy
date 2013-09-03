@@ -2,7 +2,9 @@ body {
     font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
     overflow: hidden;
     padding: 0px;
+    background-color: #f1f1f1;
 }
+
 .table {
     display: table;
     width: 100%;

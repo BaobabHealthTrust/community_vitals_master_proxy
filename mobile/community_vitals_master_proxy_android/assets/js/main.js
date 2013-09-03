@@ -7,6 +7,7 @@ var options = {};
 var kybdnumeric = false;
 var showKeys = true;
 var selected = "";
+var tt_unknown = search("unknown");
 
 var ajaxGeneralRequestResult = "";
          
@@ -104,8 +105,6 @@ function checkLogin(){
         if(navigator.userAgent.toLowerCase().match(/android/)){
             var token = Android.getToken();
 
-            Android.debugPrint(token);
-        
             if(token.trim().length > 0){
                 window.location = "index.html";
             }
@@ -300,13 +299,17 @@ function showKeyboard(numeric, showAgain){
     keyboard.className = "keyboard";
     keyboard.id = "keyboard";
     keyboard.style.display = "block";
+    
+    var unknown = search("Unknown");
+    var del = search("Delete");
+    var cap = search("cap");
 
     __$("keyboard_container").appendChild(keyboard);
 
     var rows = [["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "ABC"],
-    ["A", "S", "D", "F", "G", "H", "J", "K", "L", "Enter", "cap"],
-    ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "Space", "Unknown"],
-    ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Del"]];
+    ["A", "S", "D", "F", "G", "H", "J", "K", "L", "Enter", cap],
+    ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "Space", unknown],
+    ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", del]];
 
     if(navigator.userAgent.toLowerCase().match(/android/)){
         var prefered_keyboard = Android.getPref("prefered_keyboard");
@@ -317,9 +320,9 @@ function showKeyboard(numeric, showAgain){
 
     if(prefered_keyboard == "abc"){
         rows = [["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "QWERTY"],
-        ["K", "L", "M", "N", "O", "P", "Q", "R", "S", "Enter", "cap"],
-        ["T", "U", "V", "W", "X", "Y", "Z", ",", ".", "Space", "Unknown"],
-        ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Del"]];
+        ["K", "L", "M", "N", "O", "P", "Q", "R", "S", "Enter", cap],
+        ["T", "U", "V", "W", "X", "Y", "Z", ",", ".", "Space", unknown],
+        ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", del]];
     }
 
     if(typeof(numeric) == "undefined")
@@ -328,10 +331,10 @@ function showKeyboard(numeric, showAgain){
     if(numeric){
         
         var groups = [
-        ["1", "2", "3", "Unknown"],
+        ["1", "2", "3", unknown],
         ["4", "5", "6", ""],
         ["7", "8", "9", ""],
-        ["", "0", ".", "Del"]
+        ["", "0", ".", del]
         ];
 
         for(var j = 0; j < groups.length; j++){
@@ -358,8 +361,8 @@ function showKeyboard(numeric, showAgain){
 
                 // btn.innerHTML = groups[j][i];
 
-                if(groups[j][i].toLowerCase() != "cap" && groups[j][i].toLowerCase() != "unknown" &&
-                    groups[j][i].toLowerCase() != "del" && groups[j][i].toLowerCase() != "abc" &&
+                if(groups[j][i].toLowerCase() != cap.toLowerCase() && groups[j][i].toLowerCase() != unknown.toLowerCase() &&
+                    groups[j][i].toLowerCase() != del.toLowerCase() && groups[j][i].toLowerCase() != "abc" &&
                     groups[j][i].toLowerCase() != "qwerty" && groups[j][i].toLowerCase() != "space"){
 
                     btn.innerHTML = (current_case_upper ? groups[j][i] : groups[j][i].toLowerCase());
@@ -373,7 +376,7 @@ function showKeyboard(numeric, showAgain){
                     btn.innerHTML = "<img src='images/enter.png' height='32' alt='Enter' style='margin: -6px;' />";
                     btn.setAttribute("tag", "enter");
                     cell.style.verticalAlign = "middle";
-                } else if(groups[j][i].toLowerCase() == "cap"){
+                } else if(groups[j][i].toLowerCase() == cap.toLowerCase()){
                     btn.innerHTML = (!current_case_upper ? groups[j][i].toUpperCase() : groups[j][i].toLowerCase());
                     btn.style.minWidth = "120px";
                 } else {
@@ -384,20 +387,34 @@ function showKeyboard(numeric, showAgain){
                 cell.appendChild(btn);
                 
                 new FastButton(document.getElementById(btn.id), function() {
-					        if(this.innerHTML == "Del"){
-                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
+					        if(this.innerHTML == del){
+                        if(__$("inputField").value.trim().toLowerCase() == unknown.toLowerCase()){
                             __$("inputField").value = "";
+                            
+                            __$('inputField').setAttribute("tstValue", "")
                         } else {
                             __$("inputField").value = __$("inputField").value.trim().substr(0,
                                 __$("inputField").value.trim().length - 1);
+                                
+                                __$('inputField').setAttribute("tstValue", __$("inputField").value)
                         }
                     } else {
-                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
+                        if(__$("inputField").value.trim().toLowerCase() == unknown.toLowerCase()){
+                        
                             __$("inputField").value = this.innerHTML;
-                        } else if(this.innerHTML.trim().toLowerCase() == "unknown"){
+                            
+                            __$('inputField').setAttribute("tstValue", "Unknown");
+                            
+                        } else if(this.innerHTML.trim().toLowerCase() == unknown.toLowerCase()){
+                        
                             __$("inputField").value = this.innerHTML;
+                            
+                            __$('inputField').setAttribute("tstValue", "Unknown");
+                            
                         } else {
                             __$("inputField").value += this.innerHTML;
+                            
+                            __$('inputField').setAttribute("tstValue", __$("inputField").value);
                         }
                     }					        
 					      });
@@ -428,8 +445,8 @@ function showKeyboard(numeric, showAgain){
                 btn.className = "keyboard_button blue";
                 btn.id = "lbl_" + rows[j][i].trim().toLowerCase();
 
-                if(rows[j][i].toLowerCase() != "cap" && rows[j][i].toLowerCase() != "unknown" &&
-                    rows[j][i].toLowerCase() != "del" && rows[j][i].toLowerCase() != "abc" &&
+                if(rows[j][i].toLowerCase() != cap.toLowerCase() && rows[j][i].toLowerCase() != unknown.toLowerCase() &&
+                    rows[j][i].toLowerCase() != del.toLowerCase() && rows[j][i].toLowerCase() != "abc" &&
                     rows[j][i].toLowerCase() != "qwerty" && rows[j][i].toLowerCase() != "space" &&
                     rows[j][i].toLowerCase() != "enter"){
 
@@ -444,7 +461,7 @@ function showKeyboard(numeric, showAgain){
                     btn.innerHTML = "<img src='images/enter.png' height='32' alt='Enter' style='margin: -6px;' />";
                     btn.setAttribute("tag", "enter");
                     cell.style.verticalAlign = "middle";
-                } else if(rows[j][i].toLowerCase() == "cap"){
+                } else if(rows[j][i].toLowerCase() == cap.toLowerCase()){
                     btn.innerHTML = (!current_case_upper ? rows[j][i].toUpperCase() : rows[j][i].toLowerCase());
                     btn.style.minWidth = "120px";
                 } else {
@@ -454,16 +471,20 @@ function showKeyboard(numeric, showAgain){
 
                 cell.appendChild(btn);
                 
-                var b = new FastButton(document.getElementById(btn.id), function() {
+                new FastButton(document.getElementById(btn.id), function() {
 					        
-                    if(this.innerHTML == "Del"){
-                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
+                    if(this.innerHTML == del){
+                        if(__$("inputField").value.trim().toLowerCase() == unknown.toLowerCase()){
                             __$("inputField").value = "";
+                            
+                            __$('inputField').setAttribute("tstValue", "Unknown");
                         } else {
                             __$("inputField").value = __$("inputField").value.trim().substr(0,
                                 __$("inputField").value.trim().length - 1);
+                            
+                            __$('inputField').setAttribute("tstValue", __$("inputField").value);
                         }
-                    } else if(this.innerHTML.toLowerCase() == "cap"){
+                    } else if(this.innerHTML.toLowerCase() == cap.toLowerCase()){
                         current_case_upper = !current_case_upper;
 
                         showKeyboard(false, true);
@@ -484,28 +505,42 @@ function showKeyboard(numeric, showAgain){
 
                         showKeyboard(false, true);
                     } else if(this.getAttribute("tag") == "space") {
-                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
+                        if(__$("inputField").value.trim().toLowerCase() == unknown.toLowerCase()){
                             __$("inputField").value = "";
+                            
+                            __$('inputField').setAttribute("tstValue", "");
                         } else {
                             __$("inputField").value +=  " ";
+                            
+                            __$('inputField').setAttribute("tstValue", __$("inputField").value);
                         }
                     } else if(this.getAttribute("tag") == "enter") {
-                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
+                        if(__$("inputField").value.trim().toLowerCase() == unknown.toLowerCase()){
                             __$("inputField").value = "";
+                            
+                            __$('inputField').setAttribute("tstValue", "");
                         } else {
                             __$("inputField").value +=  "\n";
+                            
+                            __$('inputField').setAttribute("tstValue", __$("inputField").value);
                         }
                     } else {
-                        if(__$("inputField").value.trim().toLowerCase() == "unknown"){
+                        if(__$("inputField").value.trim().toLowerCase() == unknown.toLowerCase()){
                             __$("inputField").value = this.innerHTML;
-                        } else if(this.innerHTML.trim().toLowerCase() == "unknown"){
+                            
+                            __$('inputField').setAttribute("tstValue", __$("inputField").value);
+                        } else if(this.innerHTML.trim().toLowerCase() == unknown.toLowerCase()){
                             __$("inputField").value = this.innerHTML;
+                            
+                            __$('inputField').setAttribute("tstValue", __$("inputField").value);
                         } else {
                             __$("inputField").value += this.innerHTML;
+                            
+                            __$('inputField').setAttribute("tstValue", __$("inputField").value);
                         }
                     }
 
-                    if(current_case_upper && this.id != "lbl_cap"){
+                    if(current_case_upper && this.id != "lbl_" + cap.toLowerCase()){
                         current_case_upper = !current_case_upper;
 
                         showKeyboard(false, true);
@@ -703,6 +738,10 @@ function showPage(s, back){
         kybdnumeric = false
     }
 
+    if(__$("keyboard")){
+      __$("keyboard").style.display = "none";
+    }
+
     __$("parent").style.minHeight = "500px";
 
     __$("parent").innerHTML = "";
@@ -742,7 +781,7 @@ function showPage(s, back){
 
     var cell1 = document.createElement("div");
     cell1.style.display = "table-cell";
-    cell1.innerHTML = order[s][2];
+    cell1.innerHTML = search(order[s][2]);
     cell1.style.color = "#254061";
     cell1.style.fontSize = "1.8em";
     cell1.style.padding = "10px";
@@ -784,7 +823,7 @@ function showPage(s, back){
             loadSingleSelect(options[order[s][1]]);
         }
 
-        showKeys = false;
+        showKeys = (input.getAttribute("showKeys") != null ? eval(input.getAttribute("showKeys")) : false);
     } else if(field_type.toLowerCase() == "textarea") {
         input = document.createElement("textarea");
         input.setAttribute("srcControl", order[s][1]);
@@ -798,7 +837,7 @@ function showPage(s, back){
 
         cell2.appendChild(input);
 
-        showKeys = true;
+        showKeys = (input.getAttribute("showKeys") != null ? eval(input.getAttribute("showKeys")) : true);
     } else if(field_type.toLowerCase() == "password") {
 
         input = document.createElement("input");
@@ -812,8 +851,8 @@ function showPage(s, back){
         }
 
         cell2.appendChild(input);
-
-        showKeys = true;
+        
+        showKeys = (input.getAttribute("showKeys") != null ? eval(input.getAttribute("showKeys")) : true);
         
     } else {
 
@@ -829,7 +868,7 @@ function showPage(s, back){
 
         cell2.appendChild(input);
 
-        showKeys = true;
+        showKeys = (input.getAttribute("showKeys") != null ? eval(input.getAttribute("showKeys")) : true);
     }
 
     if(navigator.userAgent.toLowerCase().match(/android/)){
@@ -872,8 +911,40 @@ function showPage(s, back){
       __$("showKeyboard").style.display = "none";
     }
 
-    if(__$(input.getAttribute('srcControl')))
-        input.value = __$(input.getAttribute('srcControl')).value;
+    if(__$(input.getAttribute('srcControl'))){
+        
+      input.setAttribute("tstValue", __$(input.getAttribute('srcControl')).value);
+        
+      if(__$(input.getAttribute('srcControl')).tagName.toUpperCase() == "INPUT"){
+        if(input.getAttribute('dynamicLoader') == null){
+          var stored = __$(input.getAttribute('srcControl')).value;
+            
+          stored = search(stored);
+          
+          input.value = stored;                      
+          
+        } else {
+          if(__$(input.getAttribute('srcControl')).value.trim().match(/^\d+$/)){
+            input.value = "";
+          } else {
+            var stored = __$(input.getAttribute('srcControl')).value;
+            
+            stored = search(stored);
+            
+            input.value = stored; 
+          
+          }
+        }
+      } else if(__$(input.getAttribute('srcControl')).tagName.toUpperCase() == "SELECT"){
+      
+        var stored = __$(input.getAttribute('srcControl')).options[__$(input.getAttribute('srcControl')).selectedIndex].innerHTML;
+        
+        stored = search(stored);
+        
+        input.value = stored; 
+          
+      }
+    }
 
     input.focus();
 
@@ -1184,43 +1255,7 @@ function loadSingleSelect(values, selected, initialtext){
     ul.style.padding = "0px";
     ul.id = "ulOptions";
 
-    contain.appendChild(ul);
-    
-    var li = document.createElement("li");
-    li.innerHTML = "<div style='display: table;'><div style='display: table-row;'>" +
-    "<div style='display: table-cell;'><img src='images/unchecked.png' height='32' /></div>" +
-    "<div style='display: table-cell; vertical-align: middle; padding-left: 10px;'><span></span></div></div></div>";
-    li.setAttribute("tag", "odd");
-
-    li.style.backgroundColor = "#eee";
-
-    li.onkeydown = function(event){
-        if (event.keyCode == 13)
-            document.getElementById('next').click()
-    }
-
-    li.onmousedown = function(){
-        /*if(__$("inputField"))
-            __$("inputField").value = this.getElementsByTagName("span")[0].innerHTML;*/
-
-        var lis = __$("ulOptions").getElementsByTagName("li");
-
-        for(var l = 0; l < lis.length; l++){
-            lis[l].style.color = "#254061";
-            lis[l].getElementsByTagName("img")[0].src = "images/unchecked.png";
-            if(lis[l].getAttribute("tag") == "odd"){
-                lis[l].style.backgroundColor = "#eee";
-            } else {
-                lis[l].style.backgroundColor = "#ccc";
-            }
-        }
-
-        this.style.backgroundColor = "steelblue";
-        this.style.color = "#fff";
-        this.getElementsByTagName("img")[0].src = "images/checked.png";
-    }
-
-    // ul.appendChild(li);
+    contain.appendChild(ul);    
         
     var selectedControl = null;    
         
@@ -1375,16 +1410,40 @@ function goForward(){
     if(__$('inputField')){
         if(__$('inputField').getAttribute('optional') == null &&
             __$('inputField').value.trim().length == 0){
-            showMessage('This field is required. Please enter a value!');
+            var msg = search('This field is required. Please enter a value!');
+            
+            showMessage(msg);
             return;
         } else if(__$('inputField').getAttribute('validationRule') != null){
-            if(!__$('inputField').value.trim().match(__$('inputField').getAttribute('validationRule'))){
-                if(__$('inputField').getAttribute('validationMessage') != null){
-                    showMessage(__$('inputField').getAttribute('validationMessage'));
-                } else {
-                    showMessage('Wrong value!');
+            if(__$('inputField').getAttribute("tstValue") != null){
+            
+                if(!__$('inputField').getAttribute("tstValue").trim().match(__$('inputField').getAttribute('validationRule'))){
+                    if(__$('inputField').getAttribute('validationMessage') != null){
+                        var msg = search(__$('inputField').getAttribute('validationMessage'));
+                        
+                        showMessage(msg);
+                    } else {
+                        var msg = search('Wrong value!');
+                        
+                        showMessage(msg);
+                    }
+                    return;
                 }
-                return;
+                
+            } else {
+            
+                if(!__$('inputField').value.trim().match(__$('inputField').getAttribute('validationRule'))){
+                    if(__$('inputField').getAttribute('validationMessage') != null){
+                        var msg = search(__$('inputField').getAttribute('validationMessage'));
+                        
+                        showMessage(msg);
+                    } else {
+                        var msg = search('Wrong value!');
+                        
+                        showMessage(msg);
+                    }
+                    return;
+                }
             }
         }
     }
@@ -1479,10 +1538,22 @@ function showMessage(msg){
     }
 }
 
-loadLocale();
+function search(word){
+  if(navigator.userAgent.toLowerCase().match(/android/)){
+      var result = Android.search(word);
+      
+      return result;
+  } else {
+      return word;        
+  }
+}
+
+// loadLocale();
 
 if (!html5_storage_support) {
     showMessage("This Might Be a Good Time to Upgrade Your Browser or Turn On Javascript");
 } else {
+    Android.setPref("locale", "ny");
+        
     checkLogin();
 }

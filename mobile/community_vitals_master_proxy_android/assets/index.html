@@ -64,11 +64,12 @@
             function loadApplicationMenu(){
               __$("container").innerHTML = "";
               
-              var fields = ["Add Person", "Update Person Relationships", "Update Outcome", "Messages"];
+              var fields = [search("Add Person"), search("Update Person Relationships"), 
+                  search("Update Outcome"), search("Search Person")];
               
-              var images = ["add_person.png", "update_person_relationships.png", "update_outcome.png", "messages.png"];
+              var images = ["add_person.png", "update_person_relationships.png", "update_outcome.png", "default.png"];
               
-              var paths = ["add_person.html", "relationships.html", "update_outcome.html", "messages.html"];
+              var paths = ["add_person.html", "relationships.html", "update_outcome.html", "search.html"];
               
               for(var i = 0; i < fields.length; i++){
                 
@@ -106,7 +107,7 @@
             function loadReportsMenu(){
               __$("container").innerHTML = "";
               
-              var fields = ["Parameter Review", "Report", "View Results"];
+              var fields = [search("Parameter Review"), search("Report"), search("View Results")];
               
               var images = [
                   "default.png",              
@@ -151,7 +152,7 @@
             function loadActivitiesMenu(){
               __$("container").innerHTML = "";
               
-              var fields = ["Keyboard", "Define Controls"];
+              var fields = [search("Keyboard"), search("Define Controls")];
               
               var images = [
                   "default.png",              
@@ -195,7 +196,7 @@
             function loadAdministrationMenu(){
               __$("container").innerHTML = "";
               
-              var fields = ["Setup", "Settings", "Users"];
+              var fields = [search("Setup"), search("Settings"), search("Users")];
               
               var images = [
                   "default.png",              
@@ -259,6 +260,18 @@
 					        doLogout();				 
 					      });
 					
+					      var app = search("Application");
+					      var reports = search("Reports");
+					      var my_activities = search("My Activities");
+					      var admin = search("Administration");
+					      var reg = search("Village Register");
+					      
+					      __$("application").innerHTML = app;
+					      __$("reports").innerHTML = reports;
+					      __$("my_activities").innerHTML = my_activities;
+					      __$("administration").innerHTML = admin;
+					      __$("reg").innerHTML = reg;
+					
 					  }
       //-->
     </script>
@@ -306,7 +319,7 @@
     
     <div id="nav" style="width: 100%; height: 90px; 
         left: 0px; position: absolute; bottom: 0px;">
-      <div style="float: left; margin-left: 0px; font-size: 42px; padding: 30px; color: #666; min-width: 50%; 
+      <div id="reg" style="float: left; margin-left: 0px; font-size: 42px; padding: 30px; color: #666; min-width: 50%; 
           margin-top: -15px; background-image: -moz-linear-gradient(center right , #FFFFFF, #89b4ef);">
         Village Register
       </div>
