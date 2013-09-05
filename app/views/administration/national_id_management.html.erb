@@ -22,13 +22,27 @@
       <td>Category</td> <td>Count</td>
     </tr>
     <tr>
-      <td>Assigned Id's</td> <td style=" width:40% "><div class="button"><%= @counts['all'] %></div></td>
+      <td>Assigned Id's</td>
+      <td style=" width:40% ">
+        <div class="button" onclick="window.location='id_drill_down?type=Assigned&title=IDs That Have Been Assigned To Facility'">
+          <%= @counts['all'] %>
+        </div></td>
     </tr>
     <tr>
-      <td>Available Id's</td> <td ><div class="button"><%= @counts['available'] %></div></td>
+      <td>Available Id's</td>
+      <td >
+        <div class="button" onclick="window.location='id_drill_down?type=Available&title=IDs That Have Not Been Assigned To People'">
+          <%= @counts['available'] %>
+        </div>
+      </td>
     </tr>
     <tr>
-      <td>Used Id's</td> <td> <div class="button"><%= @counts['used'] %></div></td>
+      <td>Used Id's</td>
+      <td>
+        <div class="button" onclick="window.location='id_drill_down?type=Used&title=IDs That Have Been Assigned To People'">
+          <%= @counts['used'] %>
+        </div>
+      </td>
     </tr>
   </table>
 

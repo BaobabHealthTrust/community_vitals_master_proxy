@@ -244,7 +244,7 @@
         function loadActivitiesMenu(){
           __$("container").innerHTML = "";
           
-          var fields = ["Keyboard", "Define Controls", "Manage Ids"];
+          var fields = ["Keyboard", "Define Controls", "Manage Ids","Change Language"];
           
           var images = [
               "<%= (File.exists?("#{Rails.root}/public/images/keyboard.png") ? 
@@ -252,10 +252,12 @@
               "<%= (File.exists?("#{Rails.root}/public/images/definecontrols.png") ? 
                   "definecontrols.png" : "default.png") %>",
               "<%= (File.exists?("#{Rails.root}/public/images/manageids.png") ?
-                  "definecontrols.png" : "default.png") %>"
+                  "definecontrols.png" : "default.png") %>",
+              "<%= (File.exists?("#{Rails.root}/public/images/language.png") ?
+                  "language.png" : "default.png") %>"
           ];
           
-          var paths = ["", "", "administration/national_id_management"];
+          var paths = ["", "", "administration/national_id_management","administration/change_language"];
           
           for(var i = 0; i < fields.length; i++){
             
