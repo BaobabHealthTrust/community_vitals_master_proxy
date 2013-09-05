@@ -1,0 +1,13 @@
+<script type="text/javascript">
+    var tt_cancel_destination = "/";
+</script>
+
+<form id='demographics' action="post_demographics_acknowledgement" method="post">
+
+  <%= select_tag 'demographics', options_for_select( @options ),
+                 {:helpText => "Select Demographics To Acknowledge",
+                  :optional => false,
+                  :multiple => true,
+                  :tt_pageStyleClass => "NoKeyboard NoInput small"} %>
+
+</form>

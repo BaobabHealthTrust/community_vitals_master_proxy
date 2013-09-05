@@ -255,10 +255,21 @@
                   "definecontrols.png" : "default.png") %>",
               "<%= (File.exists?("#{Rails.root}/public/images/language.png") ?
                   "language.png" : "default.png") %>"
+
           ];
           
           var paths = ["", "", "administration/national_id_management","administration/change_language"];
-          
+
+        <% if @mode == "vh" %>
+              fields.push("Acknowledge Received ID's");
+              images.push("<%= (File.exists?("#{Rails.root}/public/images/receiveids.png") ? "receiveids.png" : "default.png") %>");
+              paths.push("administration/acknowledge_received_ids");
+        <% elsif @mode == "gvh" %>
+            fields.push("Acknowledge Received ID's", "Acknowledge Received Demographics");
+            images.push("<%= (File.exists?("#{Rails.root}/public/images/receiveids.png") ? "receiveids.png" : "default.png") %>",
+                    "<%= (File.exists?("#{Rails.root}/public/images/receivedemo.png") ? "recievedemo.png" : "default.png") %>");
+            paths.push("administration/acknowledge_received_ids","administration/acknowledge_received_demographics");
+        <% end %>
           for(var i = 0; i < fields.length; i++){
             
             var div = document.createElement("div");
