@@ -1,3 +1,11 @@
+<script type="text/javascript">
+    <!--
+    function send_to(data, title){
+        window.location = "outcomes_drill_down?data=" + data + "&title=" +title;
+    }
+    //-->
+</script>
+
 <style type="text/css">
     tr.heading{
         height: 45px;
@@ -19,6 +27,7 @@
     }
     td.count{
         text-align: center;
+        cursor: pointer;
     }
 </style>
 
@@ -54,14 +63,33 @@
         <td style="width: 50%;">&nbsp</td><td style="text-align: center">Month Total</td><td style="text-align: center">Cumulative Total</td>
     </tr>
     <tr><td>&nbsp;</td></tr>
-    <tr class="indicator"><td>Total Population</td><td style="text-align: center"><%= @month_summary['count'] %></td>
-      <td style="text-align: center"><%= @cumulative_summary['count'] %></td></tr>
-    <tr class="indicators"><td>Alive</td><td style="text-align: center"><%= @month_summary['outcomes']['Alive'] %></td>
-      <td style="text-align: center"><%= @cumulative_summary['outcomes']['Alive'] %></td></tr>
-    <tr class="indicator"><td>Dead</td><td style="text-align: center"><%= @month_summary['outcomes']['Dead'] %></td>
-      <td style="text-align: center"><%= @cumulative_summary['outcomes']['Dead'] %></td></tr>
-    <tr class="indicators"><td>Transferred Out</td><td style="text-align: center"><%= @month_summary['outcomes']['Transferred'] %></td>
-      <td style="text-align: center"><%= @cumulative_summary['outcomes']['Transferred'] %></td></tr>
+    <tr class="indicator"><td>Total Population</td>
+      <td class="count"><%= @month_summary['count'] %></td>
+      <td class="count"><%= @cumulative_summary['count'] %></td>
+    </tr>
+    <tr class="indicators">
+      <td>Alive</td>
+      <td class="count" onclick="send_to(<%= @month_summary['outcomes_id']['Alive'].to_json %>,'Registered People Who Are Still Alive')"><%= @month_summary['outcomes']['Alive'] %></td>
+      <td class="count" onclick="send_to(<%= @cumulative_summary['outcomes_id']['Alive'].to_json %>,'Registered People Who Are Still Alive')">
+        <%= @cumulative_summary['outcomes']['Alive'] %>
+      </td>
+    </tr>
+    <tr class="indicator">
+      <td>Dead</td>
+      <td class="count" onclick="send_to(<%= @month_summary['outcomes_id']['Dead'].to_json %>,'Registered People Who Are Died This Month')">
+        <%= @month_summary['outcomes']['Dead'] %></td>
+      <td class="count" onclick="send_to(<%= @cumulative_summary['outcomes_id']['Dead'].to_json %>,'Registered People Who Died')">
+        <%= @cumulative_summary['outcomes']['Dead'] %>
+      </td>
+    </tr>
+    <tr class="indicators">
+      <td>Transferred Out</td>
+      <td class="count" onclick="send_to(<%= @month_summary['outcomes_id']['Transferred'].to_json %>,'Registered People Who Are Transferred Out This Month')">
+        <%= @month_summary['outcomes']['Transferred'] %></td>
+      <td class="count" onclick="send_to(<%= @cumulative_summary['outcomes_id']['Transferred'].to_json %>,'Registered People Who Are Transferred Out')">
+        <%= @cumulative_summary['outcomes']['Transferred'] %>
+      </td>
+    </tr>
 
   </table>
 </div>

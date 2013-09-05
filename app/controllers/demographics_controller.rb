@@ -97,16 +97,23 @@ class DemographicsController < ApplicationController
     @gvh = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["gvh"] rescue nil
     @ta = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["ta"] rescue nil
     nat_ids = NationalIdentifier.find(:all, :conditions => ["MONTH(assigned_at) <= ? AND YEAR(assigned_at) <= ?", date.month, date.year])
-    month_nat_ids = NationalIdentifier.find(:all, :conditions => ["MONTH(assigned_at) = ? AND YEAR(assigned_at) = ?", date.month, date.year])
+    month_nat_ids = NationalIdentifier.find(:all,
+                                            :joins => "INNER JOIN people ON person_id = people.id",
+                                            :conditions => ["person_id IS NOT NULL AND outcome_date IS NULL AND DATE(assigned_at) <= ?", date.end_of_month ])
     @month_summary ={}
     @cumulative_summary = {}
-    @month_summary['count'] = month_nat_ids.length
-    @month_summary['outcomes'] = outcome_sorter(Outcome.find(:all,
+    @month_summary['count'] = ""
+    @month_summary['outcomes_id'],@month_summary['outcomes'] = outcome_sorter(Outcome.find(:all,
                                                              :conditions => ["MONTH(outcome_date) = ? AND YEAR(outcome_date) = ?",
-                                                                             date.month, date.year]).map{|x| x.name})
+                                                                             date.month, date.year]))
+    (month_nat_ids || []).each do |r|
+      if r.person.outcome_date.blank?
+        @month_summary['outcomes_id']['Alive'] << r.id
+        @month_summary['outcomes']['Alive'] += 1
+      end
+    end
     @cumulative_summary['count'] = nat_ids.length
     @cumulative_summary['outcomes_id'],@cumulative_summary['outcomes'] = outcome_sorter(nat_ids.map{|x| x.person.outcome_by_date(date.end_of_month)})
-    @month_summary['outcomes']['Alive'] = @month_summary['count'] - (@month_summary['outcomes']['Transferred'] + @month_summary['outcomes']['Dead'])
     render :layout => 'report'
   end
 
