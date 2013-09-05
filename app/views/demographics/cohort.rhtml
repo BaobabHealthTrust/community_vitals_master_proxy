@@ -3,7 +3,10 @@
   function load(){
       document.getElementById('graphs').style.display='none';
   }
-  setTimeout('load();',10)
+  function send_to(data, title){
+      window.location = "outcomes_drill_down?data=" + data + "&title=" +title;
+  }
+  //setTimeout('load();',10)
  //-->
 </script>
 

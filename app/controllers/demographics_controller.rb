@@ -4,9 +4,9 @@ class DemographicsController < ApplicationController
      day = params[:start_date].to_date
     new_nat_ids = NationalIdentifier.find(:all, :conditions => ["DATE(assigned_at) = ?", day])
     @today_count = new_nat_ids.length
-    @today_gender_count = gender_counter(new_nat_ids.map{|x| x.person})
-    @today_ages = age_categorizer(new_nat_ids.map{|x| x.person})
-    @today_outcomes = outcome_sorter(Outcome.find(:all, :conditions => ["DATE(outcome_date) = ?", day]))
+    @today_gender_count,@today_gender_count_id = gender_counter(new_nat_ids.map{|x| x.person})
+    @today_ages,@today_ages_ids = age_categorizer(new_nat_ids.map{|x| x.person})
+    @today_outcomes_id,@today_outcomes = outcome_sorter(Outcome.find(:all, :conditions => ["DATE(outcome_date) = ?", day]))
     @cumulative = cumulative_summarizer(day)
     @village = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["village"] rescue nil
     @gvh = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["gvh"] rescue nil
@@ -18,6 +18,9 @@ class DemographicsController < ApplicationController
   end
 
   def gvh_statistics
+    @ta = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["ta"] rescue nil
+    @gvh = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["gvh"] rescue nil
+    @cumulative = cumulative_summarizer(Date.today.to_date)
     render :layout => 'report'
   end
 
@@ -27,7 +30,7 @@ class DemographicsController < ApplicationController
     @mode = YAML.load_file("#{Rails.root}/config/application.yml")['dde_mode'] rescue 'vh'
     @gvh = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["gvh"] rescue nil
     @ta = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["ta"] rescue nil
-    @outcomes = specific_outcome_sorter(NationalIdentifier.find(:all,:conditions => ['person_id IS NOT NULL']),date.end_of_month,'assigned_vh')
+    @outcomes, @ids = specific_outcome_sorter(NationalIdentifier.find(:all,:conditions => ['person_id IS NOT NULL']),date.end_of_month,'assigned_vh')
     render :layout => 'report'
   end
 
@@ -65,9 +68,9 @@ class DemographicsController < ApplicationController
     @start_date,@end_date = cohort_date_range(params[:quarter])
     nat_ids = NationalIdentifier.find(:all, :conditions => ["DATE(assigned_at) >= ? AND DATE(assigned_at) <= ?", @start_date,@end_date])
     cumulative = cumulative_summarizer(@end_date)
-    cohort_gender_count = gender_counter(nat_ids.map{|x| x.person})
-    cohort_ages = age_categorizer(nat_ids.map{|x| x.person})
-    cohort_outcomes = outcome_sorter(nat_ids.map{|x| x.person.outcome_by_date(@end_date)})
+    cohort_gender_count,cohort_gender_count_ids = gender_counter(nat_ids.map{|x| x.person})
+    cohort_ages,cohort_ages_ids = age_categorizer(nat_ids.map{|x| x.person})
+    cohort_outcomes_id, cohort_outcomes = outcome_sorter(nat_ids.map{|x| x.person.outcome_by_date(@end_date)})
     @keys = ['Registration Details','Registered People By Age','Registered People By Outcome']
     @report = {}
     @report['Registration Details'] = [['Registered People', nat_ids.length, cumulative['count']],
@@ -80,9 +83,9 @@ class DemographicsController < ApplicationController
                                             ['22-59', cohort_ages['adults'], cumulative['ages']['adults']],
                                             ['60 and above', cohort_ages['grannies'], cumulative['ages']['grannies']]]
 
-    @report['Registered People By Outcome'] = [ ['Alive', cohort_outcomes['Alive'], cumulative['outcomes']['Alive']],
-                                                ['Died', cohort_outcomes['Dead'], cumulative['outcomes']['Dead']],
-                                                ['Transferred', cohort_outcomes['Transferred'], cumulative['outcomes']['Transferred']]
+    @report['Registered People By Outcome'] = [ ['Alive', cohort_outcomes['Alive'], cumulative['outcomes']['Alive'],cohort_outcomes_id['Alive'],cumulative['outcomes_id']['Alive']],
+                                                ['Died', cohort_outcomes['Dead'], cumulative['outcomes']['Dead'],cohort_outcomes_id['Dead'],cumulative['outcomes_id']['Dead']],
+                                                ['Transferred', cohort_outcomes['Transferred'], cumulative['outcomes']['Transferred'],cohort_outcomes_id['Transferred'],cumulative['outcomes_id']['Transferred']]
                                               ]
     render :layout => 'report'
   end
@@ -102,7 +105,7 @@ class DemographicsController < ApplicationController
                                                              :conditions => ["MONTH(outcome_date) = ? AND YEAR(outcome_date) = ?",
                                                                              date.month, date.year]).map{|x| x.name})
     @cumulative_summary['count'] = nat_ids.length
-    @cumulative_summary['outcomes'] = outcome_sorter(nat_ids.map{|x| x.person.outcome_by_date(date.end_of_month)})
+    @cumulative_summary['outcomes_id'],@cumulative_summary['outcomes'] = outcome_sorter(nat_ids.map{|x| x.person.outcome_by_date(date.end_of_month)})
     @month_summary['outcomes']['Alive'] = @month_summary['count'] - (@month_summary['outcomes']['Transferred'] + @month_summary['outcomes']['Dead'])
     render :layout => 'report'
   end
@@ -120,11 +123,11 @@ class DemographicsController < ApplicationController
     @cumulative_summary = {}
     @cumulative_summary['count'] = people.length
     @month_summary['count'] = new_borns.length
-    @month_summary['gender_count']  = gender_counter(new_borns.map{|x| x})
-    @month_summary['outcomes'] = outcome_sorter(new_borns.map{|x| x.outcome_by_date(date.end_of_month)})
+    @month_summary['gender_count'],@month_summary['gender_count_id']  = gender_counter(new_borns.map{|x| x})
+    @month_summary['outcomes_id'],@month_summary['outcomes'] = outcome_sorter(new_borns.map{|x| x.outcome_by_date(date.end_of_month)})
     @month_summary['outcomes']['Alive'] = @month_summary['count'] - (@month_summary['outcomes']['Transferred'] + @month_summary['outcomes']['Dead'])
-    @cumulative_summary['outcomes'] = outcome_sorter(people.map{|x| x.person.outcome_by_date(date.end_of_month)})
-    @cumulative_summary['gender_count']  = gender_counter(people.map{|x| x.person})
+    @cumulative_summary['outcomes_id'],@cumulative_summary['outcomes'] = outcome_sorter(people.map{|x| x.person.outcome_by_date(date.end_of_month)})
+    @cumulative_summary['gender_count'],@cumulative_summary['gender_count_id']  = gender_counter(people.map{|x| x.person})
     render :layout => 'report'
   end
 
@@ -146,7 +149,7 @@ class DemographicsController < ApplicationController
     @mode = YAML.load_file("#{Rails.root}/config/application.yml")['dde_mode'] rescue 'vh'
     @gvh = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["gvh"] rescue nil
     @ta = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["ta"] rescue nil
-    @outcomes = specific_outcome_sorter(NationalIdentifier.find(:all,:conditions => ['person_id IS NOT NULL']),date.end_of_month,'assigned_gvh')
+    @outcomes,@ids = specific_outcome_sorter(NationalIdentifier.find(:all,:conditions => ['person_id IS NOT NULL']),date.end_of_month,'assigned_gvh')
     render :layout => 'report'
   end
 
@@ -185,81 +188,180 @@ class DemographicsController < ApplicationController
   def ta_post_demographics
   end
 
+  def people_drill_down
+
+    @title = params[:title]
+    @data = params[:data]
+    @keys = params[:keys]
+
+    render :layout => 'report'
+  end
+
+  def outcomes_drill_down
+
+    ids = NationalIdentifier.find(:all ,:conditions =>["id in (?)", params[:data].split(',')])  rescue []
+    data = []
+    (ids || []).each do |id|
+       data << {
+           'National ID' => id.identifier,
+           'First Name' => id.person.given_name,
+           'Last Name' => id.person.family_name,
+           'Date of Birth' => id.person.birthdate,
+           'Outcome Date' => id.person.outcome_date
+       }
+    end
+    keys = ['National ID', 'First Name', 'Last Name','Date of Birth','Outcome Date']
+
+    redirect_to :action => "people_drill_down", :title => params[:title], :keys => keys, :data => data
+  end
+
+  def outcome_drill_down
+
+    outcomes = Outcome.find(:all ,:conditions =>["id in (?)", params[:data].split(',')])  rescue []
+    data = []
+    (outcomes || []).each do |outcome|
+      data << {
+          'National ID' => outcome.person.identifier.identifier,
+          'First Name' => outcome.person.given_name,
+          'Last Name' => outcome.person.family_name,
+          'Date of Birth' => outcome.person.birthdate
+      }
+    end
+    keys = ['National ID', 'First Name', 'Last Name','Date of Birth']
+
+    redirect_to :action => "people_drill_down", :title => params[:title], :keys => keys, :data => data
+  end
+  def age_drill_down
+    person = Person.find(:all ,:conditions =>["id in (?)", params[:data].split(',')])
+    data = []
+    (person || []).each do |person|
+      data << {
+          'National ID' => person.identifier.identifier,
+          'First Name' =>person.given_name,
+          'Last Name' => person.family_name,
+          'Date of Birth' => person.birthdate
+      }
+    end
+    keys = ['National ID', 'First Name', 'Last Name','Date of Birth']
+
+    redirect_to :action => "people_drill_down", :title => params[:title], :keys => keys, :data => data
+
+  end
+
+  def gender_drill_down
+
+    person = Person.find(:all ,:conditions =>["id in (?)", params[:data].split(',')])
+    data = []
+    (person || []).each do |person|
+      data << {
+          'National ID' => person.identifier.identifier,
+          'First Name' =>person.given_name,
+          'Last Name' => person.family_name,
+          'Date of Birth' => person.birthdate
+      }
+    end
+    keys = ['National ID', 'First Name', 'Last Name','Date of Birth']
+
+    redirect_to :action => "people_drill_down", :title => params[:title], :keys => keys, :data => data
+
+  end
   def cumulative_summarizer(date)
     nat_ids = NationalIdentifier.find(:all, :conditions => ["DATE(assigned_at) <= ?", date])
     cumulative_summary = {}
     cumulative_summary['count'] = nat_ids.length
-    cumulative_summary['gender_count'] = gender_counter(nat_ids.map{|x| x.person})
-    cumulative_summary['ages'] = age_categorizer(nat_ids.map{|x| x.person})
-    cumulative_summary['outcomes'] = outcome_sorter(nat_ids.map{|x| x.person.outcome_by_date(date)})
+    cumulative_summary['gender_count'],cumulative_summary['gender_count_id'] = gender_counter(nat_ids.map{|x| x.person})
+    cumulative_summary['ages'],cumulative_summary['ages_id'] = age_categorizer(nat_ids.map{|x| x.person})
+    cumulative_summary['outcomes_id'],cumulative_summary['outcomes'] = outcome_sorter(nat_ids.map{|x| x.person.outcome_by_date(date)})
     cumulative_summary
   end
 
   def gender_counter(people)
     genders = {'males' => 0, 'females'=> 0 }
+    genders_id = {'males' => [], 'females'=> [] }
     (people || []).each do |person|
        if person.gender == "Male"
           genders['males'] +=1
+          genders_id['males'] << person.id
        else
          genders['females'] +=1
+         genders_id['females'] << person.id
        end
     end
 
-    return genders
+    return [genders,genders_id]
   end
 
   def age_categorizer(people)
     age_groups = {'children' => 0, 'youth' => 0, 'adults' => 0, 'grannies' => 0}
+    age_groups_ids = {'children' => [], 'youth' => [], 'adults' => [], 'grannies' => []}
     (people || []).each do |person|
       age = Date.today.year.to_i - person.birthdate.year.to_i
       if (age < 12)
         age_groups['children'] +=1
+        age_groups_ids['children'] << person.id
       elsif (age >= 12 && age <= 21)
         age_groups['youth'] +=1
+        age_groups_ids['youth'] << person.id
       elsif (age >= 22 && age <= 59)
         age_groups['adults'] +=1
+        age_groups_ids['adults'] << person.id
       elsif (age >= 60)
         age_groups['grannies'] +=1
+        age_groups_ids['grannies'] << person.id
       end
     end
-    age_groups
+    [age_groups, age_groups_ids]
   end
 
   def outcome_sorter(outcomes)
 
     outcome = {"Alive" => 0, "Transferred" => 0, "Dead" => 0}
+    outcome_id = {"Alive" => [], "Transferred" => [], "Dead" => []}
+    (outcomes || []).each do |outcome_type|
 
-    (outcomes || []).each do |x|
-      if x == 'Dead'
-        outcome['Dead'] += 1
-      elsif x == 'Transfer Out'
-        outcome['Transferred'] += 1
-      else
+      if outcome_type.blank?
         outcome['Alive'] += 1
+      else
+        if outcome_type.name == 'Dead'
+          outcome['Dead'] += 1
+          outcome_id['Dead'] << outcome_type.id
+        elsif outcome_type.name == 'Transfer Out'
+          outcome['Transferred'] += 1
+          outcome_id['Transferred'] << outcome_type.id
+        else
+          outcome['Alive'] += 1
+          outcome_id['Alive'] << outcome_type.id
+        end
       end
     end
-    outcome
+    [outcome_id,outcome]
   end
 
   def specific_outcome_sorter(ids, end_date, mode)
 
     collection = {}
+    collection_ids = {}
 
     (ids || []).each do |x|
-      outcome = x.person.outcome_by_date(end_date)
+      outcome = x.person.outcome_by_date(end_date).name rescue 'Alive'
       if collection[x[mode]].blank?
         collection[x[mode]] =  {"Alive" => 0, "Transferred" => 0, "Dead" => 0, "Total" => 0}
+        collection_ids[x[mode]] =  {"Alive" => [], "Transferred" => [], "Dead" => [], "Total" => []}
       end
       if outcome == 'Dead'
         collection[x[mode]]['Dead'] += 1
+        collection_ids[x[mode]]['Dead'] << x.id
       elsif outcome == 'Transfer Out'
         collection[x[mode]]['Transferred'] += 1
+        collection_ids[x[mode]]['Transferred'] << x.id
       else
         collection[x[mode]]['Alive'] += 1
+        collection_ids[x[mode]]['Alive'] << x.id
       end
       collection[x[mode]]["Total"] += 1
+      collection_ids[x[mode]]["Total"] << x.id
     end
-    collection
+    [collection, collection_ids]
   end
 
   def cohort_date_range(quarter)

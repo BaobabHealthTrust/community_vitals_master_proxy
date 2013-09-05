@@ -1,3 +1,10 @@
+<script type="text/javascript">
+    <!--
+    function send_to(data, title){
+        window.location = "outcomes_drill_down?data=" + data + "&title=" +title;
+    }
+    //-->
+</script>
 <style type="text/css">
     tr.heading{
         height: 45px;
@@ -19,6 +26,7 @@
     }
     td.count{
         text-align: center;
+        cursor: pointer;
     }
 </style>
 
@@ -46,8 +54,10 @@
     </tr>
     <% @outcomes.each do |key, values|  %>
         <tr class="<%= cycle('indicator', 'indicators') %>" >
-          <td><%= key %></td><td class="count"><%= values['Alive']%></td> <td class="count"><%= values['Dead']%></td>
-          <td class="count"><%= values['Transferred']%></td><td class="count"><%= values['Total']%></td>
+          <td><%= key %></td><td onclick="send_to(<%=@ids[key]['Alive'].to_json %>, 'Registered People Who Are Alive')" class="count"><%= values['Alive']%></td>
+          <td onclick="send_to(<%=@ids[key]['Dead'].to_json %>, 'Registered People Who Died')" class="count"><%= values['Dead']%></td>
+          <td onclick="send_to(<%=@ids[key]['Transferred'].to_json %>, 'Registered People Who Transferred Out')" class="count"><%= values['Transferred']%></td>
+          <td onclick="send_to(<%=@ids[key]['Total'].to_json %>, 'All Registered People')" class="count"><%= values['Total']%></td>
         </tr>
     <% end %>
   </table>

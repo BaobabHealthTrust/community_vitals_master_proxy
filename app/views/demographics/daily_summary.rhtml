@@ -1,3 +1,22 @@
+<script type="text/javascript">
+    <!--
+    function send_to(data, title, type){
+        if (type == 'age')
+        {
+            window.location = "age_drill_down?data=" + data + "&title=" +title;
+        }
+        else if (type == 'gender')
+        {
+            window.location = "gender_drill_down?data=" + data + "&title=" +title;
+        }
+        else
+        {
+            window.location = "outcome_drill_down?data=" + data + "&title=" +title;
+        }
+
+    }
+    //-->
+</script>
 <style type="text/css">
     tr.heading{
         background-color: silver;
@@ -20,6 +39,7 @@
     }
     td.count{
         text-align: center;
+        cursor: pointer;
     }
 </style>
 
@@ -74,42 +94,78 @@
     </tr>
     <tr>
       <td style="width:60%" >Females</td>
-      <td style="width:20%" class="count"><%= @today_gender_count['females'] rescue 0 %></td>
-      <td class="count"><%= @cumulative['gender_count']['females'] %></td>
+      <td style="width:20%" class="count" onclick=" send_to(<%=@today_gender_count_id['females'].to_json %>,'Females Registered Today', 'gender' )">
+        <%= @today_gender_count['females'] rescue 0 %>
+      </td>
+      <td class="count" onclick=" send_to(<%=@cumulative['gender_count_id']['females'].to_json %>,'Total Registered Females', 'gender' )">
+        <%= @cumulative['gender_count']['females'] %>
+      </td>
     </tr>
     <tr>
-      <td>Males</td><td class="count"><%= @today_gender_count['males'] rescue 0 %></td>
-      <td class="count"><%= @cumulative['gender_count']['males']  %></td>
+      <td>Males</td>
+      <td class="count" onclick="send_to(<%=@today_gender_count_id['males'].to_json %>,'Males Registered Today', 'gender' )">
+        <%= @today_gender_count['males'] rescue 0 %>
+      </td>
+      <td class="count" onclick=" send_to(<%=@cumulative['gender_count_id']['males'].to_json %>,'Total Registered Males', 'gender' )">
+        <%= @cumulative['gender_count']['males']%>
+      </td>
     </tr>
     <tr class="headings" >
       <td colspan="3">Total Population By Age</td>
     </tr>
     <tr>
-      <td>Number of Children( < 12 Years)</td><td class="count"><%= @today_ages['children'] %></td>
-      <td class="count"><%= @cumulative['ages']['children'] %></td>
+      <td>Number of Children( < 12 Years)
+      </td>
+      <td class="count" onclick="send_to(<%=@today_ages_ids['children'].to_json %>,'People Less Than 12 Years old Registered Today', 'age' )">
+        <%= @today_ages['children'] %>
+      </td>
+      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['children'].to_json %>,'Registered People Less Than 12 Years old', 'age' )">
+            <%= @cumulative['ages']['children'] %>
+      </td>
     </tr>
     <tr>
-      <td>Youth Population (12-21 Years)</td><td class="count"><%= @today_ages['youth'] %></td>
-      <td class="count"><%= @cumulative['ages']['youth'] %></td>
+      <td>Youth Population (12-21 Years)</td>
+      <td class="count" onclick="send_to(<%=@today_ages_ids['youth'].to_json %>,'People Between 12 And 21 Years Registered Today', 'age' )">
+        <%= @today_ages['youth'] %>
+      </td>
+      <td class="count" onclick=" send_to(<%= @cumulative['ages_id']['youth'].to_json %>,'Registered People Between 12 And 21 Years', 'age' )">
+        <%= @cumulative['ages']['youth'] %>
+      </td>
     </tr>
     <tr>
-      <td>Working Population (21-59 Years)</td><td class="count"><%= @today_ages['adults'] %></td>
-      <td class="count"><%= @cumulative['ages']['adults'] %></td>
+      <td>Working Population (21-59 Years)</td>
+      <td class="count" onclick="send_to(<%=@today_ages_ids['adults'].to_json %>,'People Between 21 And 59 Years Registered Today', 'age' )">
+        <%= @today_ages['adults'] %>
+      </td>
+      <td class="count" onclick="send_to(<%= @cumulative['ages_id']['adults'].to_json %>,'Registered People Between 21 And 59 Years', 'age' )">
+        <%= @cumulative['ages']['adults'] %>
+      </td>
     </tr>
     <tr>
-      <td>Older Population (>= 60 years)</td><td class="count"><%= @today_ages['grannies'] %></td>
-      <td class="count"><%= @cumulative['ages']['grannies'] %></td>
+      <td>Older Population (>= 60 years)</td>
+      <td class="count" onclick="send_to(<%=@today_ages_ids['grannies'].to_json %>,'People Older Than 59 Years Registered Today', 'age' )">
+        <%= @today_ages['grannies'] %>
+      </td>
+      <td class="count" onclick=" send_to(<%=@cumulative['ages_id']['grannies'].to_json %>,'Registered People Older Than 59 Years', 'age' )">
+        <%= @cumulative['ages']['grannies'] %>
+      </td>
     </tr>
     <tr class="headings">
       <td colspan="3">Total Population By Outcome</td>
     </tr>
     <tr>
-      <td>Transferred Out</td><td class="count"><%= @today_outcomes['Transferred'] %></td>
-      <td class="count"><%= @cumulative['outcomes']['Transferred'] %></td>
+      <td>Transferred Out</td>
+      <td class="count" onclick="send_to(<%= @today_outcomes_id['Transferred'].to_json%>,'People Who Were Transferred Today','Outcomes')">
+        <%= @today_outcomes['Transferred'] %>
+      </td>
+      <td class="count" onclick="send_to(<%= @cumulative['outcomes_id']['Transferred'].to_json %>,'People Who Were Transferred','Outcomes')">
+              <%= @cumulative['outcomes']['Transferred'] %>
+              </td>
     </tr>
     <tr>
-      <td>Dead</td><td class="count"><%= @today_outcomes['Dead'] %></td>
-      <td class="count"><%= @cumulative['outcomes']['Dead'] %></td>
+      <td>Dead</td>
+      <td onclick="send_to( <%= @today_outcomes_id['Dead'].to_json %>,'People Who Died Today','Outcomes')" class="count"><%= @today_outcomes['Dead'] %></td>
+      <td onclick="send_to(<%= @cumulative['outcomes_id']['Dead'].to_json%>,'People Who Died','Outcomes')" class="count"><%= @cumulative['outcomes']['Dead'] %></td>
     </tr>
   </table>
 
