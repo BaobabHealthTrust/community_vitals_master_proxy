@@ -1,0 +1,69 @@
+<script type="text/javascript">
+ <!--
+  function load(){
+      document.getElementById('graphs').style.display='none';
+  }
+  function send_to(data, title){
+      window.location = "outcomes_drill_down?data=" + data + "&title=" +title;
+  }
+  //setTimeout('load();',10)
+ //-->
+</script>
+
+<style type="text/css">
+    .navButton {
+        min-width: 150px;
+    }
+    div{
+      -moz-user-select:none;
+    }
+    td{
+      border: 0.01em solid #808080;
+    }
+    td.heading{
+      font-size:18px;
+      font-weight: bold;
+      text-align: center;
+      color: #6281A7;
+    }
+    td.headings{
+        font-weight: bold;
+    }
+    td.value{
+        text-align: center;
+        cursor: pointer;
+    }
+</style>
+
+
+<div style="height: 664px; overflow: auto;">
+  <div style="height: 60px; border: solid 1px #6281A7;
+          font-size: 2em; color: #fff; padding-top: 20px;
+          background-color: #6281A7; text-align: center; vertical-align: middle;">
+    Cohort Report for <%= params[:quarter]%> (<%= @start_date.strftime('%d %B, %Y') %> TO <%= @end_date.strftime('%d %B, %Y')%>)
+  </div>
+  <div style="height: 580px; overflow: auto; border: solid 1px #6281A7;">
+    <table width="100%" border="0" cellpadding="10">
+
+      <tr >
+        <td class="heading">&nbsp;</td>
+        <td class="heading" style="width: 30%">Newly Registered In Quarter</td>
+        <td class="heading" style="width: 30%">Cumulative Ever Registered</td>
+      </tr>
+      <tr><td class="heading">Category</td><td></td><td></td></tr>
+      <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <% (@keys || {}).each do |key| %>
+        <tr>
+          <td class="headings"><%= key %></td><td>&nbsp;</td><td>&nbsp;</td>
+          <% @report[key].each do |title| %>
+            <tr>
+              <td><%= title[0] %></td><td class="value"><%= title[1] %></td><td class="value"><%= title[2] %></td>
+            </tr>
+          <% end %>
+          <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+        </tr>
+
+      <% end %>
+    </table>
+  </div>
+</div>

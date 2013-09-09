@@ -1,0 +1,13 @@
+<script type="text/javascript">
+    var tt_cancel_destination = "/";
+</script>
+
+<form id='ids' action="post_ids_acknowledgement" method="post">
+
+  <%= select_tag 'ids', options_for_select( @options),
+                 {:helpText => "Select IDs To Acknowledge",
+                  :optional => false,
+                  :multiple => true,
+                  :tt_pageStyleClass => "NoKeyboard NoInput small"} %>
+  <%= hidden_field_tag "mode", @mode %>
+</form>

@@ -1,2 +1,142 @@
-<h1>Demographics#village_statistics</h1>
-<p>Find me in app/views/demographics/village_statistics.html.erb</p>
+<script type="text/javascript">
+    <!--
+    function send_to(data, title, type){
+        if (type == 'age')
+        {
+            window.location = "age_drill_down?data=" + data + "&title=" +title;
+        }
+        else if (type == 'gender')
+        {
+            window.location = "gender_drill_down?data=" + data + "&title=" +title;
+        }
+        else
+        {
+            window.location = "outcome_drill_down?data=" + data + "&title=" +title;
+        }
+
+    }
+    //-->
+</script>
+<style type="text/css">
+  tr.heading{
+      background-color: silver;
+      height: 45px;
+      font-size: 25px;
+  }
+  tr{
+      height: 40px;
+      font-size: 22px;
+  }
+  td{
+      padding-left: 20px;
+  }
+  td.count{
+      text-align: center;
+      cursor: pointer;
+  }
+</style>
+
+<div style="width: 100%; border:solid black; border-width: 0px 0px 1px 0px;">
+  <table style="width: 100%">
+    <tr>
+      <td style="width: 130px;text-align: center" rowspan="4">
+        <img src="/images/baobab.png" style="height: 100px;width:100px;">
+      </td>
+      <td style="vertical-align: top; font-size: 25px; font-weight: bold;">Village Summary</td>
+      <td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td style="font-size: 18px; font-weight: bold;width: 250px;">Traditional Authority</td><td style="width:5px;">:</td><td><%= @ta %></td>
+    </tr>
+    <tr>
+      <td style="font-size: 18px; font-weight: bold;">Group Village Headman</td><td>:</td><td><%= @gvh%></td>
+    </tr>
+    <tr>
+      <td style="font-size: 18px; font-weight: bold;">Village Headman</td><td>:</td><td><%= @village%></td>
+    </tr>
+  </table>
+
+</div>
+<div style=" height: 150px; border:solid black; border-width: 0px 0px 1px 0px;" >
+  <table style="width: 100%">
+    <tr class="heading" >
+      <td colspan="2" style="text-align: center">General Population Statistics</td>
+    </tr>
+    <tr>
+      <td>Total Population</td>
+      <td style="text-align: center"><%= @cumulative['count'] %></td>
+    </tr>
+
+  </table>
+</div>
+
+<div style=" height: 350px; overflow: auto;" >
+
+  <table style="width: 100%">
+    <tr class="heading" >
+       <td colspan="2" style="text-align: center">Total Population by Gender</td>
+    </tr>
+    <tr>
+       <td>Females</td>
+      <td class="count" onclick=" send_to(<%=@cumulative['gender_count_id']['females'].to_json %>,'Total Registered Females', 'gender' )">
+        <%= @cumulative['gender_count']['females'] %>
+      </td>
+    </tr>
+    <tr>
+      <td>Males</td>
+      <td class="count" onclick=" send_to(<%=@cumulative['gender_count_id']['males'].to_json %>,'Total Registered Males', 'gender' )">
+        <%= @cumulative['gender_count']['males'] %>
+      </td>
+    </tr>
+    <tr class="heading" >
+      <td colspan="2" style="text-align: center">Total Population By Age</td>
+    </tr>
+    <tr>
+      <td>Number of Children( < 12 Years)</td>
+      <td class="count" onclick=" send_to(<%=@cumulative['ages_id']['children'].to_json %>,'Registered People Less Than 12 Years old', 'age' )">
+        <%= @cumulative['ages']['children'] %>
+      </td>
+    </tr>
+    <tr>
+      <td>Youth Population (12-21 Years)</td>
+      <td class="count" onclick=" send_to(<%= @cumulative['ages_id']['youth'].to_json %>,'Registered People Between 12 And 21 Years', 'age' )">
+        <%= @cumulative['ages']['youth'] %>
+      </td>
+    </tr>
+    <tr>
+      <td>Working Population (21-59 Years)</td>
+      <td class="count" onclick="send_to(<%= @cumulative['ages_id']['adults'].to_json %>,'Registered People Between 21 And 59 Years', 'age' )">
+        <%= @cumulative['ages']['adults'] %>
+      </td>
+    </tr>
+    <tr>
+      <td>Older Population (>= 60 years)</td>
+      <td class="count" onclick=" send_to(<%=@cumulative['ages_id']['grannies'].to_json %>,'Registered People Older Than 59 Years', 'age' )">
+        <%= @cumulative['ages']['grannies'] %>
+      </td>
+    </tr>
+    <tr class="heading" >
+      <td colspan="2" style="text-align: center">Total Population By Outcome</td>
+    </tr>
+    <tr>
+      <td>Alive</td>
+      <td class="count" onclick=" send_to(<%= @cumulative['outcomes_id']['Alive'] %>,'Registered People Who Are Still Alive', 'outcomes' )">
+        <%= @cumulative['outcomes']['Alive'] %>
+      </td>
+    </tr>
+    <tr>
+      <td>Transferred Out</td>
+      <td class="count" onclick=" send_to(<%= @cumulative['outcomes_id']['Transferred'] %>,'Registered People Who Were Transferred Out', 'outcomes' )">
+        <%= @cumulative['outcomes']['Transferred'] %>
+      </td>
+    </tr>
+    <tr>
+      <td>Dead</td>
+      <td class="count" onclick=" send_to(<%= @cumulative['outcomes_id']['Dead'] %>,'Registered People Who Died', 'outcomes' )">
+        <%= @cumulative['outcomes']['Dead'] %>
+      </td>
+    </tr>
+  </table>
+
+
+</div>

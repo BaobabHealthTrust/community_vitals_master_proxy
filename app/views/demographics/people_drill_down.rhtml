@@ -1,0 +1,58 @@
+<script type="text/javascript">
+  function load(){
+
+      document.getElementById('finishButton').setAttribute('onClick', 'window.history.go(-1)');
+  }
+  setTimeout('load();', 10)
+</script>
+<style type="text/css">
+    .navButton {
+        min-width: 150px;
+    }
+    div{
+        -moz-user-select:none;
+    }
+    td{
+        border: 0.01em solid #808080;
+    }
+    td.heading{
+        font-size:18px;
+        font-weight: bold;
+        text-align: left;
+        color: #6281A7;
+    }
+    td.headings{
+        font-weight: bold;
+    }
+    td.value{
+        text-align: center;
+        cursor: pointer;
+    }
+</style>
+
+
+<div style="height: 664px; overflow: auto;">
+  <div style="height: 60px; border: solid 1px #6281A7;
+          font-size: 2em; color: #fff; padding-top: 20px;
+          background-color: #6281A7; text-align: center; vertical-align: middle;">
+    <%= @title rescue "" %>
+  </div>
+  <div style="height: 580px; overflow: auto; border: solid 1px #6281A7;">
+    <table width="100%" border="0" cellpadding="10">
+
+      <tr >
+        <% @keys.each do |key| %>
+            <td class="heading"><%= key %></td>
+        <% end %>
+      </tr>
+      <% (@data || []).each do |row| %>
+        <tr>
+          <% @keys.each do |key| %>
+              <td ><%= row[key] %></td>
+          <% end %>
+        </tr>
+      <% end %>
+
+    </table>
+  </div>
+</div>

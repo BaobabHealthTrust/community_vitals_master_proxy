@@ -1,2 +1,52 @@
-<h1>Administration#national_id_management</h1>
-<p>Find me in app/views/administration/national_id_management.html.erb</p>
+<style type="text/css">
+  div.button{
+    width: 80%;
+    background-color: #bc8f8f;
+    border-radius: 15px;
+    margin-left:10%;
+    text-align: center;
+    font-size: 35px;
+    cursor: pointer;
+
+  }
+</style>
+
+<div style="width: 100%">
+
+  <span style="font-size: 30px; font-weight: bold;">National ID Management</span>
+  <hr>
+</div>
+<div style="width: 100%;margin-left: 20px; font-size: 25px;">
+  <table width="50%">
+    <tr style="background-color:silver;text-align: center ">
+      <td>Category</td> <td>Count</td>
+    </tr>
+    <tr>
+      <td>Assigned Id's</td>
+      <td style=" width:40% ">
+        <div class="button" onclick="window.location='id_drill_down?type=Assigned&title=IDs That Have Been Assigned To Facility'">
+          <%= @counts['all'] %>
+        </div></td>
+    </tr>
+    <tr>
+      <td>Available Id's</td>
+      <td >
+        <div class="button" onclick="window.location='id_drill_down?type=Available&title=IDs That Have Not Been Assigned To People'">
+          <%= @counts['available'] %>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>Used Id's</td>
+      <td>
+        <div class="button" onclick="window.location='id_drill_down?type=Used&title=IDs That Have Been Assigned To People'">
+          <%= @counts['used'] %>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+</div>
+
+
+
