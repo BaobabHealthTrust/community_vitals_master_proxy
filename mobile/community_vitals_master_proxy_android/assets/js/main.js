@@ -41,6 +41,17 @@ function doLogin(){
             Android.setPref("username", __$("1.1").value.trim());
             Android.setPref("usertype", __$("1.3").value.trim());
             Android.setPref("location", __$("1.4").value.trim());
+            
+            Android.setPref("dde_mode", __$("1.3").value.trim());
+            Android.setPref("ta", __$("1.4").value.trim());
+            Android.setPref("gvh", __$("1.5").value.trim());
+            Android.setPref("vh", __$("1.6").value.trim());
+            
+            if(__$("advanced").checked){
+              Android.setPref("advanced", true);
+            } else {
+              Android.setPref("advanced", false);
+            }
 
             Android.setPref("current_category", __$("1.3").selectedIndex);
 
@@ -726,6 +737,16 @@ function showPage(s, back){
                 return showPage(current_question, (typeof(back) != "undefined" ? back : false));
             }
         }
+    }
+
+    if((typeof(back) != "undefined" ? back : false)){
+      if(__$("inputField")){
+        if(__$("inputField").getAttribute('srcControl')){
+          if(__$(__$("inputField").getAttribute('srcControl'))){
+            __$(__$("inputField").getAttribute('srcControl')).value = "";
+          }
+        }
+      }
     }
 
     if(typeof(order[s][3]["field_type"]) != "undefined"){
@@ -1553,7 +1574,7 @@ function search(word){
 if (!html5_storage_support) {
     showMessage("This Might Be a Good Time to Upgrade Your Browser or Turn On Javascript");
 } else {
-    Android.setPref("locale", "ny");
+    Android.setPref("locale", "en");
         
     checkLogin();
 }

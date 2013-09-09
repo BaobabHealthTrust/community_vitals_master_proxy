@@ -595,9 +595,9 @@ function listVH(value){
 
 function loadChiefs(value){
     var list = {
-      0:"Traditional Authority",
-      1:"Group Village Headman",
-      2:"Village Headman"
+      "ta":"Traditional Authority",
+      "gvh":"Group Village Headman",
+      "vh":"Village Headman"
     };
     
     var arr = [];
@@ -677,5 +677,21 @@ function listOutcomeTypes(){
     }
 
     loadSingleSelect(arr);
+}
+
+function setupSite(){
+
+  if(__$("1.1") && __$("1.2") && __$("1.3") && __$("1.4") && __$("1.5")){
+    
+    Android.setPref("target_username", __$("1.1").value.trim());
+    Android.setPref("target_password", __$("1.2").value.trim());
+    Android.setPref("target_server", __$("1.3").value.trim());
+    Android.setPref("site_code", __$("1.4").value.trim());
+    Android.setPref("batch_count", __$("1.5").value.trim());
+    
+    showMessage("Settings Saved!");
+  }
+  
+  window.location = "index.html";
 }
 

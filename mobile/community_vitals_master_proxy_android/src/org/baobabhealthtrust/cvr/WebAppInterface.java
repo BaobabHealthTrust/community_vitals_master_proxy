@@ -565,7 +565,6 @@ public class WebAppInterface {
 
 	@JavascriptInterface
 	public boolean searchPerson(int id) {
-		debugPrint("Searching with id " + id);
 
 		String result[] = mDB.getPersonById(id);
 
@@ -586,4 +585,16 @@ public class WebAppInterface {
 		return true;
 	}
 
+	@JavascriptInterface
+	public int getAvailableIds() {
+		return 0;
+	}
+
+	@JavascriptInterface
+	public int getTakenIds() {
+		return 0;
+	}
+
+
+	
 }

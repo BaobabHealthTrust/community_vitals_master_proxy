@@ -12,7 +12,7 @@
         <script type="text/javascript" defer>
             <!--
 
-            setTimeout("loadPage('spec/login.spec')", 200);
+            setTimeout("loadPage('spec/site_setup.spec')", 200);
 
             function load(){
             
@@ -34,6 +34,10 @@
 					
 					      new FastButton(document.getElementById('showKeyboard'), function() {					        
 					        showKeyboard(kybdnumeric);				 
+					      });
+					
+					      new FastButton(document.getElementById('home'), function() {
+					        window.location = "index.html";				 
 					      });
 					
 					  }
@@ -60,8 +64,11 @@
                          width: 100%; background-color: #666; margin: 0px; margin-bottom: -52px; 
                          margin-left: -5px; ">
                         
-                        <input type="checkbox" id="advanced" style="display: block; float: left;" value="" />
-                        
+                        <a id="home" style="float: left;">
+                            <img src="images/home.png" alt="Home" style="margin: 0px;
+                                 margin-left: 15px;" height="60" />
+                        </a>                                                
+
                         <a id="next" style="float: right;">
                             <img src="images/bt_right.png" alt="Next" style="margin: 2px;
                                  margin-right: 15px;" height="60" />

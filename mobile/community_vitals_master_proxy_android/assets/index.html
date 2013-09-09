@@ -196,15 +196,15 @@
             function loadAdministrationMenu(){
               __$("container").innerHTML = "";
               
-              var fields = [search("Setup"), search("Settings"), search("Users")];
+              var fields = [search("Site Setup"), search("Settings Summary"), search("Users")];
               
               var images = [
-                  "default.png",              
-                  "default.png",              
+                  "setup.png",              
+                  "view.png",              
                   "default.png"
               ]
               
-              var paths = ["", "", ""];
+              var paths = ["site_setup.html", "setup_summary.html", ""];
               
               for(var i = 0; i < fields.length; i++){
                 
@@ -271,6 +271,41 @@
 					      __$("my_activities").innerHTML = my_activities;
 					      __$("administration").innerHTML = admin;
 					      __$("reg").innerHTML = reg;
+					
+					      var cat = Android.getPref("dde_mode");
+					      
+					      if(cat.trim().length == 0){
+					        cat = "vh";
+					      }
+					      
+					      var advanced = eval(Android.getPref("advanced"));
+					      
+					      switch(cat){
+					        case "vh":
+					          __$("application").style.display = "block";
+					          __$("reports").style.display = "block";
+					          __$("my_activities").style.display = "block";
+					          __$("administration").style.display = (advanced ? "block" : "none");
+					          
+					          switchTab("application");	
+					          break;
+					        case "gvh":
+					          __$("application").style.display = "none";
+					          __$("reports").style.display = "block";
+					          __$("my_activities").style.display = "block";
+					          __$("administration").style.display = (advanced ? "block" : "none");
+					          
+					          switchTab("reports");	
+					          break;
+					        case "ta":
+					          __$("application").style.display = "none";
+					          __$("reports").style.display = "block";
+					          __$("my_activities").style.display = "block";
+					          __$("administration").style.display = (advanced ? "block" : "none");
+					          
+					          switchTab("reports");	
+					          break;
+					      }
 					
 					  }
       //-->
