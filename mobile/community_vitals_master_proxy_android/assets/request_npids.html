@@ -42,7 +42,7 @@
                     Android.getPref("target_password") + "</td></tr>" +
                     "<tr><th align='left' style='border-bottom: 1px solid #ccc; border-right: " + 
                     "1px solid blue;'>Target Server IP</th><td style='border-bottom: 1px solid #ccc;'>" + 
-                    Android.getPref("target_server") + ":" + Android.getPref("target_port") +
+                    Android.getPref("target_server") + ":" + Android.getPref("target_port") + 
                     "</td></tr>" +
                     "<tr><th align='left' style='border-bottom: 1px solid #ccc; border-right: " + 
                     "1px solid blue;'>Site Code</th><td style='border-bottom: 1px solid #ccc;'>" + 
@@ -75,7 +75,7 @@
 
         </style>
     </head>
-    <body onload="load()" style="margin: 0px; padding: 0px;">
+    <body onload="getNationalIDs(); load();" style="margin: 0px; padding: 0px;">
 
         <div class="table" style="border-spacing: 0px; width: 100%;">            
             <div class="row">
@@ -94,7 +94,7 @@
                         <a id="home" style="float: left;">
                             <img src="images/home.png" alt="Home" style="margin: 0px;
                                  margin-left: 15px;" height="60" />
-                        </a>                                                
+                        </a>                                              
 
                     </div>
                 </div>

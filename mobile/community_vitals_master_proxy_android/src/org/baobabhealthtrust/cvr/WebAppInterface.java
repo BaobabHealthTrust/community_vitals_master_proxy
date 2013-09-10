@@ -6,15 +6,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.message.BasicNameValuePair;
 import org.baobabhealthtrust.cvr.models.AeSimpleSHA1;
-import org.baobabhealthtrust.cvr.models.NationalIdentifiers;
-import org.baobabhealthtrust.cvr.models.OutcomeTypes;
+import org.baobabhealthtrust.cvr.models.DdeSettings;
 import org.baobabhealthtrust.cvr.models.Outcomes;
 import org.baobabhealthtrust.cvr.models.People;
-import org.baobabhealthtrust.cvr.models.RelationshipTypes;
 import org.baobabhealthtrust.cvr.models.Relationships;
 import org.baobabhealthtrust.cvr.models.User;
 import org.json.JSONException;
@@ -26,6 +28,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.AssetManager;
+import android.net.Credentials;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
@@ -315,7 +318,6 @@ public class WebAppInterface {
 		if (identifier == 0) {
 
 			showMsg("Sorry, no national identifiers are available!");
-
 		} else {
 
 			String birthdate = "";
@@ -587,14 +589,157 @@ public class WebAppInterface {
 
 	@JavascriptInterface
 	public int getAvailableIds() {
-		return 0;
+		int result = 0;
+		String mode = getPref("dde_mode");
+
+		result = mDB.getAvailableIds(mode);
+
+		return result;
 	}
 
 	@JavascriptInterface
 	public int getTakenIds() {
-		return 0;
+		int result = 0;
+		String mode = getPref("dde_mode");
+
+		result = mDB.getTakenIds(mode);
+
+		return result;
 	}
 
+	@JavascriptInterface
+	public void setSettings(String username, String password, String server,
+			String port, String code, String count) {
+		String mode = getPref("dde_mode");
 
-	
+		DdeSettings settings = mUDB.getDdeSettingsByMode(mode);
+
+		settings.setDdeUsername(username);
+		settings.setDdePassword(password);
+		settings.setDdeIp(server);
+		settings.setDdePort(Integer.parseInt(port));
+		settings.setDdeSiteCode(code);
+		settings.setDdeBatchSize(count);
+
+		int result = mUDB.updateDdeSettings(settings);
+
+	}
+
+	@JavascriptInterface
+	public String getSettings() {
+		JSONObject json = new JSONObject();
+
+		String mode = getPref("dde_mode");
+
+		DdeSettings settings = mUDB.getDdeSettingsByMode(mode);
+
+		try {
+
+			json.put("mode", mode);
+			json.put("username", settings.getDdeUsername());
+			json.put("password", settings.getDdePassword());
+			json.put("ip", settings.getDdeIp());
+			json.put("port", settings.getDdePort());
+			json.put("code", settings.getDdeSiteCode());
+			json.put("count", settings.getDdeBatchSize());
+
+			setPref("dde_mode", mode);
+			setPref("target_username", settings.getDdeUsername());
+			setPref("target_password", settings.getDdePassword());
+			setPref("target_server", settings.getDdeIp());
+			setPref("target_port", settings.getDdePort() + "");
+			setPref("site_code", settings.getDdeSiteCode());
+			setPref("batch_count", settings.getDdeBatchSize());
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			showMsg("Sorry, there was an error!");
+		}
+
+		return json.toString();
+	}
+
+	@JavascriptInterface
+	public void getNationalIds() {
+
+		getSettings();
+
+		String mode = getPref("dde_mode");
+
+		String target_username = getPref("target_username");
+		String target_password = getPref("target_password");
+		String target_server = getPref("target_server");
+		String target_port = getPref("target_port");
+		String site_code = getPref("site_code");
+		String batch_count = getPref("batch_count");
+		String gvh = getPref("gvh");
+		String vh = getPref("vh");
+
+		String ext = "";
+
+		WebServiceTask wst = new WebServiceTask(WebServiceTask.POST_TASK,
+				mParent, "Posting data...");
+
+		if (mode.equalsIgnoreCase("ta")) {
+			ext = "npid_requests/get_npids";
+
+			JSONObject json = new JSONObject();
+
+			try {
+
+				json.put("site_code", site_code);
+
+				json.put("count", batch_count);
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				showMsg("Sorry, there was an error!");
+			}
+
+			wst.addNameValuePair("npid_request", json.toString());
+
+			wst.targetTaskType = wst.TASK_GET_TA_NPIDS;
+
+		} else if (mode.equalsIgnoreCase("gvh")) {
+			ext = "national_identifiers/request_gvh_ids";
+
+			wst.addNameValuePair("site_code", site_code);
+			wst.addNameValuePair("count", batch_count);
+			wst.addNameValuePair("gvh", gvh);
+
+			wst.targetTaskType = wst.TASK_GET_GVH_NPIDS;
+
+		} else if (mode.equalsIgnoreCase("vh")) {
+			ext = "national_identifiers/request_village_ids";
+
+			wst.addNameValuePair("site_code", site_code);
+			wst.addNameValuePair("count", batch_count);
+			wst.addNameValuePair("gvh", gvh);
+			wst.addNameValuePair("vh", vh);
+
+			wst.targetTaskType = wst.TASK_GET_VH_NPIDS;
+
+		}
+
+		String SERVICE_URL = "http://" + target_server + ":" + target_port
+				+ "/" + ext;
+
+		wst.mUsername = target_username;
+		wst.mPassword = target_password;
+		wst.mServer = target_server;
+		wst.mPort = Integer.parseInt(target_port);
+
+		wst.mGVH = gvh;
+		wst.mVH = vh;
+		
+		wst.mDdeMode = mode;
+		wst.mCount = batch_count;
+
+		// the passed String is the URL we will POST to
+		wst.execute(new String[] { SERVICE_URL });
+
+	}
+
 }

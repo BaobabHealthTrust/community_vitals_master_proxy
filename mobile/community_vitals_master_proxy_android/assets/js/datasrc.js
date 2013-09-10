@@ -681,17 +681,27 @@ function listOutcomeTypes(){
 
 function setupSite(){
 
-  if(__$("1.1") && __$("1.2") && __$("1.3") && __$("1.4") && __$("1.5")){
+  if(__$("1.1") && __$("1.2") && __$("1.3") && __$("1.4") && __$("1.5") && __$("1.6")){
     
     Android.setPref("target_username", __$("1.1").value.trim());
     Android.setPref("target_password", __$("1.2").value.trim());
     Android.setPref("target_server", __$("1.3").value.trim());
-    Android.setPref("site_code", __$("1.4").value.trim());
-    Android.setPref("batch_count", __$("1.5").value.trim());
+    Android.setPref("target_port", __$("1.4").value.trim());
+    Android.setPref("site_code", __$("1.5").value.trim());
+    Android.setPref("batch_count", __$("1.6").value.trim());
+    
+    Android.setSettings(__$("1.1").value.trim(), __$("1.2").value.trim(), 
+        __$("1.3").value.trim(), __$("1.4").value.trim(), __$("1.5").value.trim(), __$("1.6").value.trim());
     
     showMessage("Settings Saved!");
   }
   
   window.location = "index.html";
+}
+
+function getNationalIDs(){
+  Android.getNationalIds();
+  
+  showMessage("Must have got national ids!");
 }
 

@@ -1345,7 +1345,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		int id = 0;
 
 		String selectQuery = "SELECT id FROM " + TABLE_NATIONAL_IDENTIFIERS
-				+ " WHERE COALESCE(person_id, '') = '' LIMIT 1";
+				+ " WHERE COALESCE(person_id, 0) = 0 LIMIT 1";
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
@@ -1500,6 +1500,41 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String selectQuery = "SELECT " + KEY_ID + " FROM "
 				+ TABLE_OUTCOME_TYPES + " WHERE UPPER(" + KEY_NAME
 				+ ") = UPPER('" + relation + "')";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			result = Integer.parseInt(cursor.getString(0));
+		}
+
+		return result;
+	}
+
+	public int getAvailableIds(String mode) {
+		int result = 0;
+
+		// Select All Query
+		String selectQuery = "SELECT COUNT(*) FROM "
+				+ TABLE_NATIONAL_IDENTIFIERS + " WHERE COALESCE(person_id, 0) = 0";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			result = Integer.parseInt(cursor.getString(0));
+		}
+
+		return result;
+	}
+
+	public int getTakenIds(String mode) {
+		int result = 0;
+
+		// Select All Query
+		String selectQuery = "SELECT COUNT(*) FROM "
+				+ TABLE_NATIONAL_IDENTIFIERS
+				+ " WHERE COALESCE(person_id, 0) != 0";
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
