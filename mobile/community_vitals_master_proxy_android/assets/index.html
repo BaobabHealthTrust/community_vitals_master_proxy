@@ -197,15 +197,17 @@
             function loadAdministrationMenu(){
               __$("container").innerHTML = "";
               
-              var fields = [search("Site Setup"), search("Settings Summary"), search("Users")];
+              var fields = [search("Site Setup"), search("Settings Summary"), 
+                  search("Get National IDs"), search("Users")];
               
               var images = [
                   "setup.png",              
                   "view.png",              
+                  "barcode.jpg",              
                   "default.png"
               ]
               
-              var paths = ["site_setup.html", "setup_summary.html", ""];
+              var paths = ["site_setup.html", "setup_summary.html", "request_npids.html", ""];
               
               for(var i = 0; i < fields.length; i++){
                 

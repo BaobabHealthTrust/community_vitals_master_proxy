@@ -10,6 +10,8 @@ Q.1.2. Target Site Password [pos => 1 $$ field_type => password $$ tt_onLoad => 
 
 Q.1.3. Target Server IP Address [pos => 2 $$ field_type => number $$ validationRule => ^\d+\.\d+\.\d+\.\d+$ $$ validationMessage => Wrong value. Expecting an IP address of format xxx.xxx.xxx.xxx!]
 
-Q.1.4. Site Code [pos => 3]
+Q.1.4. Target Server IP Address Port [pos => 3 $$ field_type => number $$ validationRule => ^\d+$ $$ validationMessage => Wrong value. Expecting a number!]
 
-Q.1.5. ID Batch Size [pos => 4 $$ field_type => number $$ validationRule => ^\d+$ $$ validationMessage => Wrong value. Expecting whole numbers!]
+Q.1.5. Site Code [pos => 4]
+
+Q.1.6. ID Batch Size [pos => 5 $$ field_type => number $$ validationRule => ^\d+$ $$ validationMessage => Wrong value. Expecting whole numbers!]
