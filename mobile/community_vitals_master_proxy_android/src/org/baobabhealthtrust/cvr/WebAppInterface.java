@@ -486,6 +486,14 @@ public class WebAppInterface {
 		ocome.setPersonId(person_id);
 
 		mDB.addOutcomes(ocome);
+		
+		People person = mDB.getPeople(person_id);
+		
+		person.setOutcome(outcome);
+		
+		person.setOutcomeDate(date_created);
+		
+		mDB.updatePeople(person);
 	}
 
 	@JavascriptInterface

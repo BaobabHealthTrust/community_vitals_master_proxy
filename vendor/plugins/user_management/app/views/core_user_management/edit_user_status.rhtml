@@ -1,0 +1,26 @@
+
+<script language="javascript">
+  tt_cancel_destination = '/user_list?user_id=<%= params[:user_id] %>&location_id=<%=
+params[:location_id] + (!params[:src].nil? ? "&src=#{params[:src]}" : "") %>';
+  tt_cancel_show = '/user_list?user_id=<%= params[:user_id] %>&location_id=<%=
+params[:location_id] + (!params[:src].nil? ? "&src=#{params[:src]}" : "") %>';
+</script>
+
+<form action="/update_user_status" method='post'>
+
+  <%= hidden_field_tag "user_id", "#{@user.id}" %>
+
+  <%= hidden_field_tag "target_id", "#{@target.id}" %>
+
+  <%= hidden_field_tag "location_id", "#{params[:location_id]}" %>
+
+  <% if !params[:src].nil? %>
+    <%= hidden_field_tag "src", "#{params[:src]}" %>
+  <% end %>
+
+  <label for="status">Status</label>
+  <%= select_tag(:status, options_for_select([["#{Vocabulary.search("Active")}", "ACTIVE"], 
+      ["#{Vocabulary.search("Pending")}", "PENDING"], ["#{Vocabulary.search("Blocked")}", "BLOCKED"]]),
+    :helpText => "#{Vocabulary.search("Set status for")} #{(!@target.name.blank? ? @target.name : "" )}") %>
+
+</form>

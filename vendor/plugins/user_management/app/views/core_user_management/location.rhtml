@@ -1,0 +1,43 @@
+<%= javascript_include_tag "barcode" %>
+<script>
+<% 
+if !params[:src].blank? %>
+  var tt_cancel_destination = "http://<%= @destination %>?user_id=<%= params[:user_id] %>&location_id=<%= params[:location_id] %>"
+  var tt_cancel_show = "http://<%= @destination %>?user_id=<%= params[:user_id] %>&location_id=<%= params[:location_id] %>"
+<%else%>
+  var tt_cancel_destination = "/logout?user_id=<%= params[:user_id] %>"
+<%end%>
+barcodeId = 'touchscreenInput0';
+barcodeFocusOnce = true;
+// barcodeScanAction = gotoNextPage;
+
+setTimeout("setupBarcode()", 300);
+
+function setupBarcode(){
+  barcodeScanAction = gotoNextPage;
+  loadBarcodePage();
+}
+
+function inform() {
+  $('infoBar'+tstCurrentPage).innerHTML = "";
+}           
+</script>
+
+<style>
+
+  #tt_page_workstation_location .options {
+    display: none;
+  }
+</style>
+
+<form id='location' action="/location_update" method='post'>
+  <label for="location">Location</label>
+  <%= text_field_tag(:location, nil,
+    :helpText => "#{Vocabulary.search("Workstation location")}",
+    :tt_onLoad => "__$('keyboard').style.display='none'"
+  ) %>
+  <%= hidden_field_tag "user_id", "#{params[:user_id]}" %>
+  <%= hidden_field_tag "src", "#{@destination}" %>
+  <br />
+  <%= submit_tag :value => "Submit" %>
+</form>

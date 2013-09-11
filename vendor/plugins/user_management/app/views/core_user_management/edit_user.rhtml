@@ -1,0 +1,34 @@
+
+<script language="javascript">
+<% if !params[:src].nil? %>
+    var tt_cancel_destination = "http://<%= params[:src] %>?user_id=<%= params[:user_id] %>&location_id=<%= params[:location_id] %>"
+<%else%>
+    tt_cancel_destination = '/select_user_task?user_id=<%= params[:user_id] %>&location_id=<%= params[:location_id] %>';
+    tt_cancel_show = '/select_user_task?user_id=<%= params[:user_id] %>&location_id=<%= params[:location_id] %>';
+<%end%>
+</script>
+
+<form action="/update_user" method='post'>
+
+  <% if !params[:src].nil? %>
+
+    <%= hidden_field_tag "src", "#{params[:src]}" %>
+
+  <%end%>
+
+  <%= hidden_field_tag "user_id", "#{params[:user_id]}" %>
+
+  <%= hidden_field_tag "location_id", "#{params[:location_id]}" %>
+
+  <label for="first_name">First name</label>
+  <%= text_field_tag(:first_name, @first_name, :helpText => "#{Vocabulary.search("First Name")}") %>
+
+  <label for="last_name">Last name</label>
+  <%= text_field_tag(:last_name, @last_name, :helpText => "#{Vocabulary.search("Last Name")}") %>
+
+  <label for="gender">Gender</label>
+  <%= select_tag(:gender, options_for_select([["#{Vocabulary.search("Male")}", "Male"], 
+      ["#{Vocabulary.search("Female")}", "Female"]], @gender),
+    :helpText => "#{Vocabulary.search("Gender")}") %>
+
+</form>
