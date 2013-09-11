@@ -16,9 +16,27 @@
 
       function load(){
 
-          __$("parent").innerHTML = "<div style='color: blue; position: absolute; top: 250px; " +
-                  "font-style: italic; font-size: 2em; font-weight: normal; width: 100%; text-align: center;'>" +
-                  search("Loading. Please Wait") + "...</div>";
+          var currentTime = new Date()
+          var date = currentTime.getDate() +"/"+ (currentTime.getMonth() + 1) +"/" +currentTime.getFullYear();
+
+          __$("parent").innerHTML =
+            "<table style='width: 100%'><tr class='heading'><td colspan='2'>"+
+            "General Population Statistics</td></tr><tr><td>Total Population</td><td style='text-align: center'>"
+            + Android.getTakenIds() +"</td></tr><tr><td>&nbsp;</td></tr>"+
+            "<tr class='heading'><td colspan='2' >Total Population by Gender</td></tr>"+
+            "<tr><td>Females</td><td style='text-align: center'>"+Android.getGenderCount(date,'Female')+"</td></tr><tr>"+
+            "<tr><td>Males</td><td style='text-align: center'>"+Android.getGenderCount(date,'Male')+"</td></tr><tr>"+
+            "<tr class='heading'><td colspan='2' >Total Population By Age</td></tr>"+
+            "<tr><td>Children( < 12 Years)</td><td style='text-align: center'>" + Android.getAgegroupCount(date, (0,11)) +"</td></tr><tr>"+
+            "<tr><td>Youths (12-21 Years)</td><td style='text-align: center'>" + Android.getAgegroupCount(date, (12,21)) +"</td></tr><tr>"+
+            "<tr><td>Working Population (22-59 Years)</td><td style='text-align: center'>" + Android.getAgegroupCount(date, (22,59)) +"</td></tr><tr>"+
+            "<tr><td>Older Population (>= 60 years)</td><td style='text-align: center'>" + Android.getAgegroupCount(date, (60,120)) +"</td></tr><tr>"+
+            "<tr class='heading'><td colspan='2' >Total Population By Outcome</td></tr>"+
+            "<tr><td>Alive</td><td style='text-align: center'>"+Android.getOutcomeCount(date,'NULL')+"</td></tr><tr>"+
+            "<tr><td>Transferred</td><td style='text-align: center'>"+Android.getOutcomeCount(date,'Transfer Out')+"</td></tr><tr>"+
+            "<tr><td>Dead</td><td style='text-align: center'>"+Android.getOutcomeCount(date,'Dead')+"</td></tr><tr>"+
+            "</table>";
+
 
           new FastButton(document.getElementById('home'), function() {
               window.location = "index.html";
@@ -54,19 +72,18 @@
         tr.heading{
             background-color: silver;
             height: 45px;
-            font-size: 25px;
+            font-size: 17px;
+            text-align: center;
         }
         tr{
-            font-size: 22px;
+            font-size: 15px;
         }
 
         td.count{
             text-align: center;
             cursor: pointer;
         }
-        td{
-          font-size: 13px;
-        }
+
     </style>
 
 </head>
@@ -87,29 +104,31 @@
                       <td>&nbsp;</td><td>&nbsp;</td>
                   </tr>
                   <tr>
-                      <td style="font-weight: bold;width:160px;">Traditional Authority</td>
-                      <td style="width:5px;">:</td>
-                      <td id='ta'></td>
+                      <td style="font-weight: bold;width:160px;font-size: 13px">Traditional Authority</td>
+                      <td style="width:5px;font-size: 13px">:</td>
+                      <td id='ta' style="font-size: 13px"></td>
                   </tr>
                   <tr id= 'gvh_row'>
-                      <td style="font-weight: bold;">Group Village Headman</td><td>:</td>
-                      <td id='gvh'></td>
+                      <td style="font-weight: bold;font-size: 13px">Group Village Headman</td>
+                      <td style="font-size: 13px">:</td>
+                      <td id='gvh' style="font-size: 13px"></td>
                   </tr>
                   <tr id= 'vh_row'>
-                      <td style="font-weight: bold;">Village Headman</td><td>:</td>
-                      <td id='vh'></td>
+                      <td style="font-weight: bold;font-size: 13px">Village Headman</td>
+                      <td style="font-size: 13px">:</td>
+                      <td id='vh' style="font-size: 13px"></td>
                   </tr>
               </table>
         </div>
-       <div id="parent" style="background-color: #f1f1f1; min-height: 420px;
-              width: 100%; margin: 0px; margin-top: -5px; padding: 0px;">
+       <div id="parent" style="background-color: #f1f1f1; min-height: 400px;max-height: 80%;
+              width: 100%; margin: 0px; margin-top: -5px; padding: 0px;overflow: auto;">
 
 
 
       </div>
 
       <div class="nav" style="position: absolute; bottom: 0px; border: 1px #fff solid; height: 64px;
-              width: 100%; background-color: #666; margin: 0px; margin-bottom: -52px;
+              width: 100%; background-color: #666; margin: 0px; margin-bottom: -65px;
               margin-left: -5px; ">
 
         <a id="home" style="float: left;">

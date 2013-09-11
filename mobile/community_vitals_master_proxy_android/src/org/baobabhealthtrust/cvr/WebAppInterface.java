@@ -742,4 +742,24 @@ public class WebAppInterface {
 
 	}
 
+	@JavascriptInterface
+	public int getGenderCount( String date_selected , String gender){
+		int result = 0;
+		result = mDB.getGenderCount(date_selected, gender);		
+		return result;
+	}
+	
+	@JavascriptInterface
+	public int getOutcomeCount( String date_selected , String outcome){
+		int result = 0;
+		result = mDB.getOutcomeCount(date_selected, outcome);		
+		return result;
+	}
+	
+	@JavascriptInterface
+	public int getAgegroupCount( String date_selected , String[] age_group){
+		int result = 0;
+		//result = mDB.getAgegroupCount(date_selected, age_group);		
+		return result;
+	}
 }
