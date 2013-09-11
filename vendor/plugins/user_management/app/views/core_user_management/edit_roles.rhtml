@@ -1,0 +1,35 @@
+<style type="text/css">
+  .long .options {
+    height: 22em !important;
+  }
+</style>
+
+<script language="javascript">
+  tt_cancel_destination = '/user_list?user_id=<%= (params[:user_id] || params[:id])
+%>&location_id=<%= params[:location_id] + (!params[:src].nil? ? "&src=#{params[:src]}" : "") %>';
+  tt_cancel_show = '/user_list?user_id=<%= (params[:user_id] || params[:id])
+%>&location_id=<%= params[:location_id] + (!params[:src].nil? ? "&src=#{params[:src]}" : "") %>';
+</script> padding-top: 10px;
+
+<form action="/add_user_roles" method='post'>
+
+  <label for="roles">Roles</label>
+  <%= select_tag("roles[]", options_for_select(@roles),
+    :id => "roles",
+    :helpText => "#{Vocabulary.search("Add User Roles for")} #{(!@target.name.blank? ? @target.name : "" )}",
+    :multiple => "multiple",
+    :tt_pageStyleClass => "long"
+  ) %>
+
+  <%= hidden_field_tag "target_id", "#{@target.id}" %>
+
+  <%= hidden_field_tag "user_id", "#{@user.id}" %>
+
+  <%= hidden_field_tag "location_id", "#{params[:location_id]}" %>
+
+  <% if !params[:src].nil? %>
+    <%= hidden_field_tag "src", "#{params[:src]}" %>
+  <% end %>
+
+  <%= submit_tag value="Submit"%>
+</form>

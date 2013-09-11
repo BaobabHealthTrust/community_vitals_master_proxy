@@ -1,0 +1,237 @@
+
+<script language="javascript">
+  tt_cancel_destination = '/select_user_task?user_id=<%= (params[:user_id] || 
+    params[:id]) %>&location_id=<%= params[:location_id] %>';
+  tt_cancel_show = '/select_user_task?user_id=<%= (params[:user_id] ||
+    params[:id]) %>&location_id=<%= params[:location_id] %>';
+
+  function confirmDeletion(message, link) {
+    if (!tstMessageBar) {
+
+      var tstMessageBar = document.createElement("div");
+      tstMessageBar.id = "messageBar";
+      tstMessageBar.className = "messageBar";
+
+      tstMessageBar.innerHTML = message + "<br/>" + 
+        "<button onmousedown=\"document.getElementById('content').removeChild(document.getElementById('messageBar')); " +
+        "window.location='" + link + "';\"><span><%= Vocabulary.search("Yes") %></span>" + 
+        "</button><button onmousedown=\"document.getElementById('content').removeChild(document.getElementById('messageBar'));\">" + 
+        "<span><%= Vocabulary.search("No") %></span></button>";
+
+      tstMessageBar.style.display = "block";
+      document.getElementById("content").appendChild(tstMessageBar);
+    }
+
+    return false;
+
+  }
+
+</script> 
+
+<table width="100%" style="margin: 0px;" border="0" cellspacing="0">
+  <tr>
+    <td style="font-size: 2.3em; background-color: #6281A7; color: #eee; padding: 15px; text-align: center;">
+      <%= Vocabulary.search("User Management") %>
+    </td>
+  </tr>
+  <tr>
+    <td style="background-color: #ccc; padding: 5px;">
+      <div style="height: 36.2em; background-color: #fff; overflow: auto; padding: 5px;">
+
+        <div style="display: table; width: 100%; border-spacing: 2px;">
+          <div style="display: table-row; background-color: #999; color: #eee;">
+            <div style="display: table-cell; border: 1px solid #ccc; padding: 5px;
+                 text-align: center; font-weight: bold;">
+              &nbsp;
+            </div>
+            <div style="display: table-cell; border: 1px solid #ccc; padding: 5px;
+                 text-align: center; font-weight: bold;">
+              <%= Vocabulary.search("Name") %>
+            </div>
+            <div style="display: table-cell; border: 1px solid #ccc; padding: 5px;
+                 text-align: center; font-weight: bold;">
+              <%= Vocabulary.search("Username") %>
+            </div>
+            <div style="display: table-cell; border: 1px solid #ccc; padding: 5px;
+                 text-align: center; font-weight: bold;">
+              <%= Vocabulary.search("Gender") %>
+            </div>
+            <div style="display: table-cell; border: 1px solid #ccc; padding: 5px;
+                 text-align: center; font-weight: bold;">
+              <%= Vocabulary.search("Roles") %>
+            </div>
+            <div style="display: table-cell; border: 1px solid #ccc; padding: 5px;
+                 text-align: center; font-weight: bold;">
+              <%= Vocabulary.search("Status") %>
+            </div>
+            <div style="display: table-cell; border: 1px solid #ccc; padding: 5px;
+                 text-align: center; font-weight: bold;">
+              <%= Vocabulary.search("Operations") %>
+            </div>
+          </div>
+
+          <% i = 0 %>
+          <% @users.each do |user| %>
+
+            <% i = i + 1 %>
+
+            <div style="display: table-row;">
+              <div style="display: table-cell; border-left: 1px dotted #ccc; border-bottom: 1px dotted #ccc;
+                   border-right: 1px dotted #ccc; padding: 5px; text-align: center; vertical-align: top; padding-top: 20px;">
+                   <%= i %>
+              </div>
+              <div style="display: table-cell; border-bottom: 1px dotted #ccc;
+                   border-right: 1px dotted #ccc;  padding: 5px; vertical-align: top; padding-top: 20px;">
+                   <%= user[0] %>
+              </div>
+              <div style="display: table-cell; border-bottom: 1px dotted #ccc;
+                   border-right: 1px dotted #ccc;  padding: 5px; vertical-align: top; padding-top: 20px;">
+                   <%= user[1] %>
+              </div>
+              <div style="display: table-cell; border-bottom: 1px dotted #ccc;
+                   border-right: 1px dotted #ccc;  padding: 5px; vertical-align: top; padding-top: 20px;">
+                   <%= Vocabulary.search(user[2]) %>
+              </div>
+              <div style="display: table-cell; border-bottom: 1px dotted #ccc;
+                   border-right: 1px dotted #ccc;  padding: 5px; vertical-align: middle;">
+                <table width="100%">
+                  <tr>
+                    <td>
+                      <table width="100%">
+
+                        <% user[3].each do |role| %>
+
+                          <tr>
+                            <td>
+                              <%= Vocabulary.search(role) %>
+                            </td>
+                            <td align="right">
+
+                              <% if (params[:user_id] || params[:id]).to_i != user[5].to_i and
+                                  @can_edit and user[4].upcase != "BLOCKED" %>
+
+                                <img src="/touchscreentoolkit/lib/images/cancel_flat_small_red.png" alt="edit"
+                                     style="margin: 5px; border: 1px dotted #efe; padding: 10px;"
+                                     onclick="confirmDeletion('<%= Vocabulary.search("Are you sure you want <br/>to delete this role") %>?',
+                                             '/void_role?target_id=<%= user[5] %>&role=<%= role
+                                   %>&user_id=<%= params[:user_id] %>&location_id=<%=
+                                     params[:location_id] %><%= (!params[:src].nil? ? "&src=#{params[:src]}" : "") %>')"/>
+
+                              <% else %>
+                                &nbsp;
+                              <% end %>
+
+                            </td>
+                          </tr>
+
+                        <% end %>
+
+                      </table>
+                    </td>
+                    <td align="right" style="width: 60px; vertical-align: top;">
+
+                      <% if (params[:user_id] || params[:id]).to_i != user[5].to_i and
+                          @can_edit and user[4].upcase != "BLOCKED" %>
+
+                        <img src="/touchscreentoolkit/lib/images/pencil.png" alt="edit"
+                             style="margin: 5px; border: 1px dotted #efe; padding: 10px;
+                             padding-left: 15px; padding-right: 15px; cursor: pointer;"
+                             onclick="window.location='/edit_roles?target_id=<%= user[5]
+                           %>&user_id=<%= params[:user_id] %>&location_id=<%=
+                             params[:location_id] %><%= (!params[:src].nil? ? "&src=#{params[:src]}" : "") %>'" />
+
+                      <% else %>
+                        &nbsp;
+                      <% end %>
+
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div style="display: table-cell; border-bottom: 1px dotted #ccc; text-align: center;
+                   border-right: 1px dotted #ccc;  padding: 5px; vertical-align: top; padding-top: 20px;">
+                   <%
+                   status = user[4]
+                   pic = ""
+                   case status.upcase
+                   when "ACTIVE"
+                     pic = "active"
+                   when "BLOCKED"
+                     pic = "block"
+                   else
+                     pic = "suspend"
+                   end
+
+                   if !pic.blank?
+                   %>
+                  <img src="/touchscreentoolkit/lib/images/<%= pic %>.png" alt="<%= status %>" height="50" width="50" />
+                <% else %>
+                  &nbsp;
+                <% end %>
+              </div>
+              <div style="display: table-cell; border-bottom: 1px dotted #ccc;
+                   border-right: 1px dotted #ccc;  padding: 5px; text-align: center; vertical-align: top; padding-top: 20px;">
+
+                <% if (params[:user_id] || params[:id]).to_i != user[5].to_i and @can_edit and @user.manager? %>
+
+                  <button class="btn"
+                          onclick="window.location='/edit_user_status?target_id=<%= user[5] %>&user_id=<%=
+                          @user.id %>&location_id=<%= params[:location_id] %><%=
+                          (!params[:src].nil? ? "&src=#{params[:src]}" : "") %>'">
+                    <%= Vocabulary.search("Status") %>
+                  </button>
+
+                <% end %>
+
+              </div>
+            </div>
+
+          <% end %>
+
+        </div>
+
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td style="background-color: #333;">
+      <div style="height: 4.8em;">
+        <table style="float: left; margin: 20px;">
+          <tr>
+            <td align="right">
+              <img src="/touchscreentoolkit/lib/images/active.png" height="40" width="40" />
+            </td>
+            <td style="color: #fff;">
+              <%= Vocabulary.search("Active") %>&nbsp;&nbsp;
+            </td>
+            <td align="right">
+              <img src="/touchscreentoolkit/lib/images/suspend.png" height="40" width="40" />
+            </td>
+            <td style="color: #fff;">
+              <%= Vocabulary.search("Pending") %>&nbsp;&nbsp;
+            </td>
+            <td>
+              <img src="/touchscreentoolkit/lib/images/block.png" height="40" width="40" />
+            </td>
+            <td style="color: #fff;">
+              <%= Vocabulary.search("Blocked") %>&nbsp;&nbsp;
+            </td>
+          </tr>
+        </table>
+        <button class="green" style="float: right; margin: 8px; width: 150px; margin-right: 20px;"
+                onclick="window.location='<%= @destination %>'">
+          <span>
+            <%= Vocabulary.search("Finish") %>
+          </span>
+        </button>
+        <button class="blue" style="float: right; margin: 8px; margin-right: 20px;"
+                onclick="window.location='/new_user?user_id=<%= params[:user_id] 
+              %>&location_id=<%= params[:location_id] %><%= (!params[:src].nil? ? "&src=#{params[:src]}" : "") %>'">
+          <span>
+            <%= Vocabulary.search("Add User") %>
+          </span>
+        </button>
+      </div>
+    </td>
+  </tr>
+</table>

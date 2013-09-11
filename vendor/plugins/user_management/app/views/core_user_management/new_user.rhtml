@@ -1,0 +1,61 @@
+<style type="text/css">
+  .long .options {
+    height: 22em !important;
+  }
+</style>
+
+<script language="javascript">
+  tt_cancel_destination = '/user_list?user_id=<%= params[:user_id] %>&location_id=<%=
+params[:location_id] + (!params[:src].nil? ? "&src=#{params[:src]}" : "") %>';
+  tt_cancel_show = '/user_list?user_id=<%= params[:user_id] %>&location_id=<%=
+params[:location_id] + (!params[:src].nil? ? "&src=#{params[:src]}" : "") %>';
+</script> padding-top: 10px;
+
+<form action="/create_user" method='post'>
+
+  <label for="first_name">First name</label>
+  <%= text_field_tag(:first_name, params[:first_name], :helpText => "#{Vocabulary.search("First Name")}") %>
+
+  <label for="last_name">Last name</label>
+  <%= text_field_tag(:last_name, params[:last_name], :helpText => "#{Vocabulary.search("Last Name")}") %>
+
+  <label for="gender">Gender</label>
+  <%= select_tag(:gender, options_for_select([["#{Vocabulary.search("Male")}", "Male"], 
+    ["#{Vocabulary.search("Female")}", "Female"]], params[:gender]),
+    :helpText => "#{Vocabulary.search("Gender")}") %>
+
+  <label for="login">Username</label>
+  <%= text_field_tag(:login, nil, :helpText => "#{Vocabulary.search("Username")}",
+    :textCase => "lower", :field_type => "password") %>
+
+  <label for="password">Password</label>
+  <%= password_field_tag(:password, nil, :helpText => "#{Vocabulary.search("Password")}",
+    :textCase => "lower", :field_type => "password",
+    :tt_onUnLoad => "__$('confirm').setAttribute('validationRule', __$('touchscreenInput' + tstCurrentPage).value)"
+  ) %>
+
+  <label for="confirm">Confirm Password</label>
+  <%= password_field_tag(:confirm, nil, :helpText => "#{Vocabulary.search("Confirm Password")}",
+    :textCase => "lower", :field_type => "password",
+    :validationRule => "",
+    :validationMessage => "#{Vocabulary.search("Password Mismatch")}"
+  ) %>
+
+  <label for="roles">Roles</label>
+  <%= select_tag("roles[]", options_for_select(@roles),
+    :id => "roles",
+    :helpText => "#{Vocabulary.search("Roles")}",
+    :multiple => "multiple",
+    :tt_pageStyleClass => "long"
+  ) %>
+
+  <%= hidden_field_tag "user_id", "#{params[:id] || params[:user_id]}" %>
+
+  <%= hidden_field_tag "location_id", "#{params[:location_id]}" %>
+
+  <% if !params[:src].nil? %>
+    <%= hidden_field_tag "src", "#{params[:src]}" %>
+  <% end %>
+
+  <%= submit_tag value="Submit"%>
+</form>

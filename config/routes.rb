@@ -3,6 +3,45 @@ ActionController::Routing::Routes.draw do |map|
 
   map.root :controller => 'landing', :action => 'landing'
 
+  map.login  '/login',  :controller => 'core_user_management', :action => 'login'
+
+  map.login  '/new_user/:id',  :controller => 'core_user_management', :action => 'new_user'
+
+  map.login  '/edit_user_status/:id',  :controller => 'core_user_management', :action => 'edit_user_status'
+
+  map.login  '/create_user',  :controller => 'core_user_management', :action => 'create_user'
+
+  map.user_list  '/user_list',  :controller => 'core_user_management', :action => 'user_list'
+
+  map.select_user_task  '/select_user_task',  :controller => 'core_user_management', :action => 'select_user_task'
+
+  map.update_user_status  '/update_user_status',  :controller => 'core_user_management', :action => 'update_user_status'
+
+  map.edit_roles  '/edit_roles',  :controller => 'core_user_management', :action => 'edit_roles'
+
+  map.add_user_roles  '/add_user_roles',  :controller => 'core_user_management', :action => 'add_user_roles'
+
+  map.void_role  '/void_role',  :controller => 'core_user_management', :action => 'void_role'
+
+  map.edit_user  '/edit_user',  :controller => 'core_user_management', :action => 'edit_user'
+
+  map.update_user  '/update_user',  :controller => 'core_user_management', :action => 'update_user'
+
+  map.edit_password  '/edit_password',  :controller => 'core_user_management', :action => 'edit_password'
+
+  map.update_password  '/update_password',  :controller => 'core_user_management', :action => 'update_password'
+
+  map.authenticate  '/authenticate',  :controller => 'core_user_management', :action => 'authenticate'
+
+  map.logout  '/logout/:id',  :controller => 'core_user_management', :action => 'logout'
+
+  map.verify  '/verify/:id',  :controller => 'core_user_management', :action => 'verify'
+
+  map.location  '/location',  :controller => 'core_user_management', :action => 'location'
+
+  map.location_update  '/location_update',  :controller => 'core_user_management', :action => 'location_update'
+
+  map.user_demographics  '/user_demographics',  :controller => 'core_user_management', :action => 'user_demographics'
   
 	map.resources :national_identifiers, :collection => {
 	  :request_gvh_ids => [:get, :post], 

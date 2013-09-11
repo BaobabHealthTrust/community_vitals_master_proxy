@@ -1,0 +1,120 @@
+<table width="100%" style="margin: 0px;" border="0" cellspacing="0">
+  <tr>
+    <td style="font-size: 2.3em; background-color: #6281A7; color: #eee; padding: 15px; text-align: center;">
+      <%= Vocabulary.search("User Demographics") %>
+    </td>
+  </tr>
+  <tr>
+    <td style="background-color: #ccc; padding: 5px;">
+      <div style="height: 36.2em; background-color: #fff; overflow: auto; padding: 5px; text-align: center;">
+
+        <table width="100%">
+          <tr>
+            <td rowspan="4" style="vertical-align: top; padding-top: 20px;">
+              <table width="100%" cellpadding="5" cellspacing="0">
+                <tr>
+                  <td align="center" style="border-bottom: 1px dotted #ccc;">
+                    <div style="border-radius: 20px; padding: 5px; border: solid 1px #6281A7;
+                         width: 30px; height: 30px; text-align: center; vertical-align: middle;">
+                         <% if @user.gender.downcase.match(/^m/) %>
+                        <img src="/touchscreentoolkit/lib/images/male.gif" alt="M" style="margin: 2px;" />
+                      <% elsif @user.gender.downcase.match(/^f/) %>
+                        <img src="/touchscreentoolkit/lib/images/female.gif" alt="F" style="margin: 2px;" />
+                      <% end %>
+                    </div>
+                  </td>
+                  <td style="font-size: 2.8em; vertical-align: top; text-align: left; 
+                      border-bottom: 1px dotted #ccc; border-left: 1px dotted #ccc;">
+                      <%= @user.name %>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="vertical-align: top; font-size: 2em; padding-top: 30px;">
+                    <%= Vocabulary.search("Roles") %>:
+                  </td>
+                  <td style="vertical-align: top; font-size: 1.8em; border-left: 1px dotted #ccc;" align="left">
+                    <div style="height: 470px; width: 620px; overflow: auto;">
+                      <ul>
+                        <% @user.user_roles.each do |role| %>
+                          <li style="padding-left: 20px;">
+                            <%= Vocabulary.search(role.role) %>
+                          </li>
+                        <% end %>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              &nbsp;
+            </td>
+          </tr>
+          <tr>
+            <td align="right" style="vertical-align: top;">
+              <table>
+                <tr>
+                  <td>
+                    <button class="blue" style="margin: 8px; width: 250px; float: right;"
+                            onclick="window.location='/edit_user?user_id=<%= @user.id
+                          %>&location_id=<%= params[:location_id] %>'">
+                      <span>
+                        <%= Vocabulary.search("Edit Demographics") %>
+                      </span>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <button class="blue" style="margin: 8px; width: 250px; float: right;"
+                            onclick="window.location='/edit_password?user_id=<%= 
+                            @user.id %>&location_id=<%= params[:location_id] %>'">
+                      <span>
+                        <%= Vocabulary.search("Change Password") %>
+                      </span>
+                    </button>
+                  </td>
+                </tr>
+
+                <% if @user.admin? || @user.manager? %>
+
+                  <tr>
+                    <td>
+                      <button class="blue" style="margin: 8px; width: 250px; float: right;"
+                              onclick="window.location='/user_list?user_id=<%=
+                              @user.id %>&location_id=<%= params[:location_id] %>'">
+                        <span>
+                          <%= Vocabulary.search("Manage Users") %>
+                        </span>
+                      </button>
+                    </td>
+                  </tr>
+
+                <% end %>
+
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td style="background-color: #333;">
+      <div style="height: 4.8em;">
+        <button class="red" style="float: left; margin: 8px; width: 150px; margin-right: 20px;"
+                onclick="window.location='/logout/<%= @user.id %>'">
+          <span>
+            <%= Vocabulary.search("Logout") %>
+          </span>
+        </button>
+        <button class="green" style="float: right; margin: 8px; width: 150px; margin-right: 20px;"
+                onclick="window.location='<%= @destination %>'">
+          <span>
+            <%= Vocabulary.search("Finish") %>
+          </span>
+        </button>
+      </div>
+    </td>
+  </tr>
+</table>
