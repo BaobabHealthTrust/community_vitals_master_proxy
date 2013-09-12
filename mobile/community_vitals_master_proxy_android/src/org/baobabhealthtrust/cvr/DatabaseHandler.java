@@ -1545,4 +1545,50 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		return result;
 	}
+	
+	public int getGenderCount( String date_selected, String gender){
+		int result = 0;
+		// Select All Query
+		String selectQuery = "SELECT COUNT(*) FROM "
+				+ TABLE_PEOPLE + " WHERE voided != 1 AND gender ='" + gender +"'";
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			result = Integer.parseInt(cursor.getString(0));
+		}
+		
+		return result;
+	}
+	
+	public int getOutcomeCount(String date_selected, String outcome){
+		int result = 0;
+		// Select All Query
+		String selectQuery = "SELECT COUNT(*) FROM "
+				+ TABLE_PEOPLE + " WHERE voided != 1 AND outcome ='" + outcome +"'";
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			result = Integer.parseInt(cursor.getString(0));
+		}
+		
+		return result;
+	}
+	
+	public int getAgegroupCount(String date_selected , String [] age_group){
+		int result = 0;
+		String selectQuery = "SELECT COUNT(*) FROM "
+				+ TABLE_PEOPLE + " WHERE voided != 1 AND "
+				+"(strftime('%Y','now')-strftime('%Y', birthdate )) IN " + age_group ;
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			result = Integer.parseInt(cursor.getString(0));
+		}
+		
+		
+		return result;
+	}
 }

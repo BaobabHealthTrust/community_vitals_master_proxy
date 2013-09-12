@@ -1,0 +1,144 @@
+<html>
+<head>
+  <title>CVR</title>
+  <link rel="stylesheet" type="text/css" href="css/main.css" />
+
+  <script type="text/javascript" src="js/md5.js"></script>
+  <script type="text/javascript" src="js/vocab.js"></script>
+  <script type="text/javascript" src="js/datasrc.js"></script>
+  <script type="text/javascript" src="js/main.js" defer></script>
+  <script type="text/javascript" src="js/google.fastbutton.js"></script>
+
+  <script type="text/javascript" defer>
+      <!--
+
+      // setTimeout("loadPage('spec/add_person.spec')", 200);
+
+      function load(){
+
+          var currentTime = new Date()
+          var date = currentTime.getDate() +"/"+ (currentTime.getMonth() + 1) +"/" +currentTime.getFullYear();
+
+          __$("parent").innerHTML =
+            "<table style='width: 100%'><tr class='heading'><td colspan='2'>"+
+            "General Population Statistics</td></tr><tr><td>Total Population</td><td style='text-align: center'>"
+            + Android.getTakenIds() +"</td></tr><tr><td>&nbsp;</td></tr>"+
+            "<tr class='heading'><td colspan='2' >Total Population by Gender</td></tr>"+
+            "<tr><td>Females</td><td style='text-align: center'>"+Android.getGenderCount(date,'Female')+"</td></tr><tr>"+
+            "<tr><td>Males</td><td style='text-align: center'>"+Android.getGenderCount(date,'Male')+"</td></tr><tr>"+
+            "<tr class='heading'><td colspan='2' >Total Population By Age</td></tr>"+
+            "<tr><td>Children( < 12 Years)</td><td style='text-align: center'>" + Android.getAgegroupCount(date, (0,11)) +"</td></tr><tr>"+
+            "<tr><td>Youths (12-21 Years)</td><td style='text-align: center'>" + Android.getAgegroupCount(date, (12,21)) +"</td></tr><tr>"+
+            "<tr><td>Working Population (22-59 Years)</td><td style='text-align: center'>" + Android.getAgegroupCount(date, (22,59)) +"</td></tr><tr>"+
+            "<tr><td>Older Population (>= 60 years)</td><td style='text-align: center'>" + Android.getAgegroupCount(date, (60,120)) +"</td></tr><tr>"+
+            "<tr class='heading'><td colspan='2' >Total Population By Outcome</td></tr>"+
+            "<tr><td>Alive</td><td style='text-align: center'>"+Android.getOutcomeCount(date,'NULL')+"</td></tr><tr>"+
+            "<tr><td>Transferred</td><td style='text-align: center'>"+Android.getOutcomeCount(date,'Transfer Out')+"</td></tr><tr>"+
+            "<tr><td>Dead</td><td style='text-align: center'>"+Android.getOutcomeCount(date,'Dead')+"</td></tr><tr>"+
+            "</table>";
+
+
+          new FastButton(document.getElementById('home'), function() {
+              window.location = "index.html";
+          });
+          var mode = Android.getPref("dde_mode");
+
+          if (mode == 'gvh')
+          {
+              document.getElementById('ta').innerHTML = Android.getPref("ta");
+              document.getElementById('gvh').innerHTML = Android.getPref("gvh");
+              document.getElementById('vh_row').style.display = 'none';
+              document.getElementById('logo').setAttribute('rowspan', 3)
+          }
+          else if (mode == 'ta')
+          {
+              document.getElementById('ta').innerHTML = Android.getPref("ta");
+              document.getElementById('gvh_row').style.display = 'none';
+              document.getElementById('vh_row').style.display = 'none';
+              document.getElementById('logo').setAttribute('rowspan', 2)
+          }
+          else
+          {
+              document.getElementById('ta').innerHTML = Android.getPref("ta");
+              document.getElementById('gvh').innerHTML = Android.getPref("gvh");
+              document.getElementById('vh').innerHTML = Android.getPref("vh");
+          }
+
+      }
+      //-->
+  </script>
+
+    <style type="text/css">
+        tr.heading{
+            background-color: silver;
+            height: 45px;
+            font-size: 17px;
+            text-align: center;
+        }
+        tr{
+            font-size: 15px;
+        }
+
+        td.count{
+            text-align: center;
+            cursor: pointer;
+        }
+
+    </style>
+
+</head>
+<body onload="load()" style="margin: 0px; padding: 0px;">
+
+<div class="table" style="border-spacing: 0px; width: 100%;">
+  <div class="row">
+    <div class="cell center" style="position: relative; width: 100%; height: 80%;">
+        <div id="header" style="background-color: #f1f1f1; min-height: 80px;
+              width: 100%; margin: 0px; margin-top: -5px; padding: 0px;
+              border:solid black; border-width: 0px 0px 0.4em 0px; ">
+              <table style="width: 100%; height: 70px" >
+                  <tr>
+                      <td id='logo' style="width: 100px;text-align: center" rowspan="4">
+                          <img src="images/baobab.png" style="height: 70px;width:90px;">
+                      </td>
+                      <td style="vertical-align: top; font-size: 15px; font-weight: bold;">Village Summary</td>
+                      <td>&nbsp;</td><td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                      <td style="font-weight: bold;width:160px;font-size: 13px">Traditional Authority</td>
+                      <td style="width:5px;font-size: 13px">:</td>
+                      <td id='ta' style="font-size: 13px"></td>
+                  </tr>
+                  <tr id= 'gvh_row'>
+                      <td style="font-weight: bold;font-size: 13px">Group Village Headman</td>
+                      <td style="font-size: 13px">:</td>
+                      <td id='gvh' style="font-size: 13px"></td>
+                  </tr>
+                  <tr id= 'vh_row'>
+                      <td style="font-weight: bold;font-size: 13px">Village Headman</td>
+                      <td style="font-size: 13px">:</td>
+                      <td id='vh' style="font-size: 13px"></td>
+                  </tr>
+              </table>
+        </div>
+       <div id="parent" style="background-color: #f1f1f1; min-height: 400px;max-height: 80%;
+              width: 100%; margin: 0px; margin-top: -5px; padding: 0px;overflow: auto;">
+
+
+
+      </div>
+
+      <div class="nav" style="position: absolute; bottom: 0px; border: 1px #fff solid; height: 64px;
+              width: 100%; background-color: #666; margin: 0px; margin-bottom: -65px;
+              margin-left: -5px; ">
+
+        <a id="home" style="float: left;">
+          <img src="images/home.png" alt="Home" style="margin: 0px;
+                  margin-left: 15px;" height="60" />
+        </a>
+
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

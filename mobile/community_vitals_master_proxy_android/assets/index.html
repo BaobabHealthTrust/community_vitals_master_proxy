@@ -107,15 +107,18 @@
             function loadReportsMenu(){
               __$("container").innerHTML = "";
               
-              var fields = [search("Parameter Review"), search("Report"), search("View Results")];
+              var fields = [search("Parameter Review"), search("Report"), search("View Results"), search("Village Summary")];
               
               var images = [
+
                   "report.png",              
                   "report.png",
+                  "report.png",
                   "report.png"
+
               ]
               
-              var paths = ["", "", ""];
+              var paths = ["", "", "","village_statistics.html"];
               
               for(var i = 0; i < fields.length; i++){
                 
@@ -159,7 +162,7 @@
                   "default.png"
               ];
               
-              var paths = ["", "", ""];
+              var paths = ["", ""];
               
               for(var i = 0; i < fields.length; i++){
                 

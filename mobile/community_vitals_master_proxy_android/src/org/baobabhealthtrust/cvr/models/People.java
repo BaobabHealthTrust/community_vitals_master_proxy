@@ -363,5 +363,9 @@ public class People{
 		this._middle_name = middle_name;
 	}
 
-	
+	//get number of people in system
+	public int get_count()
+	{
+		return 0;
+	}
 }
