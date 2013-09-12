@@ -1546,7 +1546,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return result;
 	}
 	
-	public int getGenderCount( String date_selected, String gender){
+	public int getGenderCount(String date_selected, String gender){
 		int result = 0;
 		// Select All Query
 		String selectQuery = "SELECT COUNT(*) FROM "
