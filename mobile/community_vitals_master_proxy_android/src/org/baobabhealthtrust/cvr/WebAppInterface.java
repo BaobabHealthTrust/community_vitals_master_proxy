@@ -706,7 +706,10 @@ public class WebAppInterface {
 				showMsg("Sorry, there was an error!");
 			}
 
-			wst.addNameValuePair("npid_request", json.toString());
+			wst.addNameValuePair("site_code", site_code);
+			wst.addNameValuePair("count", batch_count);
+			
+			// wst.addNameValuePair("npid_request", json.toString());
 
 			wst.targetTaskType = wst.TASK_GET_TA_NPIDS;
 

@@ -46,6 +46,16 @@ protected
 
   def check_user
 
+    # raise request.headers['Authorization'].to_yaml
+
+    if !request.headers['Authorization'].blank?
+    
+      result = Rails.decode64(request.headers['Authorization'])
+      
+      return if !result.nil?
+        
+    end
+
     if !params[:token].nil?
       session[:token] = params[:token]
     end

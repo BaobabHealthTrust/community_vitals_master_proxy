@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
@@ -31,6 +32,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.util.Base64;
 import android.util.Log;
 
 public class WebServiceTask extends AsyncTask<String, Integer, String> {
@@ -81,7 +83,7 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 		this.processMessage = processMessage;
 
 		mDB = new DatabaseHandler(mContext);
-		
+
 	}
 
 	public void addNameValuePair(String name, String value) {
@@ -167,20 +169,32 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 
 			case POST_TASK:
 
-				UsernamePasswordCredentials creds = new UsernamePasswordCredentials(
-						mUsername, mPassword);
-
-				((AbstractHttpClient) httpclient).getCredentialsProvider()
-						.setCredentials(new AuthScope(mServer, mPort), creds);
-
 				HttpPost httppost = new HttpPost(url);
+
 				// Add parameters
 				httppost.setEntity(new UrlEncodedFormEntity(params));
+
+				httppost.setEntity(new UrlEncodedFormEntity(params));
+
+				httppost.setHeader(
+						"Authorization",
+						"Basic "
+								+ Base64.encodeToString(
+										(mUsername + ":" + mPassword)
+												.getBytes(), Base64.NO_WRAP));
 
 				response = httpclient.execute(httppost);
 				break;
 			case GET_TASK:
 				HttpGet httpget = new HttpGet(url);
+
+				httpget.setHeader(
+						"Authorization",
+						"Basic "
+								+ Base64.encodeToString(
+										(mUsername + ":" + mPassword)
+												.getBytes(), Base64.NO_WRAP));
+
 				response = httpclient.execute(httpget);
 				break;
 			}
@@ -272,24 +286,24 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 				obj.setAssignedGvh(mGVH);
 
 				obj.setAssignedVh(mVH);
-				
+
 				obj.setRequestedByGvh(0);
-				
+
 				obj.setRequestedByVh(1);
-				
+
 				obj.setRequestGvhNotified(0);
-				
+
 				obj.setRequestVhNotified(1);
-				
+
 				obj.setCreatedAt(date_created);
-				
+
 				obj.setUpdatedAt(date_created);
-				
+
 				mDB.addNationalIdentifiers(obj);
 			}
 
 			ackNPIDS(response);
-			
+
 		} catch (Exception e) {
 			Log.e(TAG, e.getLocalizedMessage(), e);
 		}
@@ -334,12 +348,12 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 		String vh = mVH;
 
 		String extAck = "";
-		
+
 		WebServiceTask wst = new WebServiceTask(WebServiceTask.POST_TASK,
 				mContext, "Posting data...");
 
 		if (mode.equalsIgnoreCase("ta")) {
-			
+
 			extAck = "npid_requests/ack/";
 
 			JSONObject json = new JSONObject();
@@ -365,11 +379,11 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 			wst.addNameValuePair("site_code", site_code);
 			wst.addNameValuePair("count", batch_count);
 			wst.addNameValuePair("gvh", gvh);
-			
+
 			wst.addNameValuePair("ids", response);
 
 		} else if (mode.equalsIgnoreCase("vh")) {
-			
+
 			extAck = "national_identifiers/request_village_ids_ack/";
 
 			wst.addNameValuePair("site_code", site_code);
