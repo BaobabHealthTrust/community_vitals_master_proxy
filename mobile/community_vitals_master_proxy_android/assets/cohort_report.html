@@ -24,42 +24,13 @@
             new FastButton(document.getElementById('home'), function() {
                 window.location = "index.html";
             });
-            var mode = Android.getPref("dde_mode");
 
-            if (mode == 'gvh')
-            {
-                document.getElementById('ta').innerHTML = Android.getPref("ta");
-                document.getElementById('gvh').innerHTML = Android.getPref("gvh");
-                document.getElementById('vh_row').style.display = 'none';
-                document.getElementById('logo').setAttribute('rowspan', 3)
-            }
-            else if (mode == 'ta')
-            {
-                document.getElementById('ta').innerHTML = Android.getPref("ta");
-                document.getElementById('gvh_row').style.display = 'none';
-                document.getElementById('vh_row').style.display = 'none';
-                document.getElementById('logo').setAttribute('rowspan', 2)
-            }
-            else
-            {
-                document.getElementById('ta').innerHTML = Android.getPref("ta");
-                document.getElementById('gvh').innerHTML = Android.getPref("gvh");
-                document.getElementById('vh').innerHTML = Android.getPref("vh");
-            }
 
-            __$("parent").innerHTML ="<table style='width: 100%'>" +
-                    "<tr class='heading' ><td style='text-align: center;width:60%'>&nbsp;</td>"+
-                    "<td style='text-align: center;width:20%'>Month Total</td><td style='text-align:center;'>Cumulative</td></tr>"+
-                    "<tr class='heading'><td colspan='3'> Population Birth Statistics</td></tr>"+
-                    "<tr class='headings'><td>Total Population by Gender</td><td class='count'>0</td><td class='count'>0</td></tr>"+
-                    "<tr><td>Females</td><td class='count'>0</td><td class='count'>0</td></tr>"+
-                    "<tr class='headings'><td>Males</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
-                    "<tr><td >&nbsp;</td></tr>"+
-                    "<tr class='heading'><td colspan='3'> Population Survival Statistics</td></tr>"+
-                    "<tr class='headings'><td>Alive</td><td class='count'>0</td><td class='count'>0</td></tr>"+
-                    "<tr><td>Dead</td><td class='count'>0</td><td class='count'>0</td></tr>"+
-                    "<tr class='headings'><td>Transferred Out</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
-                    "</table>";
+            __$("parent").innerHTML ="<br><table style='width: 100%'>" +
+                    "<tr><td class='heading'>&nbsp;</td><td class='heading' style='width: 35%'>" +
+                    "Newly Registered In Quarter</td><td class='heading' style='width: 35%'>" +
+                    "Cumulative Ever Registered</td></tr><tr><td class='heading'>Category</td>" +
+                    "<td>&nbsp;</td><td>&nbsp;</td></tr></table>";
 
         }
         //-->
@@ -76,6 +47,20 @@
             background-color: #dcdcdc;
             font-size: 17px;
             text-align: left;
+        }
+        td.heading{
+            font-size:18px;
+            font-weight: bold;
+            text-align: center;
+            color: #6281A7;
+            border: 0.01em solid #808080;
+        }
+        td.headings{
+            font-weight: bold;
+        }
+        td.value{
+            text-align: center;
+            cursor: pointer;
         }
         tr{
             font-size: 15px;
