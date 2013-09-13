@@ -18,6 +18,8 @@
 
           var currentTime = new Date()
           var date = currentTime.getDate() +"/"+ (currentTime.getMonth() + 1) +"/" +currentTime.getFullYear();
+          var var_date = currentTime.getDate() +"/"+ (currentTime.getMonth() + 1) +"/";
+          var var_year = currentTime.getFullYear();
 
           __$("parent").innerHTML =
             "<table style='width: 100%'><tr class='heading'><td colspan='2'>"+
@@ -27,10 +29,14 @@
             "<tr><td>Females</td><td style='text-align: center'>"+Android.getGenderCount(date,'Female')+"</td></tr><tr>"+
             "<tr><td>Males</td><td style='text-align: center'>"+Android.getGenderCount(date,'Male')+"</td></tr><tr>"+
             "<tr class='heading'><td colspan='2' >Total Population By Age</td></tr>"+
-            "<tr><td>Children( < 12 Years)</td><td style='text-align: center'>" + Android.getAgegroupCount(date, (0,11)) +"</td></tr><tr>"+
-            "<tr><td>Youths (12-21 Years)</td><td style='text-align: center'>" + Android.getAgegroupCount(date, (12,21)) +"</td></tr><tr>"+
-            "<tr><td>Working Population (22-59 Years)</td><td style='text-align: center'>" + Android.getAgegroupCount(date, (22,59)) +"</td></tr><tr>"+
-            "<tr><td>Older Population (>= 60 years)</td><td style='text-align: center'>" + Android.getAgegroupCount(date, (60,120)) +"</td></tr><tr>"+
+            "<tr><td>Children( < 12 Years)</td><td style='text-align: center'>" +
+            Android.getAgegroupCount((var_date + (var_year-11)),date) +"</td></tr><tr>"+
+            "<tr><td>Youths (12-21 Years)</td><td style='text-align: center'>" +
+            Android.getAgegroupCount((var_date + (var_year-21)), (var_date + (var_year-12))) +"</td></tr><tr>"+
+            "<tr><td>Working Population (22-59 Years)</td><td style='text-align: center'>" +
+            Android.getAgegroupCount((var_date + (var_year-59)), (var_date + (var_year-22))) +"</td></tr><tr>"+
+            "<tr><td>Older Population (>= 60 years)</td><td style='text-align: center'>" +
+            Android.getAgegroupCount((var_date + (var_year-60)),date) +"</td></tr><tr>"+
             "<tr class='heading'><td colspan='2' >Total Population By Outcome</td></tr>"+
             "<tr><td>Alive</td><td style='text-align: center'>"+Android.getOutcomeCount(date,'NULL')+"</td></tr><tr>"+
             "<tr><td>Transferred</td><td style='text-align: center'>"+Android.getOutcomeCount(date,'Transfer Out')+"</td></tr><tr>"+
