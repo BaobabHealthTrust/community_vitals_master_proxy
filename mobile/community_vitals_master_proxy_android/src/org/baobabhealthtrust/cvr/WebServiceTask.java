@@ -106,7 +106,13 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 	protected void onPreExecute() {
 
 		// hideKeyboard();
-		showProgressDialog();
+
+		/*
+		 * if (processMessage.toString().trim().length() > 0) {
+		 * showProgressDialog(); }
+		 */
+
+		Log.i("POSTING", "Posting started");
 
 	}
 
@@ -141,7 +147,11 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 	protected void onPostExecute(String response) {
 
 		handleResponse(response);
-		pDlg.dismiss();
+
+		/*
+		 * if (processMessage.toString().trim().length() > 0) { pDlg.dismiss();
+		 * }
+		 */
 
 	}
 
@@ -367,7 +377,8 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				showMsg("Sorry, there was an error!");
+				Log.e("FATAL ERROR",
+						"Sorry, there was an error! Can't proceed!");
 			}
 
 			wst.addNameValuePair("npid_request", json.toString());
@@ -412,20 +423,24 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 		wst.execute(new String[] { SERVICE_URL });
 	}
 
-	public void showMsg(String msg) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-		builder.setCancelable(true);
-		builder.setTitle(msg);
-		builder.setInverseBackgroundForced(true);
-		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		});
+	public void showMessage(String msg) {
+		try {
+			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+			builder.setCancelable(true);
+			builder.setTitle(msg);
+			builder.setInverseBackgroundForced(true);
+			builder.setPositiveButton("OK",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+						}
+					});
 
-		AlertDialog alert = builder.create();
-		alert.show();
+			AlertDialog alert = builder.create();
+			alert.show();
+		} catch (Exception e) {
+		}
 	}
 
 }

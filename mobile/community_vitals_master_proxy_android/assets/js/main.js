@@ -559,7 +559,7 @@ function showKeyboard(numeric, showAgain){
 
                     var dynamicLoader = __$("inputField").getAttribute("dynamicLoader");
                     
-                    if(dynamicLoader){
+                    if(dynamicLoader){                        
                         eval(dynamicLoader);
                     }	 
 					      });									
@@ -915,7 +915,9 @@ function showPage(s, back){
     row2.appendChild(cell2);
 
     if(input.getAttribute("tt_onLoad") != null){
+        
         eval(input.getAttribute("tt_onLoad"));
+              
     }
 
     if(input.getAttribute("tt_showToggleKeyboard") != null){
@@ -937,13 +939,15 @@ function showPage(s, back){
       input.setAttribute("tstValue", __$(input.getAttribute('srcControl')).value);
         
       if(__$(input.getAttribute('srcControl')).tagName.toUpperCase() == "INPUT"){
+      
         if(input.getAttribute('dynamicLoader') == null){
+        
           var stored = __$(input.getAttribute('srcControl')).value;
-            
+              
           stored = search(stored);
           
-          input.value = stored;                      
-          
+          input.value = stored;  
+             
         } else {
           if(__$(input.getAttribute('srcControl')).value.trim().match(/^\d+$/)){
             input.value = "";
@@ -1567,6 +1571,51 @@ function search(word){
   } else {
       return word;        
   }
+}
+
+function checkConnection(){
+  
+  var host = Android.getPref("target_server");
+  var timeOut = 3000;
+  
+  if(String(host).match(/unknown|null/i)){
+    setTimeout("checkConnection()", 1000);
+  
+    return;
+  }
+  
+  if(!__$("network")){
+    setTimeout("checkConnection()", 1000);
+  
+    return;
+  }
+  
+  __$("network").setAttribute("src", "images/nsync.png");
+  
+  var conn = Android.checkConnection(host, timeOut);
+  
+  if(conn){
+    __$("network").setAttribute("src", "images/nup.png");
+  } else {
+    __$("network").setAttribute("src", "images/ndown.png");
+  }
+  
+  var threshold = parseInt(Android.getThreshold());
+  var availableIDs = parseInt(Android.getAvailableIds());
+  
+  if(availableIDs <= threshold){
+    if(__$("threshold")){					          
+      __$("threshold").style.color = "red";				          
+      __$("threshold").style.border = "2px solid red";
+    }
+  } else {					          
+    __$("threshold").style.color = "#38b038";				          
+    __$("threshold").style.border = "2px solid #38b038";
+  }
+  
+  __$("threshold").innerHTML = availableIDs;
+					      
+  setTimeout("checkConnection()", 1000);
 }
 
 // loadLocale();

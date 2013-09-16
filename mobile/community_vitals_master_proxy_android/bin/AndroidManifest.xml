@@ -27,6 +27,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name="CVRSyncServices"
+            android:icon="@drawable/ic_launcher"
+            android:label="CVR Sync"
+            android:process=":cvr_sync_process" >
+        </service>
     </application>
 
 </manifest>

@@ -45,6 +45,7 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 	private static final String KEY_DDE_PORT = "dde_port";
 	private static final String KEY_DDE_SITE_CODE = "dde_site_code";
 	private static final String KEY_DDE_BATCH_SIZE = "dde_batch_size";
+	private static final String KEY_DDE_THRESHOLD_SIZE = "dde_threshold_size";
 
 	public UserDatabaseHandler(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -59,7 +60,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 				+ KEY_DDE_USERNAME + " TEXT," + KEY_DDE_PASSWORD + " TEXT,"
 				+ KEY_DDE_IP + " TEXT," + KEY_DDE_PORT + " INTEGER,"
 				+ KEY_DDE_SITE_CODE + " TEXT," + KEY_DDE_BATCH_SIZE
-				+ " INTEGER," + KEY_DATE_CREATED + " TEXT" + ")";
+				+ " INTEGER, " + KEY_DDE_THRESHOLD_SIZE + " INTEGER, "
+				+ KEY_DATE_CREATED + " TEXT" + ")";
 
 		db.execSQL(CREATE_DDE_SETTINGS_TABLE);
 
@@ -79,10 +81,12 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 				+ KEY_DDE_SITE_CODE
 				+ " ,"
 				+ KEY_DDE_BATCH_SIZE
+				+ ", "
+				+ KEY_DDE_THRESHOLD_SIZE
 				+ ") VALUES ('ta', 'unknown', 'unknown', 'unknown', 80, "
-				+ "'unknown', 0 ), ('gvh', 'unknown', 'unknown', 'unknown', 80, "
-				+ "'unknown', 0), ('vh', 'unknown', 'unknown', 'unknown', 80, "
-				+ "'unknown', 0)";
+				+ "'unknown', 0, 0 ), ('gvh', 'unknown', 'unknown', 'unknown', 80, "
+				+ "'unknown', 0, 0), ('vh', 'unknown', 'unknown', 'unknown', 80, "
+				+ "'unknown', 0, 0)";
 
 		db.execSQL(INITIALISE_SETTINGS);
 
@@ -355,22 +359,19 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getReadableDatabase();
 
 		Cursor cursor = db.query(TABLE_DDE_SETTINGS, new String[] {
-				KEY_DDE_BATCH_SIZE, KEY_MODE, KEY_ID, KEY_DDE_SITE_CODE,
-				KEY_DDE_PASSWORD, KEY_DDE_PORT, KEY_DDE_IP, KEY_DDE_USERNAME },
-				KEY_MODE + "=?", new String[] { mode }, null, null, null, null);
+				KEY_DDE_BATCH_SIZE, KEY_DDE_THRESHOLD_SIZE, KEY_DDE_SITE_CODE,
+				KEY_DDE_USERNAME, KEY_DDE_PASSWORD, KEY_MODE, KEY_DDE_PORT,
+				KEY_ID, KEY_DDE_IP }, KEY_MODE + "=?",
+				new String[] { String.valueOf(mode) }, null, null, null, null);
 
 		if (cursor != null)
 			cursor.moveToFirst();
 
-		Log.i("TRYING TO SEARCH", cursor.getCount() + "");
-
-		Log.i("TRYING TO SEARCH", cursor.getString(0) + "");
-
 		DdeSettings dde_settings = new DdeSettings(cursor.getString(0),
-				cursor.getString(1), Integer.parseInt(cursor.getString(2)),
-				cursor.getString(3), cursor.getString(4),
-				Integer.parseInt(cursor.getString(5)), cursor.getString(6),
-				cursor.getString(7));
+				cursor.getString(1), cursor.getString(2), cursor.getString(3),
+				cursor.getString(4), cursor.getString(5),
+				Integer.parseInt(cursor.getString(6)), Integer.parseInt(cursor
+						.getString(7)), cursor.getString(8));
 
 		// return dde_settings
 		return dde_settings;
@@ -381,12 +382,13 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 		ContentValues values = new ContentValues();
 		values.put(KEY_DDE_BATCH_SIZE, dde_settings.getDdeBatchSize());
-		values.put(KEY_MODE, dde_settings.getMode());
+		values.put(KEY_DDE_THRESHOLD_SIZE, dde_settings.getDdeThresholdSize());
 		values.put(KEY_DDE_SITE_CODE, dde_settings.getDdeSiteCode());
+		values.put(KEY_DDE_USERNAME, dde_settings.getDdeUsername());
 		values.put(KEY_DDE_PASSWORD, dde_settings.getDdePassword());
+		values.put(KEY_MODE, dde_settings.getMode());
 		values.put(KEY_DDE_PORT, dde_settings.getDdePort());
 		values.put(KEY_DDE_IP, dde_settings.getDdeIp());
-		values.put(KEY_DDE_USERNAME, dde_settings.getDdeUsername());
 
 		// Insert Row
 		db.insert(TABLE_DDE_SETTINGS, null, values);
@@ -397,19 +399,19 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getReadableDatabase();
 
 		Cursor cursor = db.query(TABLE_DDE_SETTINGS, new String[] {
-				KEY_DDE_BATCH_SIZE, KEY_MODE, KEY_ID, KEY_DDE_SITE_CODE,
-				KEY_DDE_PASSWORD, KEY_DDE_PORT, KEY_DDE_IP, KEY_DDE_USERNAME },
-				KEY_ID + "=?", new String[] { String.valueOf(id) }, null, null,
-				null, null);
+				KEY_DDE_BATCH_SIZE, KEY_DDE_THRESHOLD_SIZE, KEY_DDE_SITE_CODE,
+				KEY_DDE_USERNAME, KEY_DDE_PASSWORD, KEY_MODE, KEY_DDE_PORT,
+				KEY_ID, KEY_DDE_IP }, KEY_ID + "=?",
+				new String[] { String.valueOf(id) }, null, null, null, null);
 
 		if (cursor != null)
 			cursor.moveToFirst();
 
 		DdeSettings dde_settings = new DdeSettings(cursor.getString(0),
-				cursor.getString(1), Integer.parseInt(cursor.getString(2)),
-				cursor.getString(3), cursor.getString(4),
-				Integer.parseInt(cursor.getString(5)), cursor.getString(6),
-				cursor.getString(7));
+				cursor.getString(1), cursor.getString(2), cursor.getString(3),
+				cursor.getString(4), cursor.getString(5),
+				Integer.parseInt(cursor.getString(6)), Integer.parseInt(cursor
+						.getString(7)), cursor.getString(8));
 
 		// return dde_settings
 		return dde_settings;
@@ -427,13 +429,14 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 			do {
 				DdeSettings dde_settings = new DdeSettings();
 				dde_settings.setDdeBatchSize(cursor.getString(0));
-				dde_settings.setMode(cursor.getString(1));
-				dde_settings.setId(Integer.parseInt(cursor.getString(2)));
-				dde_settings.setDdeSiteCode(cursor.getString(3));
+				dde_settings.setDdeThresholdSize(cursor.getString(1));
+				dde_settings.setDdeSiteCode(cursor.getString(2));
+				dde_settings.setDdeUsername(cursor.getString(3));
 				dde_settings.setDdePassword(cursor.getString(4));
-				dde_settings.setDdePort(Integer.parseInt(cursor.getString(5)));
-				dde_settings.setDdeIp(cursor.getString(6));
-				dde_settings.setDdeUsername(cursor.getString(7));
+				dde_settings.setMode(cursor.getString(5));
+				dde_settings.setDdePort(Integer.parseInt(cursor.getString(6)));
+				dde_settings.setId(Integer.parseInt(cursor.getString(7)));
+				dde_settings.setDdeIp(cursor.getString(8));
 				// Adding dde_settings to list
 				dde_settingsList.add(dde_settings);
 			} while (cursor.moveToNext());
@@ -448,13 +451,14 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 		ContentValues values = new ContentValues();
 		values.put(KEY_DDE_BATCH_SIZE, dde_settings.getDdeBatchSize());
-		values.put(KEY_MODE, dde_settings.getMode());
-		values.put(KEY_ID, dde_settings.getId());
+		values.put(KEY_DDE_THRESHOLD_SIZE, dde_settings.getDdeThresholdSize());
 		values.put(KEY_DDE_SITE_CODE, dde_settings.getDdeSiteCode());
-		values.put(KEY_DDE_PASSWORD, dde_settings.getDdePassword());
-		values.put(KEY_DDE_PORT, dde_settings.getDdePort());
-		values.put(KEY_DDE_IP, dde_settings.getDdeIp());
 		values.put(KEY_DDE_USERNAME, dde_settings.getDdeUsername());
+		values.put(KEY_DDE_PASSWORD, dde_settings.getDdePassword());
+		values.put(KEY_MODE, dde_settings.getMode());
+		values.put(KEY_DDE_PORT, dde_settings.getDdePort());
+		values.put(KEY_ID, dde_settings.getId());
+		values.put(KEY_DDE_IP, dde_settings.getDdeIp());
 
 		// updating row
 		return db.update(TABLE_DDE_SETTINGS, values, KEY_ID + " = ?",
@@ -476,5 +480,41 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 		// return count
 		return cursor.getCount();
+	}
+
+	public int getThreshold(String mode) {
+		int result = 0;
+
+		// Select All Query
+		String selectQuery = "SELECT " + KEY_DDE_THRESHOLD_SIZE + " FROM "
+				+ TABLE_DDE_SETTINGS + " WHERE " + KEY_MODE + " = '" + mode
+				+ "'";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			result = Integer.parseInt(cursor.getString(0));
+		}
+
+		return result;
+	}
+
+	public String getDDESetting(String mode, String setting) {
+		String result = "";
+
+		// Select All Query
+		String selectQuery = "SELECT " + setting + " FROM "
+				+ TABLE_DDE_SETTINGS + " WHERE " + KEY_MODE + " = '" + mode
+				+ "'";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			result = cursor.getString(0);
+		}
+
+		return result;
 	}
 }

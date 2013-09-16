@@ -5,14 +5,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.message.BasicNameValuePair;
 import org.baobabhealthtrust.cvr.models.AeSimpleSHA1;
 import org.baobabhealthtrust.cvr.models.DdeSettings;
 import org.baobabhealthtrust.cvr.models.Outcomes;
@@ -28,7 +26,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.AssetManager;
-import android.net.Credentials;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
@@ -486,13 +483,13 @@ public class WebAppInterface {
 		ocome.setPersonId(person_id);
 
 		mDB.addOutcomes(ocome);
-		
+
 		People person = mDB.getPeople(person_id);
-		
+
 		person.setOutcome(outcome);
-		
+
 		person.setOutcomeDate(date_created);
-		
+
 		mDB.updatePeople(person);
 	}
 
@@ -500,12 +497,7 @@ public class WebAppInterface {
 	public void savePersonRelationship(String person_a_id, String person_b_id,
 			String relation) {
 
-		debugPrint("person_a: " + person_a_id + "; person_b_id: " + person_b_id
-				+ "; relation: " + relation);
-
 		int rtype = mDB.getRelationByType(relation);
-
-		debugPrint("Returned with relation type id: " + rtype);
 
 		Relationships relationship = new Relationships();
 
@@ -617,17 +609,32 @@ public class WebAppInterface {
 
 	@JavascriptInterface
 	public void setSettings(String username, String password, String server,
-			String port, String code, String count) {
+			String port, String code, String count, String threshold) {
 		String mode = getPref("dde_mode");
 
 		DdeSettings settings = mUDB.getDdeSettingsByMode(mode);
 
-		settings.setDdeUsername(username);
-		settings.setDdePassword(password);
-		settings.setDdeIp(server);
-		settings.setDdePort(Integer.parseInt(port));
-		settings.setDdeSiteCode(code);
-		settings.setDdeBatchSize(count);
+		if (username.trim().length() > 0)
+			settings.setDdeUsername(username);
+
+
+		if (password.trim().length() > 0)
+			settings.setDdePassword(password);
+
+		if (server.trim().length() > 0)
+			settings.setDdeIp(server);
+
+		if (port.trim().length() > 0)
+			settings.setDdePort(Integer.parseInt(port));
+
+		if (code.trim().length() > 0)
+			settings.setDdeSiteCode(code);
+
+		if (count.trim().length() > 0)
+			settings.setDdeBatchSize(count);
+
+		if (threshold.trim().length() > 0)
+			settings.setDdeThresholdSize(threshold);
 
 		int result = mUDB.updateDdeSettings(settings);
 
@@ -708,7 +715,7 @@ public class WebAppInterface {
 
 			wst.addNameValuePair("site_code", site_code);
 			wst.addNameValuePair("count", batch_count);
-			
+
 			// wst.addNameValuePair("npid_request", json.toString());
 
 			wst.targetTaskType = wst.TASK_GET_TA_NPIDS;
@@ -744,7 +751,7 @@ public class WebAppInterface {
 
 		wst.mGVH = gvh;
 		wst.mVH = vh;
-		
+
 		wst.mDdeMode = mode;
 		wst.mCount = batch_count;
 
@@ -754,23 +761,60 @@ public class WebAppInterface {
 	}
 
 	@JavascriptInterface
-	public int getGenderCount( String date_selected , String gender){
+	public int getGenderCount(String date_selected, String gender) {
 		int result = 0;
-		result = mDB.getGenderCount(date_selected, gender);		
+		result = mDB.getGenderCount(date_selected, gender);
 		return result;
 	}
-	
+
 	@JavascriptInterface
-	public int getOutcomeCount( String date_selected , String outcome){
+	public int getOutcomeCount(String date_selected, String outcome) {
 		int result = 0;
-		result = mDB.getOutcomeCount(date_selected, outcome);		
+		result = mDB.getOutcomeCount(date_selected, outcome);
 		return result;
 	}
-	
+
 	@JavascriptInterface
-	public int getAgegroupCount( String date_selected , String[] age_group){
+	public int getAgegroupCount(String date_selected, String[] age_group) {
 		int result = 0;
-		//result = mDB.getAgegroupCount(date_selected, age_group);		
+		// result = mDB.getAgegroupCount(date_selected, age_group);
 		return result;
 	}
+
+	@JavascriptInterface
+	public boolean checkConnection(String host, int timeOut) {
+		boolean result = false;
+		try {
+			result = InetAddress.getByName(host).isReachable(timeOut);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// result = mDB.getAgegroupCount(date_selected, age_group);
+		return result;
+	}
+
+	@JavascriptInterface
+	public int getThreshold() {
+		int result = 0;
+		String mode = getPref("dde_mode");
+
+		result = mUDB.getThreshold(mode);
+
+		return result;
+	}
+
+	@JavascriptInterface
+	public String getDDESetting(String setting) {
+		String result = "";
+		String mode = getPref("dde_mode");
+
+		result = mUDB.getDDESetting(mode, setting);
+
+		return result;
+	}
+
 }

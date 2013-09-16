@@ -2,6 +2,15 @@
     <head>
         <title>CVR</title>
         <link rel="stylesheet" type="text/css" href="css/main.css" />
+        
+        <script>        
+            Ext.Loader.setConfig({
+              enabled: true,
+              disableCaching: false
+            });
+
+            Ext.Ajax.setDisableCaching(false);
+        </Script>
 
         <script type="text/javascript" src="db/seed.js"></script>
         <script type="text/javascript" src="js/md5.js"></script>
@@ -264,7 +273,13 @@
 					      new FastButton(document.getElementById('logout'), function() {
 					        doLogout();				 
 					      });
-					
+										
+					      new FastButton(document.getElementById('network'), function() {
+					        checkConnection();				 
+					      });
+										      
+					      setTimeout("checkConnection()", 500);
+					      
 					      var app = search("Application");
 					      var reports = search("Reports");
 					      var my_activities = search("My Activities");
@@ -311,7 +326,6 @@
 					          switchTab("reports");	
 					          break;
 					      }
-					
 					  }
       //-->
     </script>
@@ -364,6 +378,15 @@
         Village Register
       </div>
       <img src="images/baobab.png" height="80" style="margin-right: 20px; float: right;" />
+      
+      <img id="network" src="images/ndown.png" height="65" style="margin-right: 20px;
+          margin-top: 15px; float: right;" />
+          
+      <div id="threshold" style="margin-right: -25px; margin-top: 15px; float: right; color: red;
+          border: 2px solid red; border-radius: 50px; width: 40px; font-size: 18px; padding-bottom: 0px;
+          height: 30px; text-align: center; vertical-align: middle; padding-top: 10px; background-color: rgba(255,255,255,0.6);">
+          &nbsp;
+      </div>
     </div>
   </body>
 </html>

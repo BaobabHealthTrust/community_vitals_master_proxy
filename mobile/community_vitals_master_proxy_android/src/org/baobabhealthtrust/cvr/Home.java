@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
-import org.baobabhealthtrust.cvr.R;
+import java.util.Calendar;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -46,7 +49,7 @@ public class Home extends Activity {
 		}
 		exportDB();
 		// importDB();
-		
+
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -55,7 +58,6 @@ public class Home extends Activity {
 				WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
 		setContentView(R.layout.activity_home);
-
 
 		myWebView = (WebView) findViewById(R.id.webview);
 		WebSettings webSettings = myWebView.getSettings();
@@ -71,6 +73,22 @@ public class Home extends Activity {
 				"Android");
 
 		myWebView.loadUrl("file:///android_asset/login.html");
+
+		// use this to start and trigger a service
+		// Intent i = new Intent(this, CVRSync.class);
+		// potentially add data to the intent
+		// i.putExtra("KEY1", "Value to be used by the service");
+		// this.startService(i);
+
+		Calendar cal = Calendar.getInstance();
+
+		Intent intent = new Intent(this, CVRSyncServices.class);
+		PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
+
+		AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		// Start every 30 seconds
+		alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
+				30 * 1000, pintent);
 	}
 
 	@Override
@@ -178,7 +196,7 @@ public class Home extends Activity {
 				dst.transferFrom(src, 0, src.size());
 				src.close();
 				dst.close();
-				
+
 				// General DB
 
 				currentDBPath = "//data//" + "org.baobabhealthtrust.cvr"

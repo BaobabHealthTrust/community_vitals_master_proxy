@@ -1415,7 +1415,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			if (cursor.moveToFirst()) {
 				term = cursor.getString(0);
 			} else {
-				Log.i("SEARCH DEBUGGING", selectQuery);
+				// Log.i("SEARCH DEBUGGING", selectQuery);
 			}
 		}
 
@@ -1477,8 +1477,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 
 	public String[] getPersonById(int id) {
-		Log.i("SEARCHING", "Got in with " + id);
-
+		
 		People people = getPeople(id);
 
 		int npid = Integer.parseInt(people.getNationalId());
@@ -1591,4 +1590,5 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		
 		return result;
 	}
+
 }
