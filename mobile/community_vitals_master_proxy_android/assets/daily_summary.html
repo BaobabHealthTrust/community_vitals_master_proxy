@@ -16,16 +16,13 @@
 
         function load(){
 
-            var currentTime = new Date()
-            var date = currentTime.getDate() +"/"+ (currentTime.getMonth() + 1) +"/" +currentTime.getFullYear();
-            var var_date = currentTime.getDate() +"/"+ (currentTime.getMonth() + 1) +"/";
-            var var_year = currentTime.getFullYear();
-
             new FastButton(document.getElementById('home'), function() {
                 window.location = "index.html";
             });
             var mode = Android.getPref("dde_mode");
-
+            var day =  Android.getPref("query_date");
+             Android.getDailySummary(day);
+            document.getElementById('duration').innerHTML += ( " " +  Android.getPref("report_date"));
             if (mode == 'gvh')
             {
                 document.getElementById('ta').innerHTML = Android.getPref("ta");
@@ -49,23 +46,24 @@
 
 
             __$("parent").innerHTML = "<table style='width: 100%'>" +
-                "<tr class='heading' ><td style='text-align: center;width:60%'>Indicator</td>"+
-                "<td style='text-align: center;width:20%'>Today</td><td style='text-align:center;'>Cumulative</td>"+
-                "</tr><tr class='headings'><td colspan='3' >General Population Statistics</td></tr><tr>" +
-                "<td>Total Population</td><td class='count'>0</td> <td class='count'>0</td></tr>"+
-                "<tr class='headings'><td colspan='3' >Total Population by Gender</td></tr>"+
-                "<tr><td>Females</td><td class='count'>0</td><td class='count'>0</td></tr>"+
-                "<tr><td>Males</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
-                "<tr class='headings'><td colspan='3' >Total Population By Age</td></tr>"+
-                "<tr><td>Children( < 12 Years)</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
-                "<tr><td>Youths (12-21 Years)</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
-                "<tr><td>Working Population (22-59 Years)</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
-                "<tr><td>Older Population (>= 60 years)</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
-                "<tr class='headings'><td colspan='3' >Total Population By Outcome</td></tr>"+
-                "<tr><td>Alive</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
-                "<tr><td>Transferred</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
-                "<tr><td>Dead</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
-            "</table>";
+                    "<tr class='heading' ><td style='text-align: center;width:60%'>Indicator</td>"+
+                    "<td style='text-align: center;width:20%'>Today</td><td style='text-align:center;'>Cumulative</td>"+
+                    "</tr><tr class='headings'><td colspan='3' >General Population Statistics</td></tr><tr>" +
+                    "<td>Total Population</td><td class='count'>"+ Android.getPref('new_popln')+"</td>"+
+                    "<td class='count'>" +Android.getPref('popln') + "</td></tr>"+
+                    "<tr class='headings'><td colspan='3' >Total Population by Gender</td></tr>"+
+                    "<tr><td>Females</td><td class='count'>0</td><td class='count'>"+ Android.getPref('female') +"</td></tr>"+
+                    "<tr><td>Males</td><td class='count'>0</td><td class='count'>"+ Android.getPref('male') +"</td></tr><tr>"+
+                    "<tr class='headings'><td colspan='3' >Total Population By Age</td></tr>"+
+                    "<tr><td>Children( < 12 Years)</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
+                    "<tr><td>Youths (12-21 Years)</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
+                    "<tr><td>Working Population (22-59 Years)</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
+                    "<tr><td>Older Population (>= 60 years)</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
+                    "<tr class='headings'><td colspan='3' >Total Population By Outcome</td></tr>"+
+                    "<tr><td>Alive</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
+                    "<tr><td>Transferred</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
+                    "<tr><td>Dead</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
+                    "</table>";
 
         }
         //-->
@@ -110,11 +108,11 @@
                         <td id='logo' style="width: 100px;text-align: center" rowspan="4">
                             <img src="images/baobab.png" style="height: 70px;width:90px;">
                         </td>
-                        <td style="vertical-align: top; font-size: 15px; font-weight: bold;">Daily Summary</td>
+                        <td id="duration" style="vertical-align: top; font-size: 15px; font-weight: bold;">Daily Summary For</td>
                         <td>&nbsp;</td><td>&nbsp;</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold;width:160px;font-size: 13px">Traditional Authority</td>
+                        <td style="font-weight: bold;width:30%;font-size: 13px">Traditional Authority</td>
                         <td style="width:5px;font-size: 13px">:</td>
                         <td id='ta' style="font-size: 13px"></td>
                     </tr>

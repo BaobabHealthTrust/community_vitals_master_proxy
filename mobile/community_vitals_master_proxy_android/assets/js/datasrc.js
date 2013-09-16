@@ -705,3 +705,87 @@ function getNationalIDs(){
   showMessage("Must have got national ids!");
 }
 
+function selectMonth( month){
+
+    var months = {
+        "January":"1",
+        "February":"2",
+        "March":"3",
+        "April":"4",
+        "May":"5",
+        "June":"6",
+        "July":"7",
+        "August":"8",
+        "September":"9",
+        "October":"10",
+        "November":"11",
+        "December":"12"
+    };
+
+    return months[month]
+}
+
+function selectOutcomeMonth(){
+
+    var year = __$("1.1").value;
+    var month = __$("1.2").value;
+
+    var rep_month = selectMonth(month)+"/"+ year.trim();
+    var dis_month =month.trim() +" "+ year.trim();
+
+    Android.setReportMonth(rep_month, dis_month);
+    if (Android.getPref("dde_mode") == 'vh')
+    {
+        window.location = "monthly_outcomes_report.html";
+    }
+    else
+    {
+        window.location = "monthly_outcomes_report_senior.html";
+    }
+}
+
+function selectBirthMonth(){
+
+    var year = __$("1.1").value;
+    var month = __$("1.2").value;
+
+    var rep_month = selectMonth(month)+"/"+ year.trim();
+    var dis_month =month.trim() +" "+ year.trim();
+
+    Android.setReportMonth(rep_month, dis_month);
+    if (Android.getPref("dde_mode") == 'vh')
+    {
+        window.location = "monthly_birth_report.html";
+    }
+    else
+    {
+        window.location = "monthly_birth_report_senior.html";
+    }
+
+}
+
+function selectDate(){
+    var year = __$("1.1").value;
+    var month = __$("1.2").value;
+    var day = __$("1.3").value;
+
+    var months = {
+        "January":"1",
+        "February":"2",
+        "March":"3",
+        "April":"4",
+        "May":"5",
+        "June":"6",
+        "July":"7",
+        "August":"8",
+        "September":"9",
+        "October":"10",
+        "November":"11",
+        "December":"12"
+    };
+
+    var date = day.trim() + '/' + months[month].trim() +'/' + year.trim();
+    var display_date = day.trim() + ' ' + __$("1.2").value.trim() +' ' + year.trim();
+    Android.setReportDate(date,display_date)
+    window.location = "daily_summary.html"
+}

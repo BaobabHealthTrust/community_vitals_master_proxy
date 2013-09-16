@@ -754,6 +754,20 @@ public class WebAppInterface {
 	}
 
 	@JavascriptInterface
+	public void setReportMonth(String months, String month)
+	{
+		setPref("report_month", months);
+		setPref("display_month", month);
+	}
+	
+	@JavascriptInterface
+	public void setReportDate(String date, String display_date )
+	{
+		setPref("query_date", date);
+		setPref("report_date", display_date);
+	}
+	
+	@JavascriptInterface
 	public int getGenderCount( String date_selected , String gender){
 		int result = 0;
 		result = mDB.getGenderCount(date_selected, gender);		
@@ -772,5 +786,23 @@ public class WebAppInterface {
 		int result = 0;
 		//result = mDB.getAgegroupCount(date_selected, age_group);		
 		return result;
+	}
+	@JavascriptInterface
+	public void getMonthBirthReport(String month)
+	{
+		
+	}
+	@JavascriptInterface
+	public void getDailySummary(String date)
+	{
+		int today_count = mDB.getAssignedByDate(date, date);
+		int cul_count =  mDB.getAssignedByDate("01/01/1900", date);
+		int cul_male =  mDB.getGenderCount(date, "Male");
+		int cul_female = mDB.getGenderCount(date, "Female");
+		
+		setPref( "new_popln", String.valueOf(today_count) );
+		setPref( "popln", String.valueOf(cul_count));
+		setPref( "male", String.valueOf(cul_male));
+		setPref( "female", String.valueOf(cul_female));
 	}
 }

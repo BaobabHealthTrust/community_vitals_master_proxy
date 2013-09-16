@@ -106,7 +106,7 @@
           
             function loadReportsMenu(){
               __$("container").innerHTML = "";
-              var mode = Android.getPref("dde_mode");
+
               var fields = [search("Cohort Report"), search("Month Outcomes Report"), search("Monthly Birth Report"),
                   search("Daily Summary"),search("Village Summary")];
               
@@ -120,16 +120,10 @@
 
               ]
 
-              if (mode != 'vh')
-              {
-                  var paths = ["cohort_report.html", "monthly_outcomes_report_senior.html", "monthly_birth_report_senior.html",
-                      "daily_summary.html","village_statistics.html"];
-              }
-              else
-              {
-                var paths = ["cohort_report.html", "monthly_outcomes_report.html", "monthly_birth_report.html",
-                              "daily_summary.html","village_statistics.html"];
-              }
+
+              var paths = ["cohort_report.html", "select_outcome_month.html", "select_birth_month.html",
+                              "select_date.html","village_statistics.html"];
+
               
               for(var i = 0; i < fields.length; i++){
                 

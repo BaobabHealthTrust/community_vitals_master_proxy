@@ -24,6 +24,9 @@
             new FastButton(document.getElementById('home'), function() {
                 window.location = "index.html";
             });
+
+            document.getElementById('title').innerHTML += ( " " + Android.getPref("display_month"));
+
             var mode = Android.getPref("dde_mode");
 
             if (mode == 'gvh')
@@ -90,7 +93,7 @@
                         <td id='logo' style="width: 100px;text-align: center" rowspan="4">
                             <img src="images/baobab.png" style="height: 70px;width:90px;">
                         </td>
-                        <td style="vertical-align: top; font-size: 15px; font-weight: bold;"colspan="3">Monthly Outcomes Report</td>
+                        <td id='title' style="vertical-align: top; font-size: 15px; font-weight: bold;"colspan="3">Monthly Outcomes Report For</td>
                     </tr>
                     <tr>
                         <td style="font-weight: bold;width: 20%;font-size: 13px">Traditional Authority</td>

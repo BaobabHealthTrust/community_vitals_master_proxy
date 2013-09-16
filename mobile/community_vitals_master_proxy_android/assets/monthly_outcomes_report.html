@@ -24,6 +24,7 @@
             new FastButton(document.getElementById('home'), function() {
                 window.location = "index.html";
             });
+            document.getElementById('title').innerHTML += ( " " + Android.getPref("display_month"));
             var mode = Android.getPref("dde_mode");
 
             if (mode == 'gvh')
@@ -48,9 +49,9 @@
             }
 
             __$("parent").innerHTML = "<table style='width: 100%'>" +
+                    "<tr class='heading'><td colspan='3'> Population Outcome Statistics</td></tr>"+
                     "<tr class='heading' ><td style='text-align: center;width:60%'>&nbsp;</td>"+
                     "<td style='text-align: center;width:20%'>Month Total</td><td style='text-align:center;'>Cumulative</td></tr>"+
-                    "<tr class='heading'><td colspan='3'> Population Outcome Statistics</td></tr>"+
                     "<tr class='headings'><td>Total Population </td><td>&nbsp;</td><td class='count'>0</td></tr>"+
                     "<tr><td>Alive</td><td class='count'>0</td><td class='count'>0</td></tr>"+
                     "<tr class='headings'><td>Dead</td><td class='count'>0</td><td class='count'>0</td></tr>"+
@@ -98,7 +99,7 @@
                         <td id='logo' style="width: 100px;text-align: center" rowspan="4">
                             <img src="images/baobab.png" style="height: 70px;width:90px;">
                         </td>
-                        <td style="vertical-align: top; font-size: 15px; font-weight: bold;" colspan="3">Monthly Outcomes Report</td>
+                        <td id='title' style="vertical-align: top; font-size: 15px; font-weight: bold;" colspan="3">Monthly Outcomes Report For</td>
                     </tr>
                     <tr>
                         <td style="font-weight: bold;font-size: 13px;width: 20%;">Traditional Authority</td>

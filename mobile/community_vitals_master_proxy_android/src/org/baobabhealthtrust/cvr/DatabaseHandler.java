@@ -1545,20 +1545,41 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		return result;
 	}
-	
-	public int getGenderCount(String date_selected, String gender){
+
+	public int getAssignedByDate(String min_date, String max_date)
+	{
 		int result = 0;
-		// Select All Query
-		String selectQuery = "SELECT COUNT(*) FROM "
-				+ TABLE_PEOPLE + " WHERE voided != 1 AND gender ='" + gender +"'";
+		
+		String countQuery = "SELECT  count(*) FROM " + TABLE_PEOPLE  +
+				" WHERE COALESCE(voided,0) = 0 AND Date(created_at) >= Date('" + min_date +"') AND " +
+				"Date('" + max_date + "')";
+
 		SQLiteDatabase db = this.getWritableDatabase();
-		Cursor cursor = db.rawQuery(selectQuery, null);
+		Cursor cursor = db.rawQuery(countQuery, null);
 		// looping through all rows and adding to list
 		if (cursor.moveToFirst()) {
 			result = Integer.parseInt(cursor.getString(0));
 		}
-		
-		return result;
+
+		return result;	
+	}
+	
+	public int getGenderCount(String date_selected, String gender){
+
+		int result = 0;
+		// Select All Query
+		String countQuery = "SELECT COUNT(*) FROM "+ TABLE_PEOPLE
+				 + " WHERE voided = 0 AND Date("+ KEY_CREATED_AT +") <= Date('" + date_selected
+				+ "')  AND gender ='" + gender +"'";
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			result = Integer.parseInt(cursor.getString(0));
+		}
+
+		return result;	
+
 	}
 	
 	public int getOutcomeCount(String date_selected, String outcome){
