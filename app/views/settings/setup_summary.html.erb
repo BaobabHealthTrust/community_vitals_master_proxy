@@ -1,0 +1,65 @@
+<script language="javascript">
+  tt_cancel_destination = '/';
+  tt_cancel_show = '/';
+  
+  function loadSettings(){
+    __$("inputFrame" + tstCurrentPage).innerHTML = "<div style='top: 0px; " + 
+                    "width: 100%; text-align: center;'>" + 
+                    "<table style='margin: 30px; font-size: 1.3em;' width='93%' cellpadding='6' cellspacing='0'>" + 
+                    "<tr><th style='font-size: 1.2em; border-bottom: 2px solid blue; color: blue;' " + 
+                    "colspan='2'>Target Server Settings</th></tr>" +
+                    "<tr><th align='left' style='border-bottom: 1px solid #ccc; " + 
+                    "border-right: 1px solid blue;'>Current Mode</th><td style='border-bottom: " + 
+                    "1px solid #ccc;'><%= @dde_mode %></td></tr>" +
+                    "<tr><th align='left' style='border-bottom: 1px solid #ccc; border-right: " + 
+                    "1px solid blue;'>Username</th><td style='border-bottom: 1px solid #ccc;'>" + 
+                    "<%= @username %><a href='site_setup?f=username' " + 
+                    "style='float: right;'><img src='/images/pencil.png'/></a>" + "</td></tr>" +
+                    "<tr><th align='left' style='border-bottom: 1px solid #ccc; border-right: " + 
+                    "1px solid blue;'>Password</th><td style='border-bottom: 1px solid #ccc;'>" + 
+                    "<%= @password %><a href='site_setup?f=password' " + 
+                    "style='float: right;'><img src='/images/pencil.png'/></a>" + "</td></tr>" +
+                    "<tr><th align='left' style='border-bottom: 1px solid #ccc; border-right: " + 
+                    "1px solid blue;'>Target Server IP</th><td style='border-bottom: 1px solid #ccc;'>" + 
+                    "<%= @target_server %><a href='site_setup?f=ip&o=port' style='float: right;'>" + 
+                    "<img src='/images/pencil.png'/></a></td></tr>" +
+                    "<tr><th align='left' style='border-bottom: 1px solid #ccc; border-right: " + 
+                    "1px solid blue;'>Site Code</th><td style='border-bottom: 1px solid #ccc;'>" + 
+                    "<%= @site_code %><a href='site_setup?f=code' " + 
+                    "style='float: right;'><img src='/images/pencil.png'/></a>" + "</td></tr>" +
+                    "<tr><th align='left' style='border-bottom: 1px solid #ccc; border-right: 1px " + 
+                    "solid blue;'>ID Batch Size</th><td style='border-bottom: 1px solid #ccc;'>" + 
+                    "<%= @batch_count %><a href='site_setup?f=batch' " + 
+                    "style='float: right;'><img src='/images/pencil.png'/></a>" + "</td></tr>" +
+                    "<tr><th align='left' style='border-bottom: 1px solid #ccc; border-right: 1px " + 
+                    "solid blue;'>T/A</th><td style='border-bottom: 1px solid #ccc;'>" + 
+                    "<%= @ta %></td></tr>" +
+                    "<tr><th align='left' style='border-bottom: 1px solid #ccc; border-right: 1px " + 
+                    "solid blue;'>GVH</th><td style='border-bottom: 1px solid #ccc;'>" + 
+                    "<%= @gvh %></td></tr>" +
+                    "<tr><th align='left' style='border-bottom: 1px solid #ccc; border-right: 1px " + 
+                    "solid blue;'>VH</th><td style='border-bottom: 1px solid #ccc;'>" + 
+                    "<%= @vh %></td></tr>" +
+                    "<tr><th align='left' style='border-bottom: 1px solid #ccc; border-right: 1px " + 
+                    "solid blue;'>Available IDs</th><td style='border-bottom: 1px solid #ccc;'>" +  
+                    "<%= @available %></td></tr>" +
+                    "<tr><th align='left' style='border-bottom: 1px solid #ccc; border-right: 1px " + 
+                    "solid blue;'>IDs Threshold</th><td style='border-bottom: 1px solid #ccc;'>" + 
+                    "<%= @threshold %><a href='site_setup?f=threshold' " + 
+                    "style='float: right;'><img src='/images/pencil.png'/></a>" + "</td></tr>" +
+                    "</table>" +
+                    "</div>";
+  }
+  
+</script> 
+
+<% form_tag (:action => :done) do %>
+
+  <%= text_field_tag "username", nil, 
+    {
+      :helpText => "",
+      :tt_onLoad => "loadSettings()",
+      :tt_pageStyleClass => "NoControls NoKeyboard"
+    } %>
+
+<% end %>                    
