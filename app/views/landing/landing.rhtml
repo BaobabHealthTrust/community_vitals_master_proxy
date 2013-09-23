@@ -18,14 +18,14 @@
       }
 
       .menu_button.blue {
-          color: #333;
+          color: #ffffee;
           -moz-transition: none 0s ease 0s;
           border: 0 none;
           border-radius: 15px;
           box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 1px 5px rgba(0, 0, 0, 0.25);
           padding: 14px 24px;
           background-color: #006DCC;
-          background-image: -moz-linear-gradient(center top , #497ac4, #89b4ef);
+          background-image: -moz-linear-gradient(center top , #0088EE, #0044EE);
           background-repeat: repeat-x;
           border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
           text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
@@ -59,6 +59,8 @@
       }
 
     </style>
+    
+    <script type="text/javascript" src="/javascripts/android.js"></script>
     
     <script type="text/javascript">
       <!--
@@ -305,7 +307,7 @@
         function loadAdministrationMenu(){
           __$("container").innerHTML = "";
           
-          var fields = ["Setup", "Settings", "Users"];
+          var fields = ["Setup", "Settings Summary", "Users"];
           
           var images = [
               "<%= (File.exists?("#{Rails.root}/public/images/setup.png") ? 
@@ -316,7 +318,7 @@
                   "users.png" : "default.png") %>"
           ]
           
-          var paths = ["", "", ""];
+          var paths = ["/settings/site_setup", "", ""];
           
           for(var i = 0; i < fields.length; i++){
             
@@ -350,10 +352,24 @@
           }
         }
       
+        
+        function checkConnection(){
+          
+          var android = new Android();
+          
+          android.getThreshold();
+          
+          android.getAvailableIds();
+          
+          android.checkConnection();
+					              
+          setTimeout("checkConnection()", 1000);
+        }
+
       //-->
     </script>
   </head>
-  <body onresize="adjustView()" onload="adjustView(); load_menu()">
+  <body onresize="adjustView()" onload="adjustView(); load_menu(); checkConnection();">
     <table width="100%" cellspacing="0" cellpadding="10">
       <tr>
         <td id="application" class="menu" style="border-bottom: 5px solid #5496ef; font-size: 18px;
@@ -380,8 +396,10 @@
           &nbsp;
         </td>
         <td style="width: 100px; border-bottom: 1px solid #5496ef;">
-          <img src="/images/<%= (File.exists?("#{Rails.root}/public/images/app.png") ? 
-              "app.png" : "baobab.png") %>" height="80" style="float: right;" />
+          
+        <img src="/images/close.png" height="65" style="margin-right: 0px; 
+            margin-top: 0px; cursor: pointer; float: right;" onclick="window.location='/logout'" />
+            
         </td>
       </tr>
       <tr>
@@ -404,8 +422,16 @@
           margin-top: -25px; background-image: -moz-linear-gradient(center right , #FFFFFF, #89b4ef);">
         <%= Vocabulary.search("Village Register") %>
       </div>
-      <img src="/images/close.png" height="65" style="margin-right: 20px; 
-          margin-top: 0px; cursor: pointer; float: right;" onclick="window.location='/logout'" />
+      
+      <img src="/images/<%= (File.exists?("#{Rails.root}/public/images/app.png") ? 
+          "app.png" : "baobab.png") %>" height="80" style="float: right; margin-right: 20px;" />
+          
+      <img id="network" src="images/ndown.png" height="65" style="margin-right: 20px;
+           margin-top: 15px; float: right;" />
+
+      <div id="threshold" style="margin-right: -25px; margin-top: 15px; float: right; color: red;
+           border: 2px solid red; border-radius: 50px; width: 40px; font-size: 18px; padding-bottom: 0px;
+           height: 30px; text-align: center; vertical-align: middle; padding-top: 10px; background-color: rgba(255,255,255,0.6);">
     </div>
   </body>
 </html>

@@ -1,0 +1,64 @@
+<script language="javascript">
+  tt_cancel_destination = '/';
+  tt_cancel_show = '/';
+</script> 
+
+<% form_tag (:action => :save_setup) do %>
+
+  <%= text_field_tag "username", nil, 
+    {
+      :helpText => Vocabulary.search("Target Site Username"),
+      :field_type => :password,
+      :condition => "(window.location.href.match(/\\?/) ? (window.location.href.match(/username/i) ? true : false) : true)"
+    } %>
+
+  <%= password_field_tag "password", nil, 
+    {
+      :helpText => Vocabulary.search("Target Site Password"), 
+      :field_type => :password,
+      :condition => "(window.location.href.match(/\\?/) ? (window.location.href.match(/password/i) ? true : false) : true)"
+    } %>
+
+  <%= text_field_tag "ip", nil, 
+    {
+      :helpText => Vocabulary.search("Target Server IP Address"),
+      :field_type => "number",
+      :tt_pageStyleClass => "NumbersOnlyWithDecimal",
+      :validationRule => "^\\d+\\.\\d+\\.\\d+\\.\\d+$",
+      :validationMessage => "Wrong value. Expecting an IP address of format xxx.xxx.xxx.xxx!",
+      :condition => "(window.location.href.match(/\\?/) ? (window.location.href.match(/ip/i) ? true : false) : true)"
+    } %>
+
+  <%= text_field_tag "port", nil, 
+    {
+      :helpText => Vocabulary.search("Target Server IP Address Port"),
+      :field_type => "number",
+      :validationRule => "^\\d+$",
+      :tt_pageStyleClass => "NumbersOnly",
+      :validationMessage => "Wrong value. Expecting a number!",
+      :condition => "(window.location.href.match(/\\?/) ? (window.location.href.match(/ip/i) ? true : false) : true)"
+    } %>
+    
+  <%= text_field_tag "code", nil, 
+    {
+      :helpText => Vocabulary.search("Site Code"),
+      :condition => "(window.location.href.match(/\\?/) ? (window.location.href.match(/code/i) ? true : false) : true)"
+    } %>
+
+  <%= text_field_tag "batch", nil, 
+    {
+      :helpText => Vocabulary.search("ID Batch Size"),
+      :tt_pageStyleClass => "NumbersOnly",
+      :field_type => "number",
+      :condition => "(window.location.href.match(/\\?/) ? (window.location.href.match(/batch/i) ? true : false) : true)"
+    } %>
+
+  <%= text_field_tag "threshold", nil, 
+    {
+      :helpText => Vocabulary.search("ID Lower Threshold Size"),
+      :tt_pageStyleClass => "NumbersOnly",
+      :field_type => "number",
+      :condition => "(window.location.href.match(/\\?/) ? (window.location.href.match(/threshold/i) ? true : false) : true)"
+    } %>
+
+<% end %>

@@ -214,16 +214,16 @@
                 __$("container").innerHTML = "";
               
                 var fields = [search("Site Setup"), search("Settings Summary"), 
-                    search("Get National IDs"), search("Users")];
+                    /*search("Get National IDs"),*/ search("Users")];
               
                 var images = [
                     "setup.png",              
                     "settings.png",              
-                    "barcode.jpg",              
+                    /*"barcode.jpg",*/              
                     "users.png"
                 ]
               
-                var paths = ["site_setup.html", "setup_summary.html", "request_npids.html", ""];
+                var paths = ["site_setup.html", "setup_summary.html", /*"request_npids.html",*/ ""];
               
                 for(var i = 0; i < fields.length; i++){
                 
@@ -379,7 +379,7 @@
         <div id="nav" style="width: 100%; height: 90px; background:url(images/pad.png) left repeat-y;
              left: 0px; position: absolute; bottom: 0px; ">
             <div id="reg" style="float: left; margin-left: 0px; font-size: 42px; padding: 30px; color: #666; min-width: 50%; 
-                 margin-top: -15px; background-image: -moz-linear-gradient(center right , #FFFFFF, #89b4ef);">
+                 margin-top: -15px; background-image: -moz-linear-gradient(center right , #FFFFFF, #89b4ef); padding-left: 45px;">
                 Village Register
             </div>
             <img src="images/baobab.png" height="80" style="margin-right: 20px; float: right;" />
@@ -390,7 +390,6 @@
             <div id="threshold" style="margin-right: -25px; margin-top: 15px; float: right; color: red;
                  border: 2px solid red; border-radius: 50px; width: 40px; font-size: 18px; padding-bottom: 0px;
                  height: 30px; text-align: center; vertical-align: middle; padding-top: 10px; background-color: rgba(255,255,255,0.6);">
-                &nbsp;
             </div>
         </div>
     </body>

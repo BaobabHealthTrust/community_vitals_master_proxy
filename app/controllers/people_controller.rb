@@ -361,4 +361,41 @@ class PeopleController < ApplicationController
     end
   end
 
+  def below_threshold
+    threshold = NationalIdentifier.threshold
+    ids = NationalIdentifier.available_ids
+    
+    result = false
+    
+    result = true if ids < threshold 
+    
+    render :text => result
+  end
+
+  def available_ids
+    result = 0
+    
+    result = NationalIdentifier.available_ids rescue 0
+    
+    render :text => result
+  end
+
+  def connected  
+    settings = YAML.load_file("#{Rails.root}/config/application.yml") rescue {}
+    
+    result = false
+
+    if !settings.empty?
+      mode = settings["dde_mode"] rescue nil
+      
+      server = settings["dde_#{mode}"]["target_server"] rescue nil
+
+      server = server.split(":")[0] if !server.nil?
+
+      result = Net::HTTP.new("#{server}").head("/").kind_of? Net::HTTPOK rescue false
+    end
+    
+    render :text => result
+  end
+
 end

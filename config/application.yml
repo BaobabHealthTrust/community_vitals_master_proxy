@@ -29,6 +29,7 @@ dde_ta:
   target_server: localhost:3002
   site_code: 009
   batch_count: 10
+  threshold: 5
   
 dde_gvh:
   username: admin
@@ -36,6 +37,7 @@ dde_gvh:
   target_server: localhost:3005
   site_code: 009
   batch_count: 5
+  threshold: 5
   gvh: GVH Mtema
   
 dde_vh:
@@ -44,5 +46,6 @@ dde_vh:
   target_server: localhost:3005
   site_code: 009
   batch_count: 3
+  threshold: 5
   gvh: GVH Mtema
   vh: VH Mtema

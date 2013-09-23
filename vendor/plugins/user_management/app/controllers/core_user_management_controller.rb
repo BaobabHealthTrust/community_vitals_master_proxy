@@ -75,7 +75,47 @@ class CoreUserManagementController < ApplicationController
     session[:token] = u.property_value
     session[:user_id] = u.user_id
 
-    redirect_to "/location?user_id=#{user.id}&src=#{params[:src]}&token=#{session[:token]}" and return
+    # redirect_to "/location?user_id=#{user.id}&src=#{params[:src]}&token=#{session[:token]}" and return
+    
+    file = "#{File.expand_path("#{Rails.root}/tmp", __FILE__)}/user.login.yml"
+
+    @destination = nil
+
+    if File.exists?(file)
+
+      @destination = YAML.load_file(file)["#{Rails.env
+        }"]["host.path.login"].strip
+
+      File.delete(file)
+
+    end
+
+    # @destination = params[:src] if @destination.blank? && !params[:src].blank?
+    
+    if !@destination.nil?
+      q = (@destination.match(/\?/))
+      u = (@destination.match(/user_id=(\d+)/))
+
+      if u
+
+        @destination = @destination.gsub(/user_id=(\d+)/, "user_id=#{session[:user_id]}&token=#{session[:token]}")
+
+        redirect_to "http://#{@destination}" and return
+
+      else
+
+        # raise "http://#{@destination}#{(!q ? "?" : "")}user_id=#{user.id}".to_yaml
+
+        redirect_to "http://#{@destination}#{(!q ? "?" : "")}user_id=#{session[:user_id]}&token=#{session[:token]}" and return
+
+      end
+
+    else
+
+      redirect_to "http://#{request.raw_host_with_port}?user_id=#{session[:user_id]}" and return
+
+    end
+    
 
   end
 

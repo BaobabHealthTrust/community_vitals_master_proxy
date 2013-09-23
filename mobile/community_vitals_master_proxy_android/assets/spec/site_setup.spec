@@ -10,7 +10,7 @@ Q.1.2. Target Site Password [pos => 1 $$ field_type => password $$ tt_onLoad => 
 
 Q.1.3. Target Server IP Address [pos => 2 $$ field_type => number $$ validationRule => ^\d+\.\d+\.\d+\.\d+$ $$ validationMessage => Wrong value. Expecting an IP address of format xxx.xxx.xxx.xxx! $$ condition => (window.location.href.match(/\?/) ? (window.location.href.match(/ip/i) ? true : false) : true)]
 
-Q.1.4. Target Server IP Address Port [pos => 3 $$ field_type => number $$ validationRule => ^\d+$ $$ validationMessage => Wrong value. Expecting a number! $$ condition => (window.location.href.match(/\?/) ? (window.location.href.match(/port/i) ? true : false) : true)]
+Q.1.4. Target Server IP Address Port [pos => 3 $$ field_type => number $$ validationRule => ^\d+$ $$ validationMessage => Wrong value. Expecting a number! $$ condition => (window.location.href.match(/\?/) ? (window.location.href.match(/ip/i) ? true : false) : true)]
 
 Q.1.5. Site Code [pos => 4 $$ condition => (window.location.href.match(/\?/) ? (window.location.href.match(/code/i) ? true : false) : true)]
 
