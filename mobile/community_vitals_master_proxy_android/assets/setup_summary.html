@@ -54,7 +54,8 @@
                     "<tr><th align='left' style='border-bottom: 1px solid #ccc; border-right: " + 
                     "1px solid blue;'>Target Server IP</th><td style='border-bottom: 1px solid #ccc;'>" + 
                     Android.getPref("target_server") + ":" + Android.getPref("target_port") + 
-                    "<a href='site_setup.html?f=ip&o=port' style='float: right;'><img src='images/pencil.png'/></a>" +
+                    "<a href='site_setup.html?ip=" + Android.getPref("target_server") + 
+                    "&port=" + Android.getPref("target_port") + "' style='float: right;'><img src='images/pencil.png'/></a>" +
                     "</td></tr>" +
                     "<tr><th align='left' style='border-bottom: 1px solid #ccc; border-right: " + 
                     "1px solid blue;'>Site Code</th><td style='border-bottom: 1px solid #ccc;'>" + 
