@@ -3,8 +3,13 @@ package org.baobabhealthtrust.cvr;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 
 import org.baobabhealthtrust.cvr.models.DdeSettings;
+import org.baobabhealthtrust.cvr.models.NationalIdentifiers;
+import org.baobabhealthtrust.cvr.models.Outcomes;
+import org.baobabhealthtrust.cvr.models.People;
+import org.baobabhealthtrust.cvr.models.Relationships;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -72,6 +77,8 @@ public class CVRSyncServices extends IntentService {
 			if (availableIDs <= threshold) {
 				getNationalIds();
 			}
+
+			postData();
 		}
 
 		mRunning = false;
@@ -218,6 +225,163 @@ public class CVRSyncServices extends IntentService {
 		}
 		// result = mDB.getAgegroupCount(date_selected, age_group);
 		return result;
+	}
+
+	public void postData() {
+
+		String mode = getPref("dde_mode");
+
+		String target_username = getPref("target_username");
+		String target_password = getPref("target_password");
+		String target_server = getPref("target_server");
+		String target_port = getPref("target_port");
+		String site_code = getPref("site_code");
+		String batch_count = getPref("batch_count");
+		String gvh = getPref("gvh");
+		String vh = getPref("vh");
+
+		String ext = "";
+
+		WebServiceTask wst = new WebServiceTask(WebServiceTask.POST_TASK,
+				mContext, "");
+
+		if (mode.equalsIgnoreCase("ta")) {
+			ext = "npid_requests/get_npids";
+
+			JSONObject json = new JSONObject();
+
+			try {
+
+				json.put("site_code", site_code);
+
+				json.put("count", batch_count);
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			wst.addNameValuePair("site_code", site_code);
+			wst.addNameValuePair("count", batch_count);
+
+			// wst.addNameValuePair("npid_request", json.toString());
+
+			wst.targetTaskType = wst.TASK_GET_TA_NPIDS;
+
+		} else if (mode.equalsIgnoreCase("gvh")) {
+			ext = "national_identifiers/request_gvh_ids";
+
+			wst.addNameValuePair("site_code", site_code);
+			wst.addNameValuePair("count", batch_count);
+			wst.addNameValuePair("gvh", gvh);
+
+			wst.targetTaskType = wst.TASK_GET_GVH_NPIDS;
+
+		} else if (mode.equalsIgnoreCase("vh")) {
+			ext = "national_identifiers/receive_village_demographics";
+
+			JSONObject to_post = new JSONObject();
+
+			List<People> people = mDB.getUnSyncedVillagePeople();
+
+			for (int i = 0; i < people.size(); i++) {
+
+				JSONObject json = new JSONObject();
+				JSONObject pjson = new JSONObject();
+				JSONObject rjson = new JSONObject();
+				JSONObject ojson = new JSONObject();
+
+				People person = people.get(i);
+
+				try {
+
+					pjson.put("fname", person.getGivenName());
+					pjson.put("middle_name", person.getMiddleName());
+					pjson.put("lname", person.getFamilyName());
+					pjson.put("gender", person.getGender());
+					pjson.put("dob", person.getBirthdate());
+					pjson.put("dob_estimated", person.getBirthdateEstimated());
+					pjson.put("outcome", person.getOutcome());
+					pjson.put("outcome_date", person.getOutcomeDate());
+					pjson.put("village", person.getVillage());
+					pjson.put("gvh", person.getGvh());
+					pjson.put("ta", person.getTa());
+					pjson.put("assigned_at", person.getCreatedAt());
+
+					json.put("person_details", pjson);
+
+					List<Outcomes> outcomes = mDB.getAllPersonOutcomes(person
+							.getId());
+
+					for (int j = 0; j < outcomes.size(); j++) {
+						Outcomes outcome = outcomes.get(j);
+
+						if (outcome.getOutcomeType() != 0) {
+							String oname = mDB.getOutcomeTypes(
+									outcome.getOutcomeType()).getName();
+
+							ojson.put("outcome", oname);
+
+							ojson.put("outcome_date", outcome.getOutcomeDate());
+						}
+					}
+
+					json.put("outcomes", ojson);
+
+					int npid = Integer.parseInt(person.getNationalId());
+
+					NationalIdentifiers identifier = mDB
+							.getNationalIdentifiers(npid);
+
+					List<Relationships> relations = mDB
+							.getAllPersonRelations(identifier.getIdentifier());
+
+					for (int k = 0; k < relations.size(); k++) {
+						Relationships relation = relations.get(k);
+
+						String rname = mDB.getRelationshipTypes(
+								relation.getPersonIsToRelation()).getRelation();
+
+						rjson.put("person", identifier.getIdentifier());
+						rjson.put("relative", relation.getRelationNationalId());
+						rjson.put("relationship", rname);
+
+					}
+
+					json.put("relationships", rjson);
+
+					to_post.put(identifier.getIdentifier(), json);
+
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+			wst.addNameValuePair("details", to_post.toString());
+
+			wst.targetTaskType = wst.TASK_POST_DATA;
+
+		}
+
+		String SERVICE_URL = "http://" + target_server + ":" + target_port
+				+ "/" + ext;
+
+		wst.mUsername = target_username;
+		wst.mPassword = target_password;
+		wst.mServer = target_server;
+		wst.mPort = Integer.parseInt(target_port);
+
+		wst.mGVH = gvh;
+		wst.mVH = vh;
+
+		wst.mDdeMode = mode;
+		wst.mCount = batch_count;
+
+		// the passed String is the URL we will POST to
+		wst.execute(new String[] { SERVICE_URL });
+
 	}
 
 }

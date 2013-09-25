@@ -104,6 +104,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	private static final String KEY_PERSON_IS_TO_RELATION = "person_is_to_relation";
 	private static final String KEY_PERSON_NATIONAL_ID = "person_national_id";
 	private static final String KEY_RELATION_NATIONAL_ID = "relation_national_id";
+	private static final String KEY_ASSIGNED_AT = "assigned_at";
 
 	private Context mContext;
 
@@ -1477,7 +1478,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 
 	public String[] getPersonById(int id) {
-		
+
 		People people = getPeople(id);
 
 		int npid = Integer.parseInt(people.getNationalId());
@@ -1515,7 +1516,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		// Select All Query
 		String selectQuery = "SELECT COUNT(*) FROM "
-				+ TABLE_NATIONAL_IDENTIFIERS + " WHERE COALESCE(person_id, 0) = 0";
+				+ TABLE_NATIONAL_IDENTIFIERS
+				+ " WHERE COALESCE(person_id, 0) = 0";
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
@@ -1545,13 +1547,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return result;
 	}
 
-	public int getAssignedByDate(String min_date, String max_date)
-	{
+	public int getAssignedByDate(String min_date, String max_date) {
 		int result = 0;
-		
-		String countQuery = "SELECT  count(*) FROM " + TABLE_PEOPLE  +
-				" WHERE COALESCE(voided,0) = 0 AND Date(created_at) >= Date('" + min_date +"') AND " +
-				"Date('" + max_date + "')";
+
+		String countQuery = "SELECT  count(*) FROM "
+				+ TABLE_PEOPLE
+				+ " WHERE COALESCE(voided,0) = 0 AND Date(created_at) >= Date('"
+				+ min_date + "') AND " + "Date('" + max_date + "')";
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
@@ -1560,16 +1562,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			result = Integer.parseInt(cursor.getString(0));
 		}
 
-		return result;	
+		return result;
 	}
-	
-	public int getGenderCount(String date_selected, String gender){
+
+	public int getGenderCount(String date_selected, String gender) {
 
 		int result = 0;
 		// Select All Query
-		String countQuery = "SELECT COUNT(*) FROM "+ TABLE_PEOPLE
-				 + " WHERE voided = 0 AND Date("+ KEY_CREATED_AT +") <= Date('" + date_selected
-				+ "')  AND gender ='" + gender +"'";
+		String countQuery = "SELECT COUNT(*) FROM " + TABLE_PEOPLE
+				+ " WHERE voided = 0 AND Date(" + KEY_CREATED_AT
+				+ ") <= Date('" + date_selected + "')  AND gender ='" + gender
+				+ "'";
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
 		// looping through all rows and adding to list
@@ -1577,39 +1580,194 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			result = Integer.parseInt(cursor.getString(0));
 		}
 
-		return result;	
+		return result;
 
 	}
-	
-	public int getOutcomeCount(String date_selected, String outcome){
+
+	public int getOutcomeCount(String date_selected, String outcome) {
 		int result = 0;
 		// Select All Query
-		String selectQuery = "SELECT COUNT(*) FROM "
-				+ TABLE_PEOPLE + " WHERE voided != 1 AND outcome ='" + outcome +"'";
+		String selectQuery = "SELECT COUNT(*) FROM " + TABLE_PEOPLE
+				+ " WHERE voided != 1 AND outcome ='" + outcome + "'";
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		// looping through all rows and adding to list
 		if (cursor.moveToFirst()) {
 			result = Integer.parseInt(cursor.getString(0));
 		}
-		
+
 		return result;
 	}
-	
-	public int getAgegroupCount(String date_selected , String [] age_group){
+
+	public int getAgegroupCount(String date_selected, String[] age_group) {
 		int result = 0;
-		String selectQuery = "SELECT COUNT(*) FROM "
-				+ TABLE_PEOPLE + " WHERE voided != 1 AND "
-				+"(strftime('%Y','now')-strftime('%Y', birthdate )) IN " + age_group ;
+		String selectQuery = "SELECT COUNT(*) FROM " + TABLE_PEOPLE
+				+ " WHERE voided != 1 AND "
+				+ "(strftime('%Y','now')-strftime('%Y', birthdate )) IN "
+				+ age_group;
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		// looping through all rows and adding to list
 		if (cursor.moveToFirst()) {
 			result = Integer.parseInt(cursor.getString(0));
 		}
-		
-		
+
 		return result;
+	}
+
+	public List<People> getUnSyncedVillagePeople() {
+		List<People> namesList = new ArrayList<People>();
+		// Select All Query
+		String selectQuery = "SELECT " + TABLE_PEOPLE + "." + KEY_ID + ", "
+				+ KEY_GIVEN_NAME + ", " + KEY_MIDDLE_NAME + ", "
+				+ KEY_FAMILY_NAME + ", " + KEY_GENDER + ", " + KEY_BIRTHDATE
+				+ ", " + KEY_BIRTHDATE_ESTIMATED + ", " + KEY_OUTCOME + ", "
+				+ KEY_OUTCOME_DATE + ", " + KEY_VILLAGE + ", " + KEY_GVH + ", "
+				+ KEY_TA + ", COALESCE(" + KEY_ASSIGNED_AT + ", "
+				+ TABLE_PEOPLE + "." + KEY_CREATED_AT + "), " + KEY_NATIONAL_ID
+				+ " FROM " + TABLE_PEOPLE + " LEFT OUTER JOIN "
+				+ TABLE_NATIONAL_IDENTIFIERS + " ON " + TABLE_PEOPLE + "."
+				+ KEY_NATIONAL_ID + " = " + TABLE_NATIONAL_IDENTIFIERS + "."
+				+ KEY_ID + " WHERE COALESCE(" + TABLE_NATIONAL_IDENTIFIERS
+				+ "." + KEY_PERSON_ID + ", 0) != 0 AND COALESCE("
+				+ KEY_POSTED_BY_VH + ", 0) = 0 " + "AND COALESCE("
+				+ TABLE_NATIONAL_IDENTIFIERS + "." + KEY_VOIDED
+				+ ", 0) = 0 LIMIT 0,20";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			do {
+				People person = new People();
+
+				person.setId(Integer.parseInt(cursor.getString(0)));
+				person.setGivenName(cursor.getString(1));
+				person.setMaidenName(cursor.getString(2));
+				person.setFamilyName(cursor.getString(3));
+				person.setGender(cursor.getString(4));
+				person.setBirthdate(cursor.getString(5));
+				person.setBirthdateEstimated(Integer.parseInt(cursor
+						.getString(6)));
+				person.setOutcome(cursor.getString(7));
+				person.setOutcomeDate(cursor.getString(8));
+				person.setVillage(cursor.getString(9));
+				person.setGvh(cursor.getString(10));
+				person.setTa(cursor.getString(11));
+				person.setCreatedAt(cursor.getString(12));
+				person.setNationalId(cursor.getString(13));
+
+				// Adding person
+				namesList.add(person);
+			} while (cursor.moveToNext());
+		}
+
+		// return relationship_type list
+		return namesList;
+	}
+
+	public List<Outcomes> getAllPersonOutcomes(int person_id) {
+		List<Outcomes> outcomesList = new ArrayList<Outcomes>();
+		// Select All Query
+		String selectQuery = "SELECT * FROM " + TABLE_OUTCOMES + " WHERE "
+				+ KEY_PERSON_ID + " = " + person_id;
+
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			do {
+				Outcomes outcomes = new Outcomes();
+				outcomes.setCreatedAt(cursor.getString(0));
+				outcomes.setUuid(cursor.getString(1));
+				outcomes.setPersonId(Integer.parseInt(cursor.getString(2)));
+				outcomes.setUpdatedAt(cursor.getString(3));
+				outcomes.setDateVoided(cursor.getString(4));
+				outcomes.setOutcomeType(Integer.parseInt(cursor.getString(5)));
+				outcomes.setId(Integer.parseInt(cursor.getString(6)));
+				outcomes.setVoided(Integer.parseInt(cursor.getString(7)));
+				outcomes.setVoidReason(cursor.getString(8));
+				outcomes.setOutcomeDate(cursor.getString(9));
+				// Adding outcomes to list
+				outcomesList.add(outcomes);
+			} while (cursor.moveToNext());
+		}
+
+		// return outcomes list
+		return outcomesList;
+	}
+
+	public List<Relationships> getAllPersonRelations(String national_id) {
+		List<Relationships> relationshipsList = new ArrayList<Relationships>();
+		// Select All Query
+		String selectQuery = "SELECT  * FROM " + TABLE_RELATIONSHIPS
+				+ " WHERE " + KEY_PERSON_NATIONAL_ID + " = '" + national_id
+				+ "'";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			do {
+				Relationships relationships = new Relationships();
+				relationships.setCreatedAt(cursor.getString(0));
+				relationships.setUpdatedAt(cursor.getString(1));
+				relationships.setDateVoided(cursor.getString(2));
+				relationships.setPersonIsToRelation(Integer.parseInt(cursor
+						.getString(3)));
+				relationships.setPersonNationalId(cursor.getString(4));
+				relationships.setId(Integer.parseInt(cursor.getString(5)));
+				relationships.setVoided(Integer.parseInt(cursor.getString(6)));
+				relationships.setVoidReason(cursor.getString(7));
+				relationships.setRelationNationalId(cursor.getString(8));
+				// Adding relationships to list
+				relationshipsList.add(relationships);
+			} while (cursor.moveToNext());
+		}
+
+		// return relationships list
+		return relationshipsList;
+	}
+
+	NationalIdentifiers getNationalIdentifierByIDentifier(String npid) {
+		SQLiteDatabase db = this.getReadableDatabase();
+
+		Cursor cursor = db.query(TABLE_NATIONAL_IDENTIFIERS, new String[] {
+				KEY_CREATED_AT, "COALESCE(" + KEY_REQUESTED_BY_GVH + ",0)",
+				KEY_ASSIGNED_VH, KEY_SITE_ID,
+				"COALESCE(" + KEY_REQUEST_VH_NOTIFIED + ",0)",
+				"COALESCE(" + KEY_POST_VH_NOTIFIED + ",0)",
+				"COALESCE(" + KEY_PERSON_ID + ",0)", KEY_UPDATED_AT,
+				KEY_DATE_VOIDED, "COALESCE(" + KEY_REQUESTED_BY_VH + ",0)",
+				"COALESCE(" + KEY_POSTED_BY_VH + ",0)", KEY_IDENTIFIER,
+				"COALESCE(" + KEY_ASSIGNED_GVH + ",0)",
+				"COALESCE(" + KEY_ID + ",0)", "COALESCE(" + KEY_VOIDED + ",0)",
+				"COALESCE(" + KEY_POST_GVH_NOTIFIED + ",0)",
+				"COALESCE(" + KEY_REQUEST_GVH_NOTIFIED + ",0)",
+				KEY_VOID_REASON, "COALESCE(" + KEY_POSTED_BY_GVH + ",0)" },
+				KEY_IDENTIFIER + "=?", new String[] { npid }, null, null,
+				null, null);
+
+		if (cursor != null)
+			cursor.moveToFirst();
+
+		NationalIdentifiers national_identifiers = new NationalIdentifiers(
+				cursor.getString(0), Integer.parseInt(cursor.getString(1)),
+				cursor.getString(2), cursor.getString(3),
+				Integer.parseInt(cursor.getString(4)), Integer.parseInt(cursor
+						.getString(5)), Integer.parseInt(cursor.getString(6)),
+				cursor.getString(7), cursor.getString(8),
+				Integer.parseInt(cursor.getString(9)), Integer.parseInt(cursor
+						.getString(10)), cursor.getString(11),
+				cursor.getString(12), Integer.parseInt(cursor.getString(13)),
+				Integer.parseInt(cursor.getString(14)), Integer.parseInt(cursor
+						.getString(15)),
+				Integer.parseInt(cursor.getString(16)), cursor.getString(17),
+				Integer.parseInt(cursor.getString(18)));
+
+		// return national_identifiers
+		return national_identifiers;
 	}
 
 }

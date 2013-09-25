@@ -239,14 +239,19 @@ elsif mode.to_s.downcase == "vh"
 
     if (JSON.parse(post).length == to_post.length)
       (JSON.parse(post) || []).each do |id|
+      
         nat_id = NationalIdentifier.find_by_identifier(id)
+        
         nat_id.update_attributes({:posted_by_vh => 1 })
+        
         (nat_id.person.new_outcomes("VH") || []).each do |x|
           x.update_attributes(:posted_by_vh => 1)
         end
+        
         (nat_id.person.new_relationships("VH") || []).each do |x|
           x.update_attributes(:posted_by_vh => 1)
         end
+        
       end
     end
 

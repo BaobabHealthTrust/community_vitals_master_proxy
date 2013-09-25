@@ -40,6 +40,7 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 	public static final int TASK_GET_GVH_NPIDS = 4;
 	public static final int TASK_GET_TA_NPIDS = 5;
 	public static final int TASK_ACK = 6;
+	public static final int TASK_POST_DATA = 7;
 
 	private static final String TAG = "WebServiceTask";
 
@@ -248,6 +249,9 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 		case TASK_GET_TA_NPIDS:
 			saveTANPIDS(response);
 			break;
+		case TASK_POST_DATA:
+			savePostDataResponse(response);
+			break;
 		}
 
 	}
@@ -439,4 +443,32 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 		}
 	}
 
+	private void savePostDataResponse(String response) {
+		JSONArray arr;
+
+		try {
+			arr = new JSONArray(response);
+
+			if (params.size() == arr.length()) {
+				Log.i("RETURNED SUCCESS",
+						"$$$$$$$$$$$$$$$$$$$$$$$$$$$ Back OK $$$$$$$$$$$$$$$$$$$$");
+
+				for (int i = 0; i < arr.length(); i++) {
+					NationalIdentifiers identifier = mDB
+							.getNationalIdentifierByIDentifier(arr.get(i)
+									.toString());
+					
+					identifier.setPostedByVh(1);
+					
+					mDB.updateNationalIdentifiers(identifier);
+
+				}
+			}
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 }
