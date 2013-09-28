@@ -387,5 +387,109 @@ class DemographicsController < ApplicationController
     return date_range
   end
 
+  def village_register
+    
+    count = Person.all(:conditions => ["COALESCE(voided,0) = 0"]).length
+
+    page_size = 10
+
+    current_page = (params[:page].nil? ? 1 : params[:page].to_i)
+    
+    @next_page = ((current_page * page_size) < count ? current_page + 1 : current_page)
+
+    @previous_page = (current_page > 1 ? current_page - 1 : current_page)
+
+    @last_page = (count / page_size) + 1
+
+    @people = []
+    @details = {}
+
+    Person.paginate(:page => current_page, :per_page => page_size, :conditions => "COALESCE(voided,0) = 0").each do |person|
+
+      @people << ["#{person.given_name} #{person.family_name} (#{person.identifier.identifier} - " +
+                      "#{Vocabulary.search(person.gender)} - " +
+                      "#{Vocabulary.search("Age")}: #{person.age})".strip, "#{person.id}"]
+
+      year = person.birthdate.to_date.year
+      month = person.birthdate.to_date.month
+      day = person.birthdate.to_date.day
+
+      @details[person.id] = {
+          Vocabulary.search("Name") => "#{person.given_name} #{person.family_name}",
+          Vocabulary.search("First name") => "#{person.given_name}",
+          Vocabulary.search("Middle name") => "#{person.middle_name}",
+          Vocabulary.search("Last name") => "#{person.family_name}",
+          Vocabulary.search("Birthdate") => "#{year}-#{(month == 7 && person.birthdate_estimated == 1 ? "?-?" :
+              (day == 15 && person.birthdate_estimated == 1 ? "#{"%02d" % month}-?" : "#{"%02d" % month}-#{"%02d" % day}"))}",
+          Vocabulary.search("Gender") => person.gender,
+          Vocabulary.search("National ID") => person.identifier.identifier,
+          Vocabulary.search("Relations") => "#{}",
+          Vocabulary.search("Outcome") => (!person.outcome.blank? ? person.outcome : Vocabulary.search("Alive")),
+          "synced" => (person.identifier.posted_by_vh rescue 0).to_i
+      }
+
+    end
+    
+  end
+
+  def gvh_register
+    
+    count = Person.all(:conditions => ["COALESCE(voided,0) = 0"]).length
+
+    page_size = 10
+
+    current_page = (params[:page].nil? ? 1 : params[:page].to_i)
+    
+    @next_page = ((current_page * page_size) < count ? current_page + 1 : current_page)
+
+    @previous_page = (current_page > 1 ? current_page - 1 : current_page)
+
+    @last_page = (count / page_size) + 1
+
+    @people = []
+    @details = {}
+
+    Person.paginate(:page => current_page, :per_page => page_size, :joins => [:identifier], :order => "posted_by_gvh",
+        :conditions => "COALESCE(people.voided,0) = 0").each do |person|
+
+      @people << ["#{person.given_name} #{person.family_name} (#{person.identifier.identifier} - " +
+                      "#{Vocabulary.search(person.gender)} - " +
+                      "#{Vocabulary.search("Age")}: #{person.age})".strip, "#{person.id}"]
+
+      year = person.birthdate.to_date.year
+      month = person.birthdate.to_date.month
+      day = person.birthdate.to_date.day
+
+      @details[person.id] = {
+          Vocabulary.search("Name") => "#{person.given_name} #{person.family_name}",
+          Vocabulary.search("First name") => "#{person.given_name}",
+          Vocabulary.search("Middle name") => "#{person.middle_name}",
+          Vocabulary.search("Last name") => "#{person.family_name}",
+          Vocabulary.search("Birthdate") => "#{year}-#{(month == 7 && person.birthdate_estimated == 1 ? "?-?" :
+              (day == 15 && person.birthdate_estimated == 1 ? "#{"%02d" % month}-?" : "#{"%02d" % month}-#{"%02d" % day}"))}",
+          Vocabulary.search("Gender") => person.gender,
+          Vocabulary.search("National ID") => person.identifier.identifier,
+          Vocabulary.search("Relations") => "#{}",
+          Vocabulary.search("Outcome") => (!person.outcome.blank? ? person.outcome : Vocabulary.search("Alive")),
+          "synced" => (person.identifier.posted_by_vh rescue 0).to_i,
+          "Village" => person.village,
+          "Notified" => person.identifier.post_gvh_notified,
+          "Posted" => person.identifier.posted_by_gvh
+      }
+
+    end
+    
+  end
+
+  def gvh_flag
+    unless params[:p].nil? or params[:s].nil?
+      NationalIdentifier.find_by_person_id(params[:p]).update_attributes({
+        :post_gvh_notified => params[:s]
+      }) rescue nil
+    end
+    
+    render :text => ""
+  end
+
 end
 

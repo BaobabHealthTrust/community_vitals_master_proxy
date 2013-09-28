@@ -32,7 +32,7 @@
 
         </style>
 
-        <script type="text/javascript">
+        <script type="text/javascript" defer>
             <!--
           
             function __$(id){
@@ -116,27 +116,63 @@
             function loadReportsMenu(){
                 __$("container").innerHTML = "";
 
-                var fields = [search("Cohort Report"), search("Month Outcomes Report"), search("Monthly Birth Report"),
-                    search("Daily Summary"),search("Village Summary")];
+                var fields = [
+                    search("Cohort Report"), 
+                    search("Month Outcomes Report"), 
+                    search("Monthly Birth Report"),
+                    search("Daily Summary"), 
+                    search("Village Summary"),
+                    search("Village Register")
+                ];
               
                 var images = [
-
                     "report.png",              
                     "report.png",
                     "report.png",
                     "report.png",
+                    "report.png",
                     "report.png"
-
-                ]
+                ];
 
 
                 var paths = ["cohort_report.html", "select_outcome_month.html", "select_birth_month.html",
-                    "select_date.html","village_statistics.html"];
+                    "select_date.html","village_statistics.html", "village_register.html"];
 
-              
+              			
+                var cat = Android.getPref("dde_mode");
+					      
+                if(cat.trim().length == 0){
+                    cat = "vh";
+                }
+		
+                if(cat == "gvh"){
+                    fields = [
+                        search("Cohort Report"), 
+                        search("Month Outcomes Report"), 
+                        search("Monthly Birth Report"),
+                        search("Daily Summary"), 
+                        search("Villages Summary"),
+                        search("GVH Register")
+                    ];
+
+                    images = [
+                        "report.png",              
+                        "report.png",
+                        "report.png",
+                        "report.png",
+                        "report.png",
+                        "report.png"
+                    ];
+
+
+                    paths = ["cohort_report.html", "select_outcome_month.html", "select_birth_month.html",
+                        "select_date.html","village_statistics.html", "gvh_register.html"];
+                }
+                
                 for(var i = 0; i < fields.length; i++){
                 
                     var div = document.createElement("div");
+                    div.id = "btnReport" + i;
                     div.style.width = "200px";
                     div.style.height = "160px";
                     div.style.textAlign = "center";
@@ -147,9 +183,9 @@
                     div.setAttribute("link", paths[i]);
                     div.className = "menu_button blue";
                 
-                    div.onclick = function(){
+                    /*div.onclick = function(){
                         window.location = this.getAttribute("link");
-                    }
+                    }*/
                 
                     __$("container").appendChild(div);
                 
@@ -162,7 +198,11 @@
                     div.appendChild(img);
                 
                     div.innerHTML += "<div style='padding: 5px; margin-top: 10px;'>" + fields[i] + "</div>";
-                  
+                  			
+                    new FastButton(document.getElementById("btnReport" + i), function() {
+                        window.location = this.getAttribute("link");				 
+                    });
+			
                 }
             }
           

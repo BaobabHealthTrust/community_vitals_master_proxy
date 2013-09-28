@@ -10,6 +10,7 @@ import org.baobabhealthtrust.cvr.models.NationalIdentifiers;
 import org.baobabhealthtrust.cvr.models.Outcomes;
 import org.baobabhealthtrust.cvr.models.People;
 import org.baobabhealthtrust.cvr.models.Relationships;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -79,6 +80,8 @@ public class CVRSyncServices extends IntentService {
 			}
 
 			postData();
+
+			syncData();
 		}
 
 		mRunning = false;
@@ -245,37 +248,20 @@ public class CVRSyncServices extends IntentService {
 		WebServiceTask wst = new WebServiceTask(WebServiceTask.POST_TASK,
 				mContext, "");
 
-		if (mode.equalsIgnoreCase("ta")) {
-			ext = "npid_requests/get_npids";
+		if (mode.equalsIgnoreCase("gvh")) {
+			ext = "national_identifiers/update_gvh_demographics";
 
-			JSONObject json = new JSONObject();
-
-			try {
-
-				json.put("site_code", site_code);
-
-				json.put("count", batch_count);
-
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			JSONArray to_post = new JSONArray();
+			
+			List<NationalIdentifiers> people = mDB.getAllGVHPostNationalIdentifiers();
+			
+			for(int i = 0; i < people.size(); i++){
+				to_post.put(people.get(i).getIdentifier());
 			}
+			
+			wst.addNameValuePair("details", to_post.toString());
 
-			wst.addNameValuePair("site_code", site_code);
-			wst.addNameValuePair("count", batch_count);
-
-			// wst.addNameValuePair("npid_request", json.toString());
-
-			wst.targetTaskType = wst.TASK_GET_TA_NPIDS;
-
-		} else if (mode.equalsIgnoreCase("gvh")) {
-			ext = "national_identifiers/request_gvh_ids";
-
-			wst.addNameValuePair("site_code", site_code);
-			wst.addNameValuePair("count", batch_count);
-			wst.addNameValuePair("gvh", gvh);
-
-			wst.targetTaskType = wst.TASK_GET_GVH_NPIDS;
+			wst.targetTaskType = wst.TASK_POST_GVH_DATA;
 
 		} else if (mode.equalsIgnoreCase("vh")) {
 			ext = "national_identifiers/receive_village_demographics";
@@ -361,7 +347,101 @@ public class CVRSyncServices extends IntentService {
 
 			wst.addNameValuePair("details", to_post.toString());
 
-			wst.targetTaskType = wst.TASK_POST_DATA;
+			wst.targetTaskType = wst.TASK_POST_VH_DATA;
+
+		}
+
+		String SERVICE_URL = "http://" + target_server + ":" + target_port
+				+ "/" + ext;
+
+		wst.mUsername = target_username;
+		wst.mPassword = target_password;
+		wst.mServer = target_server;
+		wst.mPort = Integer.parseInt(target_port);
+
+		wst.mGVH = gvh;
+		wst.mVH = vh;
+
+		wst.mDdeMode = mode;
+		wst.mCount = batch_count;
+
+		// the passed String is the URL we will POST to
+		wst.execute(new String[] { SERVICE_URL });
+
+	}
+
+	public void syncData() {
+		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ");
+
+		String mode = getPref("dde_mode");
+
+		String target_username = getPref("target_username");
+		String target_password = getPref("target_password");
+		String target_server = getPref("target_server");
+		String target_port = getPref("target_port");
+		String site_code = getPref("site_code");
+		String batch_count = getPref("batch_count");
+		String gvh = getPref("gvh");
+		String vh = getPref("vh");
+
+		String ext = "";
+
+		WebServiceTask wst = new WebServiceTask(WebServiceTask.POST_TASK,
+				mContext, "");
+
+		if (mode.equalsIgnoreCase("gvh")) {
+			ext = "national_identifiers/sync_gvh_demographics";
+
+			List<NationalIdentifiers> people = mDB.getAllNationalIdentifiers();
+
+			JSONArray toPost = new JSONArray();
+
+			for (int i = 0; i < people.size(); i++) {
+
+				NationalIdentifiers person = people.get(i);
+
+				toPost.put(person.getIdentifier());
+
+			}
+
+			if (toPost.length() == 0) {
+				toPost.put("OOOOOO");
+			}
+
+			wst.addNameValuePair("ids", toPost.toString());
+
+			wst.addNameValuePair("site", site_code);
+			wst.addNameValuePair("vh", vh);
+			wst.addNameValuePair("gvh", gvh);
+
+			wst.targetTaskType = wst.TASK_SYNC_VH_DATA;
+
+		} else if (mode.equalsIgnoreCase("vh")) {
+			ext = "national_identifiers/sync_village_demographics";
+
+			List<NationalIdentifiers> people = mDB.getAllNationalIdentifiers();
+
+			JSONArray toPost = new JSONArray();
+
+			for (int i = 0; i < people.size(); i++) {
+
+				NationalIdentifiers person = people.get(i);
+
+				toPost.put(person.getIdentifier());
+
+			}
+
+			if (toPost.length() == 0) {
+				toPost.put("OOOOOO");
+			}
+
+			wst.addNameValuePair("ids", toPost.toString());
+
+			wst.addNameValuePair("site", site_code);
+			wst.addNameValuePair("vh", vh);
+			wst.addNameValuePair("gvh", gvh);
+
+			wst.targetTaskType = wst.TASK_SYNC_VH_DATA;
 
 		}
 

@@ -1,0 +1,329 @@
+#!/usr/bin/env ruby
+
+require File.expand_path('../../config/environment.rb',  __FILE__)
+
+def sync_transactions(mode)
+    
+  puts ".. Operating in #{mode} mode ..."
+
+  if mode.to_s.downcase == "ta"
+
+    settings = YAML.load_file("#{Rails.root}/config/application.yml")["dde_ta"] rescue {}
+
+    if !settings.empty?
+
+      username = settings["username"]
+      password = settings["password"]
+      target = settings["target_server"]
+      site_code = settings["site_code"]
+      count = settings["batch_count"]
+
+      url = "http://#{username}:#{password}@#{target}/people/create_for_sub_proxy"
+
+      #ack_url = "http://#{username}:#{password}@#{target}/npid_requests/ack/"
+
+      to_post = {}
+
+      new_people = NationalIdentifier.find(:all, :conditions => ['person_id IS NOT NULL AND posted_by_ta = 0 AND voided = 0'])
+
+      (new_people || []).each do |identifier|
+
+        person = identifier.person
+        person_details = {
+            'given_name' => person.given_name,
+            'middle_name' => person.middle_name,
+            'family_name' => person.family_name,
+            'gender' => person.gender,
+            'birthdate' => person.birthdate,
+            'birthdate_estimated' => person.birthdate_estimated,
+            'outcome' => person.outcome,
+            'outcome_date' => person.outcome_date,
+            'village' => person.village,
+            'gvh' => person.gvh,
+            'ta' => person.ta
+        }
+
+        relationships = []
+        (person.new_relationships("TA") || []).each do |relation|
+
+          relative = {
+              'person' => relation.person_national_id,
+              'relative' => relation.relation_national_id,
+              'relationship' => relation.relation
+          }
+          relationships << relative
+        end
+
+        person_details["relationship"] = relationships
+
+        to_post[identifier.identifier] = { 'person' => person_details, 'npid' => {'value' => identifier.identifier ,'assigned_at' => identifier.assigned_at}}
+
+      end
+
+      if !to_post.blank?
+        post = RestClient.post(url,{:demographics => to_post.to_json})
+
+        if post == "OK"
+          (to_post || []).each do |key, id|
+
+            nat_id = NationalIdentifier.find_by_identifier(key)
+            nat_id.update_attributes({:posted_by_ta => 1 })
+            (nat_id.person.new_relationships("TA") || []).each do |x|
+              x.update_attributes(:posted_by_ta => 1)
+            end
+          end
+        end
+
+
+
+      end
+
+
+    end
+
+
+  elsif mode.to_s.downcase == "gvh"
+
+    settings = YAML.load_file("#{Rails.root}/config/application.yml")["dde_gvh"] rescue {}
+
+    if !settings.empty?
+
+        username = settings["username"]
+        password = settings["password"]
+        target = settings["target_server"]
+        gvh = settings["gvh"]
+        site = settings["site_code"]
+      
+        url = "http://#{username}:#{password}@#{target}/national_identifiers/sync_gvh_demographics"
+
+        to_post = []
+
+        existing_people = NationalIdentifier.find(:all, :conditions => ['person_id IS NOT NULL AND voided = 0'])
+
+        (existing_people || []).each do |identifier|
+
+          to_post << identifier.identifier
+
+        end
+
+        to_post = [""] if to_post.empty?
+
+        post = RestClient.post(url,{:ids => to_post.to_json, :site => site, :gvh => gvh})
+
+        ids = []
+        records = JSON.parse(post)
+        (records || {}).each do |pnid, details|
+
+          ActiveRecord::Base.transaction do
+
+            NationalIdentifier.create(
+               "created_at"=> records[pnid]["identifier_details"]['created_at'],
+               "voided"=> records[pnid]["identifier_details"]['voided'],
+               "post_vh_notified"=> records[pnid]["identifier_details"]['post_vh_notified'],
+               "posted_by_gvh"=> records[pnid]["identifier_details"]['posted_by_gvh'],
+               "request_gvh_notified"=> records[pnid]["identifier_details"]['request_gvh_notified'],
+               "assigned_at"=> records[pnid]["identifier_details"]['assigned_at'],
+               "posted_by_vh"=> records[pnid]["identifier_details"]['posted_by_vh'],
+               "request_vh_notified"=> records[pnid]["identifier_details"]['request_vh_notified'],
+               "post_gvh_notified"=> records[pnid]["identifier_details"]['post_gvh_notified'],
+               "void_reason"=> records[pnid]["identifier_details"]['void_reason'],
+               "requested_by_vh"=> records[pnid]["identifier_details"]['requested_by_vh'],
+               "assigned_gvh"=> records[pnid]["identifier_details"]['assigned_gvh'],
+               "site_id"=> records[pnid]["identifier_details"]['site_id'],
+               "updated_at"=> records[pnid]["identifier_details"]['updated_at'],
+               "requested_by_gvh"=> records[pnid]["identifier_details"]['requested_by_gvh'],
+               "assigned_vh"=> records[pnid]["identifier_details"]['assigned_vh'],
+               "identifier"=> records[pnid]["identifier_details"]['identifier'],
+               "date_voided"=> records[pnid]["identifier_details"]['date_voided'],
+               "posted_by_ta"=> records[pnid]["identifier_details"]['posted_by_ta']
+            )
+
+            nat_id = NationalIdentifier.find_by_identifier(pnid)
+            if nat_id.person_id.blank?
+              person = Person.create(
+                  :national_id => nat_id.id,
+                  :given_name => records[pnid]["person_details"]['fname'],
+                  :middle_name => records[pnid]["person_details"]['middle_name'],
+                  :family_name => records[pnid]["person_details"]['lname'],
+                  :gender => records[pnid]["person_details"]['gender'],
+                  :birthdate => records[pnid]["person_details"]['dob'],
+                  :birthdate_estimated => records[pnid]["person_details"]['dob_estimated'],
+                  :outcome => records[pnid]["person_details"]['outcome'],
+                  :outcome_date =>  records[pnid]["person_details"]['outcome_date'],
+                  :village => records[pnid]["person_details"]['village'],
+                  :gvh => records[pnid]["person_details"]['gvh'],
+                  :ta => records[pnid]["person_details"]['ta']
+              )
+              nat_id.update_attributes(:person_id => person.id, :assigned_at => records[pnid]["person_details"]['assigned_at'])
+            else
+              nat_id.person.update_attributes(
+                  :given_name => records[pnid]["person_details"]['fname'],
+                  :middle_name => records[pnid]["person_details"]['middle_name'],
+                  :family_name => records[pnid]["person_details"]['lname'],
+                  :gender => records[pnid]["person_details"]['gender'],
+                  :birthdate => records[pnid]["person_details"]['dob'],
+                  :birthdate_estimated => records[pnid]["person_details"]['dob_estimated'],
+                  :outcome => records[pnid]["person_details"]['outcome'],
+                  :outcome_date =>  records[pnid]["person_details"]['outcome_date'],
+                  :village => records[pnid]["person_details"]['village'],
+                  :gvh => records[pnid]["person_details"]['gvh'],
+                  :ta => records[pnid]["person_details"]['ta']
+              )
+              person = nat_id.person
+            end
+
+              (records[pnid]["relationships"] || []).each do |relationship|
+                Relationship.create(
+                    :person_national_id => relationship['person'],
+                    :relation_national_id => relationship['relative'],
+                    :person_is_to_relation => relationship['relationship']
+                )
+              end
+
+              (records[pnid]["outcomes"] || []).each do |outcome|
+                Outcome.create(
+                  :person_id => person.id,
+                  :outcome_type => outcome["outcome"],
+                  :outcome_date => outcome["outcome_date"]
+                )
+              end
+
+            ids << pnid
+          end
+        end
+
+    end
+
+  elsif mode.to_s.downcase == "vh"
+
+    settings = YAML.load_file("#{Rails.root}/config/application.yml")["dde_vh"] rescue {}
+
+    if !settings.empty?
+
+        username = settings["username"]
+        password = settings["password"]
+        target = settings["target_server"]
+        vh = settings["vh"]
+        gvh = settings["gvh"]
+        site = settings["site_code"]
+      
+        url = "http://#{username}:#{password}@#{target}/national_identifiers/sync_village_demographics"
+
+        to_post = []
+
+        existing_people = NationalIdentifier.find(:all, :conditions => ['person_id IS NOT NULL AND voided = 0'])
+
+        (existing_people || []).each do |identifier|
+
+          to_post << identifier.identifier
+
+        end
+
+        post = RestClient.post(url,{:ids => to_post.to_json, :site => site, :vh => vh, :gvh => gvh})
+
+        ids = []
+        records = JSON.parse(post)
+        (records || {}).each do |pnid, details|
+
+          ActiveRecord::Base.transaction do
+
+            NationalIdentifier.create(
+               "created_at"=> records[pnid]["identifier_details"]['created_at'],
+               "voided"=> records[pnid]["identifier_details"]['voided'],
+               "post_vh_notified"=> records[pnid]["identifier_details"]['post_vh_notified'],
+               "posted_by_gvh"=> records[pnid]["identifier_details"]['posted_by_gvh'],
+               "request_gvh_notified"=> records[pnid]["identifier_details"]['request_gvh_notified'],
+               "assigned_at"=> records[pnid]["identifier_details"]['assigned_at'],
+               "posted_by_vh"=> records[pnid]["identifier_details"]['posted_by_vh'],
+               "request_vh_notified"=> records[pnid]["identifier_details"]['request_vh_notified'],
+               "post_gvh_notified"=> records[pnid]["identifier_details"]['post_gvh_notified'],
+               "void_reason"=> records[pnid]["identifier_details"]['void_reason'],
+               "requested_by_vh"=> records[pnid]["identifier_details"]['requested_by_vh'],
+               "assigned_gvh"=> records[pnid]["identifier_details"]['assigned_gvh'],
+               "site_id"=> records[pnid]["identifier_details"]['site_id'],
+               "updated_at"=> records[pnid]["identifier_details"]['updated_at'],
+               "requested_by_gvh"=> records[pnid]["identifier_details"]['requested_by_gvh'],
+               "assigned_vh"=> records[pnid]["identifier_details"]['assigned_vh'],
+               "identifier"=> records[pnid]["identifier_details"]['identifier'],
+               "date_voided"=> records[pnid]["identifier_details"]['date_voided'],
+               "posted_by_ta"=> records[pnid]["identifier_details"]['posted_by_ta']
+            )
+
+            nat_id = NationalIdentifier.find_by_identifier(pnid)
+            if nat_id.person_id.blank?
+              person = Person.create(
+                  :national_id => nat_id.id,
+                  :given_name => records[pnid]["person_details"]['fname'],
+                  :middle_name => records[pnid]["person_details"]['middle_name'],
+                  :family_name => records[pnid]["person_details"]['lname'],
+                  :gender => records[pnid]["person_details"]['gender'],
+                  :birthdate => records[pnid]["person_details"]['dob'],
+                  :birthdate_estimated => records[pnid]["person_details"]['dob_estimated'],
+                  :outcome => records[pnid]["person_details"]['outcome'],
+                  :outcome_date =>  records[pnid]["person_details"]['outcome_date'],
+                  :village => records[pnid]["person_details"]['village'],
+                  :gvh => records[pnid]["person_details"]['gvh'],
+                  :ta => records[pnid]["person_details"]['ta']
+              )
+              nat_id.update_attributes(:person_id => person.id, :assigned_at => records[pnid]["person_details"]['assigned_at'])
+            else
+              nat_id.person.update_attributes(
+                  :given_name => records[pnid]["person_details"]['fname'],
+                  :middle_name => records[pnid]["person_details"]['middle_name'],
+                  :family_name => records[pnid]["person_details"]['lname'],
+                  :gender => records[pnid]["person_details"]['gender'],
+                  :birthdate => records[pnid]["person_details"]['dob'],
+                  :birthdate_estimated => records[pnid]["person_details"]['dob_estimated'],
+                  :outcome => records[pnid]["person_details"]['outcome'],
+                  :outcome_date =>  records[pnid]["person_details"]['outcome_date'],
+                  :village => records[pnid]["person_details"]['village'],
+                  :gvh => records[pnid]["person_details"]['gvh'],
+                  :ta => records[pnid]["person_details"]['ta']
+              )
+              person = nat_id.person
+            end
+
+              (records[pnid]["relationships"] || []).each do |relationship|
+                Relationship.create(
+                    :person_national_id => relationship['person'],
+                    :relation_national_id => relationship['relative'],
+                    :person_is_to_relation => relationship['relationship']
+                )
+              end
+
+              (records[pnid]["outcomes"] || []).each do |outcome|
+                Outcome.create(
+                  :person_id => person.id,
+                  :outcome_type => outcome["outcome"],
+                  :outcome_date => outcome["outcome_date"]
+                )
+              end
+
+            ids << pnid
+          end
+        end
+
+    end
+
+  end
+
+end
+
+mode = YAML.load_file("#{Rails.root}/config/application.yml")["dde_mode"] rescue nil
+
+settings = YAML.load_file("#{Rails.root}/config/application.yml") rescue {}
+    
+connected = false
+
+if !settings.empty?
+  
+  server = settings["dde_#{mode}"]["target_server"] rescue nil
+
+  server = server.split(":")[0] if !server.nil?
+
+  connected = Net::HTTP.new("#{server}").head("/").kind_of? Net::HTTPOK rescue false
+  
+end
+   
+sync_transactions(mode) if connected
+   

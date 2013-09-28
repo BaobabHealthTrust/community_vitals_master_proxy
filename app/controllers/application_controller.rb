@@ -50,7 +50,7 @@ protected
 
     if !request.headers['Authorization'].blank?
     
-      result = Rails.decode64(request.headers['Authorization'])
+      result = Base64.decode64(request.headers['Authorization'])
       
       return if !result.nil?
         

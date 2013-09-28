@@ -1,0 +1,190 @@
+<script type="text/javascript">
+  <!--
+
+    function toggleRow(key){
+      
+      if(__$("row" + key)){
+        if(__$("img" + key)){
+          if(__$("img" + key).getAttribute('src').match(/un/)){
+            __$("img" + key).src = '/images/ticked.jpg';
+            
+            __$("row" + key).style.backgroundColor = "lightblue";
+            
+            var url = "/demographics/gvh_flag/?p=" + key + "&s=1";
+            
+            ajaxFlagRequest(url);
+          } else {
+            __$("img" + key).src = '/images/unticked.jpg';
+            
+            __$("row" + key).style.backgroundColor = "white";
+            
+            var url = "/demographics/gvh_flag/?p=" + key + "&s=0";
+            
+            ajaxFlagRequest(url);
+          }
+        }
+      }
+    }
+
+    function ajaxFlagRequest(url){
+      
+      var httpRequest = new XMLHttpRequest();
+      httpRequest.onreadystatechange = function() {
+          handleResult(httpRequest);
+      };
+      try {
+          httpRequest.open('GET', url, true);
+          httpRequest.send(null);
+      } catch(e){
+      }      
+    }
+
+    function handleResult(aXMLHttpRequest) { 
+
+        if (!aXMLHttpRequest) return;
+
+        if (aXMLHttpRequest.readyState == 4 && (aXMLHttpRequest.status == 200 || aXMLHttpRequest.status == 304)) {
+            var result = aXMLHttpRequest.responseText;
+        }
+    }
+
+  //-->
+</script>
+
+<div style="width: 100%; height: 670px;">
+
+  <div style="height: 75px; width: 100%; background-color: #41608f; color: #ccc; 
+      font-size: 3em; text-align: center; padding-top: 10px;">
+    <%= Vocabulary.search("GVH Register") %>
+  </div>
+
+  <div style="width: 100%; height: 45px; overflow: auto; overflow: hidden; 
+      background-color: #999; color: #eee; border-bottom: 1px solid #41608f;">
+    <div style="width: 100%; display: table;">
+      <div style="display: table-row;">
+        <div style="display: table-cell; width: 200px; text-align: left; font-size: 1.8em; 
+            padding: 5px; padding-top: 0px; margin-top: -5px; border-right: 1px #41608f solid;">
+          <%= Vocabulary.search("First Name") %>
+        </div>
+        <div style="display: table-cell; width: 200px; text-align: left; font-size: 1.8em; 
+            padding: 5px; padding-top: 0px; margin-top: -5px; border-right: 1px #41608f solid;">
+          <%= Vocabulary.search("Last Name") %>
+        </div>
+        <div style="display: table-cell; width: 200px; text-align: left; font-size: 1.8em; 
+            padding: 5px; padding-top: 0px; margin-top: -5px; border-right: 1px #41608f solid;">
+          <%= Vocabulary.search("Village") %>
+        </div>
+        <div style="display: table-cell; width: 200px; text-align: center; font-size: 1.8em; 
+            padding: 5px; padding-top: 0px; margin-top: -5px; border-right: 1px #41608f solid;">
+          <%= Vocabulary.search("National ID") %>
+        </div>
+        <div style="display: table-cell; width: 200px; text-align: center; font-size: 1.8em; 
+            padding: 5px; padding-top: 0px; margin-top: -5px; border-right: 1px #41608f solid;">
+          <%= Vocabulary.search("Gender") %>
+        </div>
+        <div style="display: table-cell; width: 200px; text-align: center; font-size: 1.8em; 
+            padding: 5px; padding-top: 0px; margin-top: -5px; border-right: 1px #41608f solid;">
+          <%= Vocabulary.search("Birthdate") %>
+        </div>
+        <div style="display: table-cell; text-align: left; font-size: 1.8em; 
+            padding: 5px; padding-top: 0px; margin-top: -5px; border-right: 1px #41608f solid;">
+          <%= Vocabulary.search("Outcome") %>
+        </div>
+        <div style="display: table-cell; width: 50px; padding-top: 5px; text-align: center;">
+          <img src="/images/synced.png" height="30" style="margin-top: 0px" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="width: 100%; height: 534px; overflow: auto;">
+  
+      <input type="hidden" id="page" name="page" value="" />
+      
+      <div style="width: 100%; display: table;">
+      
+        <% @details.each do |key, value| %>
+        
+            <div id="row<%= key %>" target="<%= key %>" style="display: table-row; 
+                  <%= (value["Notified"] == 1 ? (value["Posted"] == 1 ? 
+                  "background-color: #9cd79c;" : "background-color: lightblue;") : "") %>" 
+                <%= (value["Posted"] == 0 ? "onclick=\"toggleRow(this.getAttribute('target'))\"" : "") %> >
+                
+              <div style="display: table-cell; width: 200px; text-align: left; font-size: 1.6em; 
+                  padding: 5px; border-right: 1px #41608f solid; color: #333; overflow: hidden; 
+                  border-bottom: 1px dotted #41608f;">
+                <%= value[Vocabulary.search("First name")] %>
+              </div>
+              <div style="display: table-cell; width: 200px; text-align: left; font-size: 1.6em; 
+                  padding: 5px; border-right: 1px #41608f solid; color: #333; overflow: hidden; 
+                  border-bottom: 1px dotted #41608f;">
+                <%= value[Vocabulary.search("Last name")] %>
+              </div>
+              <div style="display: table-cell; width: 200px; text-align: left; font-size: 1.6em; 
+                  padding: 5px; border-right: 1px #41608f solid; color: #333; overflow: hidden; 
+                  border-bottom: 1px dotted #41608f;">
+                <%= value["Village"] %>
+              </div>
+              <div style="display: table-cell; width: 200px; text-align: center; font-size: 1.6em; 
+                  padding: 5px; border-right: 1px #41608f solid; color: #333; overflow: hidden; 
+                  border-bottom: 1px dotted #41608f;">
+                <%= value[Vocabulary.search("National ID")] %>
+              </div>
+              <div style="display: table-cell; width: 200px; text-align: center; font-size: 1.6em; 
+                  padding: 5px; border-right: 1px #41608f solid; color: #333; overflow: hidden; 
+                  border-bottom: 1px dotted #41608f;">
+                <%= value[Vocabulary.search("Gender")] %>
+              </div>
+              <div style="display: table-cell; width: 200px; text-align: center; font-size: 1.6em; 
+                  padding: 5px; border-right: 1px #41608f solid; color: #333; overflow: hidden; 
+                  border-bottom: 1px dotted #41608f;">
+                <%= value[Vocabulary.search("Birthdate")] %>
+              </div>
+              <div style="display: table-cell; text-align: left; font-size: 1.6em; 
+                  padding: 5px; color: #333; border-right: 1px #41608f solid; 
+                  border-bottom: 1px dotted #41608f;">
+                <%= value[Vocabulary.search("Outcome")] %>
+              </div>
+              <div style="display: table-cell; width: 50px; padding-top: 5px; 
+                  border-bottom: 1px dotted #41608f; text-align: center;">
+                  <input type="hidden" id="<%= key %>" name="<%= key %>" value="" />
+                  
+                <img id="img<%= key %>" src="/images/<%= (value["Posted"] == 0 ? (value["Notified"] == 0 ? 
+                    "unticked.jpg" : "ticked.jpg") : "m_yes.png") %>" height="30" style="margin-top: 0px" />
+              </div>
+              
+            </div>
+        
+        <% end %>
+        
+      </div>
+    
+  </div>
+
+</div>
+<div style="background-color: #333; width: 100%; height: 80px;">
+  <button class="green" style="float: right; margin-right: 20px; margin-top: 10px; 
+      min-width: 150px;" onclick="window.location = '/'">
+    <span><%= Vocabulary.search("Finish") %></span>
+  </button>
+  
+  <button class="blue" style="float: right; margin-right: 10px; margin-top: 10px; 
+      min-width: 100px;" onclick="window.location = '/demographics/gvh_register?page=<%= @last_page %>'">
+    <span>>|</span>
+  </button>
+  
+  <button class="blue" style="float: right; margin-right: 10px; margin-top: 10px; 
+      min-width: 100px;" onclick="window.location = '/demographics/gvh_register?page=<%= @next_page %>'">
+    <span>></span>
+  </button>
+  
+  <button class="blue" style="float: right; margin-right: 10px; margin-top: 10px; 
+      min-width: 100px;" onclick="window.location = '/demographics/gvh_register?page=<%= @previous_page %>'">
+    <span><</span>
+  </button>
+  
+  <button class="blue" style="float: right; margin-right: 10px; margin-top: 10px; 
+      min-width: 100px;" onclick="window.location = '/demographics/gvh_register?page=1'">
+    <span>|<</span>
+  </button>
+</div>

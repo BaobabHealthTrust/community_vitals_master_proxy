@@ -1615,7 +1615,7 @@ function checkConnection(){
   
   __$("threshold").innerHTML = availableIDs;
 					      
-  setTimeout("checkConnection()", 1000);
+  setTimeout("checkConnection()", 5000);
 }
 
 // loadLocale();

@@ -1,0 +1,670 @@
+<html>
+    <head>
+        <title>CVR</title>
+        <link rel="stylesheet" type="text/css" href="css/main.css" />
+
+        <script>        
+            Ext.Loader.setConfig({
+                enabled: true,
+                disableCaching: false
+            });
+
+            Ext.Ajax.setDisableCaching(false);
+        </Script>
+
+        <script type="text/javascript" src="js/md5.js"></script>
+        <script type="text/javascript" src="js/vocab.js"></script>
+        <script type="text/javascript" src="js/datasrc.js"></script>
+        <script type="text/javascript" src="js/main.js" defer></script>
+        <script type="text/javascript" src="js/google.fastbutton.js"></script>
+
+        <script type="text/javascript" defer>
+            <!--
+
+            function load(){
+            
+                new FastButton(document.getElementById('home'), function() {
+                    window.location = "index.html";					 
+                });
+										      
+                var reg = search("Village Register");
+                
+                __$("reg").innerHTML = reg;
+					      
+                var page = (window.location.href.match(/\?/) ? window.location.href.match(/page=(\d+)/i) : [0,1])[1];
+					      
+                var result = Android.listVillagePeopleNames(page);
+					      
+                result = JSON.parse(result);
+					      
+                var fields = ["First Name", "Last Name", "National ID", "Gender", 
+                    "Birthdate", "Outcome", "synced"];
+                
+                var roots = ["fname", "lname", "npid", "gender", "dob", "outcome", "img"];
+				      
+                var lang = ["no", "no", "no", "yes", "no", "yes", "no"];
+			
+                var j = 0;
+                
+                if(__$("count")){
+                    var total_count = result[4];
+                    var start = result[5];
+                    var page_count = result[6];
+                    
+                    __$("count").innerHTML = start + " " + Android.search("to") + 
+                        " " + (page_count + start - 1) + " " + Android.search("of") + 
+                        " " + total_count;
+                }
+                
+                if(__$("first")){     
+                    
+                    __$("first").onclick = function(){
+                        window.location = "village_register.html?page=1";
+                    }
+                    
+                    /*new FastButton(document.getElementById('first'), function() {
+                        window.location = "village_register.html?page=1";				 
+                    });*/			
+                }
+                
+                if(__$("prev")){        
+                    
+                    __$("prev").onclick = function(){
+                        window.location = "village_register.html?page=" + result[1];
+                    }
+                                    			
+                    /*new FastButton(document.getElementById('prev'), function() {
+                        window.location = "village_register.html?page=" + result[1];				 
+                    });	*/		
+                }
+                
+                if(__$("last")){       
+                    
+                    __$("last").onclick = function(){
+                        window.location = "village_register.html?page=" + result[3];
+                    }
+                                     			
+                    /* new FastButton(document.getElementById('last'), function() {
+                        window.location = "village_register.html?page=" + result[3];				 
+                    });	*/		
+                }
+                
+                if(__$("next")){        
+                    
+                    __$("next").onclick = function(){
+                        window.location = "village_register.html?page=" + result[2];
+                    }
+                                    			
+                    /*new FastButton(document.getElementById('next'), function() {
+                        window.location = "village_register.html?page=" + result[2];				 
+                    });*/			
+                }
+                
+                for(var id in result[0]){
+                    	        
+                    for(var i = 0; i < fields.length; i++){					        
+                        
+                        if(i == 3){
+                            if(__$(roots[i] + j)){
+                                
+                                __$(roots[i] + j).innerHTML = "<img src='images/" + 
+                                    (result[0][id][fields[i]] == "Male" ? 
+                                    "male" : "female") + ".gif' height='30' style='margin-top: 0px' />";
+                                
+                            }
+                        } else if(i == 5){
+                            if(__$(roots[i] + j)){
+                                
+                                __$(roots[i] + j).innerHTML = 
+                                    Android.search((typeof(result[0][id][fields[i]]) == "undefined" || 
+                                        result[0][id][fields[i]] == null || result[0][id][fields[i]] == "null" ? 
+                                    "Alive" : result[0][id][fields[i]]));
+                                
+                            }
+                        } else if(i == 6){
+                            if(__$(roots[i] + j)){
+                                
+                                __$(roots[i] + j).innerHTML = "<img src='images/" + 
+                                    (result[0][id][fields[i]] == "1" ? 
+                                    "m_yes" : "m_no") + ".png' height='30' style='margin-top: 0px' />";
+                                
+                            }
+                        } else {
+                            if(__$(roots[i] + j)){
+                                
+                                __$(roots[i] + j).innerHTML = (lang[i] == "yes" ? 
+                                    Android.search(result[0][id][fields[i]]) : result[0][id][fields[i]]);
+                                
+                            }
+                        }
+                        
+                    }
+                    
+                    j++;
+                }
+					      
+            }
+            
+            //-->
+        </script>
+
+        <style type="text/css">
+
+        </style>
+    </head>
+    <body onload="load()" style="margin: 0px; padding: 0px;">
+
+        <div class="table" style="border-spacing: 0px; width: 100%;">            
+            <div class="row">
+                <div class="cell center" style="position: relative; width: 100%; height: 80%;">
+
+                    <div id="reg" style="height: 55px; width: 100%; background-color: #41608f; color: #ccc; 
+                         font-size: 2.2em; text-align: center; padding-top: 10px;">
+                        Village Register
+                    </div>
+
+                    <div style="width: 100%; height: 40px; overflow: auto; overflow: hidden; 
+                         background-color: #999; color: #eee; border-bottom: 1px solid #41608f;">
+                        <div style="width: 100%; display: table; font-size: 1.3em;">
+                            <div style="display: table-row;">
+                                <div id="fname" style="display: table-cell; width: 200px; 
+                                     text-align: left; vertical-align: top; padding: 5px; 
+                                     border-right: 1px #41608f solid; padding-bottom: 0px;">
+                                    First Name
+                                </div>
+                                <div id="lname" style="display: table-cell; width: 200px; text-align: left;  
+                                     vertical-align: top; padding: 5px; border-right: 1px #41608f solid; 
+                                     padding-bottom: 0px;">
+                                    Last Name
+                                </div>
+                                <div id="npid" style="display: table-cell; width: 90px; text-align: center; 
+                                     vertical-align: top; padding: 3px; border-right: 1px #41608f solid; 
+                                     padding-bottom: 0px;">
+                                    <img src="images/barcode.jpg" height="30" style="margin-top: 0px" />
+                                </div>
+                                <div id="gender" style="display: table-cell; width: 80px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #41608f solid; 
+                                     padding-bottom: 0px;">
+                                    <img src="images/male.gif" height="30" style="margin-top: 0px" />/<img src="images/female.gif" height="30" style="margin-top: 0px" />
+                                </div>
+                                <div id="dob" style="display: table-cell; width: 100px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #41608f solid; 
+                                     padding-bottom: 0px;">
+                                    Birthdate
+                                </div>
+                                <div id="outcome" style="display: table-cell; text-align: left; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #41608f solid; 
+                                     padding-bottom: 0px;">
+                                    Outcome
+                                </div>
+                                <div style="display: table-cell; width: 50px; padding-top: 5px; text-align: center;">
+                                    <img src="images/synced.png" height="30" style="margin-top: 0px" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="parent" style="background-color: #f1f1f1; height: 395px;
+                         width: 100%; margin: 0px; margin-top: -5px; padding: 0px; overflow: auto;">
+
+                        <div style="width: 100%; display: table; font-size: 1.1em;">
+
+                            <div style="display: table-row;">
+                                <div id="fname0" style="display: table-cell; width: 200px; 
+                                     text-align: left; vertical-align: top; padding: 5px;  border-bottom: 1px #ccc solid;
+                                     border-right: 1px #ccc solid; padding-bottom: 0px; overflow: hidden;">
+
+                                </div>
+                                <div id="lname0" style="display: table-cell; width: 200px; text-align: left;  
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="npid0" style="display: table-cell; width: 90px; text-align: center; 
+                                     vertical-align: top; padding: 3px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+                                    &nbsp;
+                                </div>
+                                <div id="gender0" style="display: table-cell; width: 80px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="dob0" style="display: table-cell; width: 100px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="outcome0" style="display: table-cell; text-align: left; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="img0" style="display: table-cell; width: 50px; 
+                                     padding-top: 5px; text-align: center; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                            </div>
+
+                            <div style="display: table-row;">
+                                <div id="fname1" style="display: table-cell; width: 200px; 
+                                     text-align: left; vertical-align: top; padding: 5px;  border-bottom: 1px #ccc solid;
+                                     border-right: 1px #ccc solid; padding-bottom: 0px; overflow: hidden;">
+
+                                </div>
+                                <div id="lname1" style="display: table-cell; width: 200px; text-align: left;  
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="npid1" style="display: table-cell; width: 90px; text-align: center; 
+                                     vertical-align: top; padding: 3px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+                                    &nbsp;
+                                </div>
+                                <div id="gender1" style="display: table-cell; width: 80px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="dob1" style="display: table-cell; width: 100px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="outcome1" style="display: table-cell; text-align: left; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="img1" style="display: table-cell; width: 50px; 
+                                     padding-top: 5px; text-align: center; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                            </div>
+
+                            <div style="display: table-row;">
+                                <div id="fname2" style="display: table-cell; width: 200px; 
+                                     text-align: left; vertical-align: top; padding: 5px;  border-bottom: 1px #ccc solid;
+                                     border-right: 1px #ccc solid; padding-bottom: 0px; overflow: hidden;">
+
+                                </div>
+                                <div id="lname2" style="display: table-cell; width: 200px; text-align: left;  
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="npid2" style="display: table-cell; width: 90px; text-align: center; 
+                                     vertical-align: top; padding: 3px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+                                    &nbsp;
+                                </div>
+                                <div id="gender2" style="display: table-cell; width: 80px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="dob2" style="display: table-cell; width: 100px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="outcome2" style="display: table-cell; text-align: left; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="img2" style="display: table-cell; width: 50px; 
+                                     padding-top: 5px; text-align: center; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                            </div>
+
+                            <div style="display: table-row;">
+                                <div id="fname3" style="display: table-cell; width: 200px; 
+                                     text-align: left; vertical-align: top; padding: 5px;  border-bottom: 1px #ccc solid;
+                                     border-right: 1px #ccc solid; padding-bottom: 0px; overflow: hidden;">
+
+                                </div>
+                                <div id="lname3" style="display: table-cell; width: 200px; text-align: left;  
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="npid3" style="display: table-cell; width: 90px; text-align: center; 
+                                     vertical-align: top; padding: 3px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+                                    &nbsp;
+                                </div>
+                                <div id="gender3" style="display: table-cell; width: 80px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="dob3" style="display: table-cell; width: 100px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="outcome3" style="display: table-cell; text-align: left; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="img3" style="display: table-cell; width: 50px; 
+                                     padding-top: 5px; text-align: center; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                            </div>
+
+                            <div style="display: table-row;">
+                                <div id="fname4" style="display: table-cell; width: 200px; 
+                                     text-align: left; vertical-align: top; padding: 5px;  border-bottom: 1px #ccc solid;
+                                     border-right: 1px #ccc solid; padding-bottom: 0px; overflow: hidden;">
+
+                                </div>
+                                <div id="lname4" style="display: table-cell; width: 200px; text-align: left;  
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="npid4" style="display: table-cell; width: 90px; text-align: center; 
+                                     vertical-align: top; padding: 3px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+                                    &nbsp;
+                                </div>
+                                <div id="gender4" style="display: table-cell; width: 80px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="dob4" style="display: table-cell; width: 100px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="outcome4" style="display: table-cell; text-align: left; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="img4" style="display: table-cell; width: 50px; 
+                                     padding-top: 5px; text-align: center; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                            </div>
+
+                            <div style="display: table-row;">
+                                <div id="fname5" style="display: table-cell; width: 200px; 
+                                     text-align: left; vertical-align: top; padding: 5px;  border-bottom: 1px #ccc solid;
+                                     border-right: 1px #ccc solid; padding-bottom: 0px; overflow: hidden;">
+
+                                </div>
+                                <div id="lname5" style="display: table-cell; width: 200px; text-align: left;  
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="npid5" style="display: table-cell; width: 90px; text-align: center; 
+                                     vertical-align: top; padding: 3px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+                                    &nbsp;
+                                </div>
+                                <div id="gender5" style="display: table-cell; width: 80px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="dob5" style="display: table-cell; width: 100px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="outcome5" style="display: table-cell; text-align: left; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="img5" style="display: table-cell; width: 50px; 
+                                     padding-top: 5px; text-align: center; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                            </div>
+
+                            <div style="display: table-row;">
+                                <div id="fname6" style="display: table-cell; width: 200px; 
+                                     text-align: left; vertical-align: top; padding: 5px;  border-bottom: 1px #ccc solid;
+                                     border-right: 1px #ccc solid; padding-bottom: 0px; overflow: hidden;">
+
+                                </div>
+                                <div id="lname6" style="display: table-cell; width: 200px; text-align: left;  
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="npid6" style="display: table-cell; width: 90px; text-align: center; 
+                                     vertical-align: top; padding: 3px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+                                    &nbsp;
+                                </div>
+                                <div id="gender6" style="display: table-cell; width: 80px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="dob6" style="display: table-cell; width: 100px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="outcome6" style="display: table-cell; text-align: left; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="img6" style="display: table-cell; width: 50px; 
+                                     padding-top: 5px; text-align: center; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                            </div>
+
+                            <div style="display: table-row;">
+                                <div id="fname7" style="display: table-cell; width: 200px; 
+                                     text-align: left; vertical-align: top; padding: 5px;  border-bottom: 1px #ccc solid;
+                                     border-right: 1px #ccc solid; padding-bottom: 0px; overflow: hidden;">
+
+                                </div>
+                                <div id="lname7" style="display: table-cell; width: 200px; text-align: left;  
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="npid7" style="display: table-cell; width: 90px; text-align: center; 
+                                     vertical-align: top; padding: 3px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+                                    &nbsp;
+                                </div>
+                                <div id="gender7" style="display: table-cell; width: 80px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="dob7" style="display: table-cell; width: 100px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="outcome7" style="display: table-cell; text-align: left; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="img7" style="display: table-cell; width: 50px; 
+                                     padding-top: 5px; text-align: center; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                            </div>
+
+                            <div style="display: table-row;">
+                                <div id="fname8" style="display: table-cell; width: 200px; 
+                                     text-align: left; vertical-align: top; padding: 5px;  border-bottom: 1px #ccc solid;
+                                     border-right: 1px #ccc solid; padding-bottom: 0px; overflow: hidden;">
+
+                                </div>
+                                <div id="lname8" style="display: table-cell; width: 200px; text-align: left;  
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="npid8" style="display: table-cell; width: 90px; text-align: center; 
+                                     vertical-align: top; padding: 3px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+                                    &nbsp;
+                                </div>
+                                <div id="gender8" style="display: table-cell; width: 80px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="dob8" style="display: table-cell; width: 100px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="outcome8" style="display: table-cell; text-align: left; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="img8" style="display: table-cell; width: 50px; 
+                                     padding-top: 5px; text-align: center; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                            </div>
+
+                            <div style="display: table-row;">
+                                <div id="fname9" style="display: table-cell; width: 200px; 
+                                     text-align: left; vertical-align: top; padding: 5px;  border-bottom: 1px #ccc solid;
+                                     border-right: 1px #ccc solid; padding-bottom: 0px; overflow: hidden;">
+
+                                </div>
+                                <div id="lname9" style="display: table-cell; width: 200px; text-align: left;  
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="npid9" style="display: table-cell; width: 90px; text-align: center; 
+                                     vertical-align: top; padding: 3px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+                                    &nbsp;
+                                </div>
+                                <div id="gender9" style="display: table-cell; width: 80px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="dob9" style="display: table-cell; width: 100px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="outcome9" style="display: table-cell; text-align: left; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="img9" style="display: table-cell; width: 50px; 
+                                     padding-top: 5px; text-align: center; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                            </div>
+
+                            <div style="display: table-row;">
+                                <div id="fname10" style="display: table-cell; width: 200px; 
+                                     text-align: left; vertical-align: top; padding: 5px;  border-bottom: 1px #ccc solid;
+                                     border-right: 1px #ccc solid; padding-bottom: 0px; overflow: hidden;">
+
+                                </div>
+                                <div id="lname10" style="display: table-cell; width: 200px; text-align: left;  
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="npid10" style="display: table-cell; width: 90px; text-align: center; 
+                                     vertical-align: top; padding: 3px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+                                    &nbsp;
+                                </div>
+                                <div id="gender10" style="display: table-cell; width: 80px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="dob10" style="display: table-cell; width: 100px; text-align: center; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="outcome10" style="display: table-cell; text-align: left; 
+                                     vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
+                                     padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                                <div id="img10" style="display: table-cell; width: 50px; 
+                                     padding-top: 5px; text-align: center; border-bottom: 1px #ccc solid;">
+
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                    <div id="keyboard_container" style="position: absolute; bottom: 10px;
+                         width: 97%; left: 5x; margin: 10px;">
+                    </div>
+                    <div class="nav" style="position: absolute; bottom: 0px; border: 1px #fff solid; height: 64px;
+                         width: 100%; background-color: #666; margin: 0px; margin-bottom: -52px; 
+                         margin-left: -5px; ">
+
+                        <a id="home" style="float: left;">
+                            <img src="images/home.png" alt="Home" style="margin: 0px;
+                                 margin-left: 15px;" height="60" />
+                        </a>                                                
+
+                        <!--div style="width: 90%; text-align: right; float: right; margin-right: 20px;"-->
+
+                        <div id="last" style="float: right;">
+                            <img src="images/nav-last.png" alt="last" style="margin: 0px;
+                                 margin-left: 15px; margin-right: 15px;" height="60" />
+                        </div> 
+
+                        <div id="next" style="float: right;">
+                            <img src="images/nav-right.png" alt="next" style="margin: 0px;
+                                 margin-left: 15px;" height="60" />
+                        </div>                                                
+
+                        <div id="count" style="border: 1px solid #fff; color: #fff; 
+                             padding: 10px; margin-top: 8px; border-radius: 50px; 
+                             float: right; margin-left: 15px; font-size: 1.3em; min-width: 180px;">
+                            0 to 0 of 0
+                        </div>
+
+                        <div id="prev" style="float: right;">
+                            <img src="images/nav-left.png" alt="previous" style="margin: 0px;
+                                 margin-left: 15px;" height="60" />
+                        </div>                                                
+
+                        <div id="first" style="float: right;">
+                            <img src="images/nav-first.png" alt="first" style="margin: 0px;
+                                 margin-left: 15px;" height="60" />
+                        </div>                                                
+
+                        <!--/div-->                                             
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

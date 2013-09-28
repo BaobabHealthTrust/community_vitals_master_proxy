@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -19,6 +20,9 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.baobabhealthtrust.cvr.models.NationalIdentifiers;
+import org.baobabhealthtrust.cvr.models.Outcomes;
+import org.baobabhealthtrust.cvr.models.People;
+import org.baobabhealthtrust.cvr.models.Relationships;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +44,9 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 	public static final int TASK_GET_GVH_NPIDS = 4;
 	public static final int TASK_GET_TA_NPIDS = 5;
 	public static final int TASK_ACK = 6;
-	public static final int TASK_POST_DATA = 7;
+	public static final int TASK_POST_VH_DATA = 7;
+	public static final int TASK_SYNC_VH_DATA = 8;
+	public static final int TASK_POST_GVH_DATA = 9;
 
 	private static final String TAG = "WebServiceTask";
 
@@ -108,8 +114,6 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 		 * if (processMessage.toString().trim().length() > 0) {
 		 * showProgressDialog(); }
 		 */
-
-		Log.i("POSTING", "Posting started");
 
 	}
 
@@ -244,13 +248,17 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 			saveVHNPIDS(response);
 			break;
 		case TASK_GET_GVH_NPIDS:
-			saveGVHNPIDS(response);
 			break;
 		case TASK_GET_TA_NPIDS:
-			saveTANPIDS(response);
 			break;
-		case TASK_POST_DATA:
-			savePostDataResponse(response);
+		case TASK_POST_VH_DATA:
+			savePostVHDataResponse(response);
+			break;
+		case TASK_POST_GVH_DATA:
+			savePostGVHDataResponse(response);
+			break;
+		case TASK_SYNC_VH_DATA:
+			saveSyncVHDataResponse(response);
 			break;
 		}
 
@@ -313,30 +321,6 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 			}
 
 			ackNPIDS(response);
-
-		} catch (Exception e) {
-			Log.e(TAG, e.getLocalizedMessage(), e);
-		}
-
-	}
-
-	private void saveGVHNPIDS(String response) {
-
-		try {
-
-			JSONArray jso = new JSONArray(response);
-
-		} catch (Exception e) {
-			Log.e(TAG, e.getLocalizedMessage(), e);
-		}
-
-	}
-
-	private void saveTANPIDS(String response) {
-
-		try {
-
-			JSONArray jso = new JSONArray(response);
 
 		} catch (Exception e) {
 			Log.e(TAG, e.getLocalizedMessage(), e);
@@ -443,26 +427,27 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 		}
 	}
 
-	private void savePostDataResponse(String response) {
+	private void savePostVHDataResponse(String response) {
 		JSONArray arr;
 
 		try {
 			arr = new JSONArray(response);
 
-			if (params.size() == arr.length()) {
-				Log.i("RETURNED SUCCESS",
-						"$$$$$$$$$$$$$$$$$$$$$$$$$$$ Back OK $$$$$$$$$$$$$$$$$$$$");
+			JSONObject posted = new JSONObject(params.get(0).getValue());
+
+			if (posted.length() == arr.length()) {
 
 				for (int i = 0; i < arr.length(); i++) {
 					NationalIdentifiers identifier = mDB
 							.getNationalIdentifierByIDentifier(arr.get(i)
 									.toString());
-					
+
 					identifier.setPostedByVh(1);
-					
+
 					mDB.updateNationalIdentifiers(identifier);
 
 				}
+
 			}
 
 		} catch (JSONException e) {
@@ -471,4 +456,199 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 		}
 
 	}
+
+	private void saveSyncVHDataResponse(String response) {
+
+		try {
+
+			JSONObject records = new JSONObject(response);
+
+			Iterator<?> keys = records.keys();
+
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+
+				if (records.get(key) instanceof JSONObject) {
+
+					NationalIdentifiers identifier = new NationalIdentifiers();
+
+					JSONObject identifier_details = records.getJSONObject(key)
+							.getJSONObject("identifier_details");
+
+					identifier.setCreatedAt(identifier_details
+							.get("created_at").toString());
+
+					identifier.setVoided(Integer.parseInt(identifier_details
+							.get("voided").toString()));
+
+					identifier.setPostedByGvh(Integer
+							.parseInt(identifier_details.get("posted_by_gvh")
+									.toString()));
+
+					identifier.setRequestGvhNotified(Integer
+							.parseInt(identifier_details.get(
+									"request_gvh_notified").toString()));
+
+					identifier.setPostedByGvh(Integer
+							.parseInt(identifier_details.get("posted_by_vh")
+									.toString()));
+
+					identifier.setRequestVhNotified(Integer
+							.parseInt(identifier_details.get(
+									"request_vh_notified").toString()));
+
+					identifier.setPostGvhNotified(Integer
+							.parseInt(identifier_details.get(
+									"post_gvh_notified").toString()));
+
+					identifier.setVoidReason(identifier_details.get(
+							"void_reason").toString());
+
+					identifier.setRequestedByVh(Integer
+							.parseInt(identifier_details.get("requested_by_vh")
+									.toString()));
+
+					identifier.setAssignedGvh(identifier_details.get(
+							"assigned_gvh").toString());
+
+					identifier.setSiteId(identifier_details.get("site_id")
+							.toString());
+
+					identifier.setUpdatedAt(identifier_details
+							.get("updated_at").toString());
+
+					identifier.setRequestedByGvh(Integer
+							.parseInt(identifier_details
+									.get("requested_by_gvh").toString()));
+
+					identifier.setAssignedVh(identifier_details.get(
+							"assigned_vh").toString());
+
+					identifier.setIdentifier(identifier_details.get(
+							"identifier").toString());
+
+					identifier.setDateVoided(identifier_details.get(
+							"date_voided").toString());
+
+					mDB.addNationalIdentifiers(identifier);
+
+					NationalIdentifiers nat_id = mDB
+							.getNationalIdentifierByIDentifier(key);
+
+					JSONObject person_details = records.getJSONObject(key)
+							.getJSONObject("person_details");
+
+					People person = new People();
+
+					person.setGivenName(person_details.get("fname").toString());
+
+					person.setMiddleName(person_details.get("middle_name")
+							.toString());
+
+					person.setFamilyName(person_details.get("lname").toString());
+
+					person.setGender(person_details.get("gender").toString());
+
+					person.setBirthdate(person_details.get("dob").toString());
+
+					person.setBirthdateEstimated(Integer
+							.parseInt(person_details.get("dob_estimated")
+									.toString()));
+
+					person.setOutcome(person_details.get("outcome").toString());
+
+					person.setOutcomeDate(person_details.get("outcome_date")
+							.toString());
+
+					person.setVillage(person_details.get("village").toString());
+
+					person.setGvh(person_details.get("gvh").toString());
+
+					person.setTa(person_details.get("ta").toString());
+
+					person.setNationalId(nat_id.getId() + "");
+
+					mDB.addPeople(person);
+
+					People person_id = mDB.getPersonByNpid(nat_id.getId());
+
+					NationalIdentifiers n_id = mDB
+							.getNationalIdentifierByIDentifier(key);
+
+					n_id.setPersonId(person_id.getId());
+
+					mDB.updateNationalIdentifiers(n_id);
+
+					JSONArray relationships = records.getJSONObject(key)
+							.getJSONArray("relationships");
+
+					for (int i = 0; i < relationships.length(); i++) {
+						Relationships relation = new Relationships();
+
+						relation.setPersonNationalId(relationships
+								.getJSONObject(i).get("person").toString());
+
+						relation.setRelationNationalId(relationships
+								.getJSONObject(i).get("relative").toString());
+
+						relation.setPersonIsToRelation(Integer
+								.parseInt(relationships.getJSONObject(i)
+										.get("relationship").toString()));
+
+						mDB.addRelationships(relation);
+
+					}
+
+					JSONArray outcomes = records.getJSONObject(key)
+							.getJSONArray("outcomes");
+
+					for (int i = 0; i < outcomes.length(); i++) {
+						Outcomes outcome = new Outcomes();
+
+						outcome.setPersonId(person_id.getId());
+
+						outcome.setOutcomeType(Integer.parseInt(outcomes
+								.getJSONObject(i).get("outcome").toString()));
+
+						outcome.setOutcomeDate(outcomes.getJSONObject(i)
+								.get("outcome_date").toString());
+
+						mDB.addOutcomes(outcome);
+					}
+
+				}
+			}
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void savePostGVHDataResponse(String response) {
+
+		try {
+
+			JSONArray records = new JSONArray(response);
+
+			for (int i = 0; i < records.length(); i++) {
+				NationalIdentifiers identifier = mDB
+						.getNationalIdentifierByIDentifier(records.get(i)
+								.toString());
+				
+				identifier.setPostedByGvh(1);
+				
+				mDB.updateNationalIdentifiers(identifier);
+			}
+
+			
+			Log.i("",
+					"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ back with "
+							+ records.length());
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
 }

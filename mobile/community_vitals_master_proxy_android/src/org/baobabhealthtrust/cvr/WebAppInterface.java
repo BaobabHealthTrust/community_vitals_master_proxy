@@ -8,11 +8,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import org.baobabhealthtrust.cvr.models.AeSimpleSHA1;
 import org.baobabhealthtrust.cvr.models.DdeSettings;
+import org.baobabhealthtrust.cvr.models.NationalIdentifiers;
 import org.baobabhealthtrust.cvr.models.Outcomes;
 import org.baobabhealthtrust.cvr.models.People;
 import org.baobabhealthtrust.cvr.models.Relationships;
@@ -844,6 +846,180 @@ public class WebAppInterface {
 		setPref("popln", String.valueOf(cul_count));
 		setPref("male", String.valueOf(cul_male));
 		setPref("female", String.valueOf(cul_female));
+	}
+
+	@JavascriptInterface
+	public String listVillagePeopleNames(String page) {
+
+		List<String> result = new ArrayList<String>();
+
+		JSONObject json = new JSONObject();
+
+		int count = mDB.getPeopleCount();
+
+		int current_page = Integer.parseInt(page);
+
+		int next_page = ((current_page * mDB.PAGE_SIZE) < count ? current_page + 1
+				: current_page);
+
+		int previous_page = (current_page > 1 ? current_page - 1 : current_page);
+
+		int last_page = (int) Math.floor((double) (count / mDB.PAGE_SIZE)) + 1;
+
+		List<People> people = mDB.getAllPeople(current_page);
+
+		for (int i = 0; i < people.size(); i++) {
+			JSONObject pjson = new JSONObject();
+
+			People person = people.get(i);
+
+			try {
+
+				NationalIdentifiers identifier = mDB
+						.getNationalIdentifiers(Integer.parseInt(person
+								.getNationalId()));
+
+				pjson.put("Name",
+						person.getGivenName() + " " + person.getFamilyName());
+
+				pjson.put("First Name", person.getGivenName());
+
+				pjson.put("Middle Name", person.getMiddleName());
+
+				pjson.put("Last Name", person.getFamilyName());
+
+				pjson.put("Birthdate", person.getBirthdate());
+
+				pjson.put("Gender", person.getGender());
+
+				pjson.put("National ID", identifier.getIdentifier());
+
+				pjson.put("Outcome", person.getOutcome());
+
+				pjson.put("synced", identifier.getPostedByVh());
+
+				json.put(person.getId() + "", pjson);
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				showMsg("Sorry, there was an error!");
+			}
+
+		}
+
+		int start = ((current_page - 1) * mDB.PAGE_SIZE) + 1;
+
+		result.add(json.toString());
+
+		result.add(previous_page + "");
+
+		result.add(next_page + "");
+
+		result.add(last_page + "");
+
+		result.add(count + "");
+
+		result.add(start + "");
+
+		result.add(people.size() + "");
+
+		return result.toString();
+	}
+
+	@JavascriptInterface
+	public String listGVHPeopleNames(String page) {
+
+		List<String> result = new ArrayList<String>();
+
+		JSONObject json = new JSONObject();
+
+		int count = mDB.getPeopleCount();
+
+		int current_page = Integer.parseInt(page);
+
+		int next_page = ((current_page * mDB.PAGE_SIZE) < count ? current_page + 1
+				: current_page);
+
+		int previous_page = (current_page > 1 ? current_page - 1 : current_page);
+
+		int last_page = (int) Math.floor((double) (count / mDB.PAGE_SIZE)) + 1;
+
+		List<People> people = mDB.getAllPeople(current_page);
+
+		for (int i = 0; i < people.size(); i++) {
+			JSONObject pjson = new JSONObject();
+
+			People person = people.get(i);
+
+			try {
+
+				NationalIdentifiers identifier = mDB
+						.getNationalIdentifiers(Integer.parseInt(person
+								.getNationalId()));
+
+				pjson.put("Name",
+						person.getGivenName() + " " + person.getFamilyName());
+
+				pjson.put("First Name", person.getGivenName());
+
+				pjson.put("Middle Name", person.getMiddleName());
+
+				pjson.put("Last Name", person.getFamilyName());
+
+				pjson.put("Village", person.getVillage());
+
+				pjson.put("Birthdate", person.getBirthdate());
+
+				pjson.put("Gender", person.getGender());
+
+				pjson.put("National ID", identifier.getIdentifier());
+
+				pjson.put("Outcome", person.getOutcome());
+
+				pjson.put("synced", identifier.getPostedByGvh());
+
+				pjson.put("flagged", identifier.getPostGvhNotified());
+
+				json.put(person.getId() + "", pjson);
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				showMsg("Sorry, there was an error!");
+			}
+
+		}
+
+		int start = ((current_page - 1) * mDB.PAGE_SIZE) + 1;
+
+		result.add(json.toString());
+
+		result.add(previous_page + "");
+
+		result.add(next_page + "");
+
+		result.add(last_page + "");
+
+		result.add(count + "");
+
+		result.add(start + "");
+
+		result.add(people.size() + "");
+
+		return result.toString();
+	}
+
+	@JavascriptInterface
+	public void gvhFlag(String id, String value) {
+		People person = mDB.getPeople(Integer.parseInt(id));
+		
+		NationalIdentifiers identifier = mDB.getNationalIdentifiers(Integer
+				.parseInt(person.getNationalId()));
+		
+		identifier.setPostGvhNotified(Integer.parseInt(value));
+		
+		mDB.updateNationalIdentifiers(identifier);
 	}
 
 }

@@ -41,6 +41,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	private static final String SP_KEY_DB_VER = "db_ver";
 
+	// Fetch size per page
+	public static final int PAGE_SIZE = 10;
+
 	// Table names
 	private static final String TABLE_SITES = "sites";
 	private static final String TABLE_PEOPLE = "people";
@@ -696,10 +699,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	public List<Sites> getAllSites() {
 		List<Sites> sitesList = new ArrayList<Sites>();
+
+		SQLiteDatabase db = this.getWritableDatabase();
+
 		// Select All Query
 		String selectQuery = "SELECT  * FROM " + TABLE_SITES;
 
-		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		// looping through all rows and adding to list
 		if (cursor.moveToFirst()) {
@@ -721,47 +726,62 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return sitesList;
 	}
 
-	public List<People> getAllPeople() {
+	public List<People> getAllPeople(int page) {
 		List<People> peopleList = new ArrayList<People>();
-		// Select All Query
-		String selectQuery = "SELECT  * FROM " + TABLE_PEOPLE;
 
 		SQLiteDatabase db = this.getWritableDatabase();
-		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		Cursor cursor = db.query(TABLE_PEOPLE, null, null, null, null, null,
+				null, ((page - 1) * PAGE_SIZE) + ", " + PAGE_SIZE);
+
+		// Select All Query
+		/*
+		 * String selectQuery = "SELECT " + TABLE_PEOPLE + ".* FROM " +
+		 * TABLE_PEOPLE + " LEFT OUTER JOIN " + TABLE_NATIONAL_IDENTIFIERS +
+		 * " ON " + TABLE_NATIONAL_IDENTIFIERS + "." + KEY_ID + " = " +
+		 * TABLE_PEOPLE + "." + KEY_NATIONAL_ID + " ORDER BY " +
+		 * KEY_POSTED_BY_GVH + " ASC";
+		 * 
+		 * Cursor cursor = db.rawQuery(selectQuery, null);
+		 */
+
 		// looping through all rows and adding to list
 		if (cursor.moveToFirst()) {
+
 			do {
 				People people = new People();
-				people.setCreatedAt(cursor.getString(0));
-				people.setTa(cursor.getString(1));
-				people.setOutcome(cursor.getString(2));
-				people.setBirthdate(cursor.getString(3));
-				people.setGender(cursor.getString(4));
-				people.setVillage(cursor.getString(5));
-				people.setCityVillage(cursor.getString(6));
-				people.setCreatorSiteId(Integer.parseInt(cursor.getString(7)));
-				people.setUpdatedAt(cursor.getString(8));
-				people.setDateVoided(cursor.getString(9));
-				people.setMaidenName(cursor.getString(10));
-				people.setNeighbourhoodCell(cursor.getString(11));
-				people.setCreatorId(Integer.parseInt(cursor.getString(12)));
-				people.setId(Integer.parseInt(cursor.getString(13)));
-				people.setVoided(Integer.parseInt(cursor.getString(14)));
-				people.setAdrress1(cursor.getString(15));
-				people.setGvh(cursor.getString(16));
-				people.setCellPhoneNumber(cursor.getString(17));
-				people.setFamilyName(cursor.getString(18));
-				people.setCountyDistrict(cursor.getString(19));
-				people.setOccupation(cursor.getString(20));
-				people.setStateProvince(cursor.getString(21));
+
+				people.setId(Integer.parseInt(cursor.getString(0)));
+				people.setNationalId(cursor.getString(1));
+				people.setCreatorSiteId(Integer.parseInt(cursor.getString(2)));
+				people.setCreatorId(Integer.parseInt(cursor.getString(3)));
+				people.setGivenName(cursor.getString(4));
+				people.setMiddleName(cursor.getString(5));
+				people.setFamilyName(cursor.getString(6));
+				people.setMaidenName(cursor.getString(7));
+				people.setGender(cursor.getString(8));
+				people.setBirthdate(cursor.getString(9));
 				people.setBirthdateEstimated(Integer.parseInt(cursor
-						.getString(22)));
-				people.setGivenName(cursor.getString(23));
-				people.setNationalId(cursor.getString(24));
+						.getString(10)));
+				people.setCountyDistrict(cursor.getString(11));
+				people.setStateProvince(cursor.getString(12));
+				people.setAdrress1(cursor.getString(13));
+				people.setAddress2(cursor.getString(14));
+				people.setCityVillage(cursor.getString(15));
+				people.setNeighbourhoodCell(cursor.getString(16));
+				people.setCellPhoneNumber(cursor.getString(17));
+				people.setOccupation(cursor.getString(18));
+				people.setOutcome(cursor.getString(19));
+				people.setOutcomeDate(cursor.getString(20));
+				people.setVillage(cursor.getString(21));
+				people.setGvh(cursor.getString(22));
+				people.setTa(cursor.getString(23));
+				people.setVoided(Integer.parseInt(cursor.getString(24)));
 				people.setVoidReason(cursor.getString(25));
-				people.setOutcomeDate(cursor.getString(26));
-				people.setAddress2(cursor.getString(27));
-				people.setMiddleName(cursor.getString(28));
+				people.setDateVoided(cursor.getString(26));
+				people.setCreatedAt(cursor.getString(26));
+				people.setUpdatedAt(cursor.getString(28));
+
 				// Adding people to list
 				peopleList.add(people);
 			} while (cursor.moveToNext());
@@ -773,47 +793,54 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	public List<NationalIdentifiers> getAllNationalIdentifiers() {
 		List<NationalIdentifiers> national_identifiersList = new ArrayList<NationalIdentifiers>();
-		// Select All Query
-		String selectQuery = "SELECT  * FROM " + TABLE_NATIONAL_IDENTIFIERS;
+
+		String selectQuery = "SELECT * FROM " + TABLE_NATIONAL_IDENTIFIERS
+				+ " WHERE COALESCE(person_id,0) != 0";
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
+
 		// looping through all rows and adding to list
 		if (cursor.moveToFirst()) {
 			do {
 				NationalIdentifiers national_identifiers = new NationalIdentifiers();
-				national_identifiers.setCreatedAt(cursor.getString(0));
-				national_identifiers.setRequestedByGvh(Integer.parseInt(cursor
-						.getString(1)));
-				national_identifiers.setAssignedVh(cursor.getString(2));
-				national_identifiers.setSiteId(cursor.getString(3));
-				national_identifiers.setRequestVhNotified(Integer
-						.parseInt(cursor.getString(4)));
-				national_identifiers.setPostVhNotified(Integer.parseInt(cursor
-						.getString(5)));
+
+				national_identifiers
+						.setId(Integer.parseInt(cursor.getString(0)));
+				national_identifiers.setIdentifier(cursor.getString(1));
 				national_identifiers.setPersonId(Integer.parseInt(cursor
+						.getString(2)));
+				national_identifiers.setSiteId(cursor.getString(3));
+				national_identifiers.setAssignedGvh(cursor.getString(4));
+				national_identifiers.setAssignedVh(cursor.getString(5));
+				national_identifiers.setRequestedByGvh(Integer.parseInt(cursor
 						.getString(6)));
-				national_identifiers.setUpdatedAt(cursor.getString(7));
-				national_identifiers.setDateVoided(cursor.getString(8));
 				national_identifiers.setRequestedByVh(Integer.parseInt(cursor
-						.getString(9)));
-				national_identifiers.setPostedByVh(Integer.parseInt(cursor
-						.getString(10)));
-				national_identifiers.setIdentifier(cursor.getString(11));
-				national_identifiers.setAssignedGvh(cursor.getString(12));
-				national_identifiers.setId(Integer.parseInt(cursor
-						.getString(13)));
-				national_identifiers.setVoided(Integer.parseInt(cursor
-						.getString(14)));
-				national_identifiers.setPostGvhNotified(Integer.parseInt(cursor
-						.getString(15)));
+						.getString(7)));
 				national_identifiers.setRequestGvhNotified(Integer
-						.parseInt(cursor.getString(16)));
-				national_identifiers.setVoidReason(cursor.getString(17));
+						.parseInt(cursor.getString(8)));
+				national_identifiers.setRequestVhNotified(Integer
+						.parseInt(cursor.getString(9)));
 				national_identifiers.setPostedByGvh(Integer.parseInt(cursor
-						.getString(18)));
+						.getString(10)));
+				national_identifiers.setPostedByVh(Integer.parseInt(cursor
+						.getString(11)));
+				// posted_by_ta - 12
+				national_identifiers.setPostGvhNotified(Integer.parseInt(cursor
+						.getString(13)));
+				national_identifiers.setPostVhNotified(Integer.parseInt(cursor
+						.getString(14)));
+				national_identifiers.setVoided(Integer.parseInt(cursor
+						.getString(15)));
+				national_identifiers.setVoidReason(cursor.getString(16));
+				national_identifiers.setDateVoided(cursor.getString(17));
+				// assigned_at - 18
+				national_identifiers.setCreatedAt(cursor.getString(19));
+				national_identifiers.setUpdatedAt(cursor.getString(20));
+
 				// Adding national_identifiers to list
 				national_identifiersList.add(national_identifiers);
+
 			} while (cursor.moveToNext());
 		}
 
@@ -1256,7 +1283,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String countQuery = "SELECT  * FROM " + TABLE_SITES;
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
-		cursor.close();
 
 		// return count
 		return cursor.getCount();
@@ -1266,7 +1292,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String countQuery = "SELECT  * FROM " + TABLE_PEOPLE;
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
-		cursor.close();
 
 		// return count
 		return cursor.getCount();
@@ -1276,7 +1301,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String countQuery = "SELECT  * FROM " + TABLE_NATIONAL_IDENTIFIERS;
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
-		cursor.close();
 
 		// return count
 		return cursor.getCount();
@@ -1286,7 +1310,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String countQuery = "SELECT  * FROM " + TABLE_WORDS;
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
-		cursor.close();
 
 		// return count
 		return cursor.getCount();
@@ -1296,7 +1319,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String countQuery = "SELECT  * FROM " + TABLE_RELATIONSHIP_TYPES;
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
-		cursor.close();
 
 		// return count
 		return cursor.getCount();
@@ -1306,7 +1328,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String countQuery = "SELECT  * FROM " + TABLE_OUTCOME_TYPES;
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
-		cursor.close();
 
 		// return count
 		return cursor.getCount();
@@ -1316,7 +1337,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String countQuery = "SELECT  * FROM " + TABLE_OUTCOMES;
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
-		cursor.close();
 
 		// return count
 		return cursor.getCount();
@@ -1326,7 +1346,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String countQuery = "SELECT  * FROM " + TABLE_RELATIONSHIPS;
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
-		cursor.close();
 
 		// return count
 		return cursor.getCount();
@@ -1336,7 +1355,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String countQuery = "SELECT  * FROM " + TABLE_VOCABULARIES;
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
-		cursor.close();
 
 		// return count
 		return cursor.getCount();
@@ -1746,8 +1764,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				"COALESCE(" + KEY_POST_GVH_NOTIFIED + ",0)",
 				"COALESCE(" + KEY_REQUEST_GVH_NOTIFIED + ",0)",
 				KEY_VOID_REASON, "COALESCE(" + KEY_POSTED_BY_GVH + ",0)" },
-				KEY_IDENTIFIER + "=?", new String[] { npid }, null, null,
-				null, null);
+				KEY_IDENTIFIER + "=?", new String[] { npid }, null, null, null,
+				null);
 
 		if (cursor != null)
 			cursor.moveToFirst();
@@ -1768,6 +1786,64 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		// return national_identifiers
 		return national_identifiers;
+	}
+
+	public List<NationalIdentifiers> getAllGVHPostNationalIdentifiers() {
+		List<NationalIdentifiers> national_identifiersList = new ArrayList<NationalIdentifiers>();
+
+		String selectQuery = "SELECT * FROM " + TABLE_NATIONAL_IDENTIFIERS
+				+ " WHERE COALESCE(person_id,0) != 0 AND posted_by_gvh = 0 "
+				+ "AND post_gvh_notified = 1 AND voided = 0";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			do {
+				NationalIdentifiers national_identifiers = new NationalIdentifiers();
+
+				national_identifiers
+						.setId(Integer.parseInt(cursor.getString(0)));
+				national_identifiers.setIdentifier(cursor.getString(1));
+				national_identifiers.setPersonId(Integer.parseInt(cursor
+						.getString(2)));
+				national_identifiers.setSiteId(cursor.getString(3));
+				national_identifiers.setAssignedGvh(cursor.getString(4));
+				national_identifiers.setAssignedVh(cursor.getString(5));
+				national_identifiers.setRequestedByGvh(Integer.parseInt(cursor
+						.getString(6)));
+				national_identifiers.setRequestedByVh(Integer.parseInt(cursor
+						.getString(7)));
+				national_identifiers.setRequestGvhNotified(Integer
+						.parseInt(cursor.getString(8)));
+				national_identifiers.setRequestVhNotified(Integer
+						.parseInt(cursor.getString(9)));
+				national_identifiers.setPostedByGvh(Integer.parseInt(cursor
+						.getString(10)));
+				national_identifiers.setPostedByVh(Integer.parseInt(cursor
+						.getString(11)));
+				// posted_by_ta - 12
+				national_identifiers.setPostGvhNotified(Integer.parseInt(cursor
+						.getString(13)));
+				national_identifiers.setPostVhNotified(Integer.parseInt(cursor
+						.getString(14)));
+				national_identifiers.setVoided(Integer.parseInt(cursor
+						.getString(15)));
+				national_identifiers.setVoidReason(cursor.getString(16));
+				national_identifiers.setDateVoided(cursor.getString(17));
+				// assigned_at - 18
+				national_identifiers.setCreatedAt(cursor.getString(19));
+				national_identifiers.setUpdatedAt(cursor.getString(20));
+
+				// Adding national_identifiers to list
+				national_identifiersList.add(national_identifiers);
+
+			} while (cursor.moveToNext());
+		}
+
+		// return national_identifiers list
+		return national_identifiersList;
 	}
 
 }

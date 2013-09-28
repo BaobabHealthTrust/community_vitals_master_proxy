@@ -595,7 +595,6 @@ function listVH(value){
 
 function loadChiefs(value){
     var list = {
-      "ta":"Traditional Authority",
       "gvh":"Group Village Headman",
       "vh":"Village Headman"
     };
@@ -824,4 +823,5 @@ function selectDate(){
     Android.setReportDate(date,display_date)
     window.location = "daily_summary.html"
 }
+
 
