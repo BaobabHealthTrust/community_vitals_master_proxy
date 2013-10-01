@@ -641,11 +641,6 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 				mDB.updateNationalIdentifiers(identifier);
 			}
 
-			
-			Log.i("",
-					"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ back with "
-							+ records.length());
-
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

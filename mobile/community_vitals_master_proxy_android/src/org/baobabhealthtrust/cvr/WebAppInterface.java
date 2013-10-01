@@ -149,6 +149,8 @@ public class WebAppInterface {
 
 		editor.commit();
 
+		setPref("user_id", mUDB.mCurrentUserId + "");
+
 		return token;
 	}
 
@@ -221,37 +223,6 @@ public class WebAppInterface {
 			e.printStackTrace();
 		}
 
-	}
-
-	@JavascriptInterface
-	public String getUsers() {
-		JSONObject json = new JSONObject();
-
-		List<User> users = mUDB.getAllUsers();
-
-		for (int i = 0; i < users.size(); i++) {
-			JSONObject pjson = new JSONObject();
-
-			User user = users.get(i);
-
-			try {
-				pjson.put("user_id", user.getUserId());
-				pjson.put("username", user.getUsername());
-				pjson.put("password", user.getPassword());
-				pjson.put("token", user.getToken());
-				pjson.put("date_created", user.getDateCreated());
-
-				json.put(user.getUserId() + "", pjson);
-
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				showMsg("Sorry, there was an error!");
-			}
-
-		}
-
-		return json.toString();
 	}
 
 	@JavascriptInterface
@@ -1013,13 +984,147 @@ public class WebAppInterface {
 	@JavascriptInterface
 	public void gvhFlag(String id, String value) {
 		People person = mDB.getPeople(Integer.parseInt(id));
-		
+
 		NationalIdentifiers identifier = mDB.getNationalIdentifiers(Integer
 				.parseInt(person.getNationalId()));
-		
+
 		identifier.setPostGvhNotified(Integer.parseInt(value));
-		
+
 		mDB.updateNationalIdentifiers(identifier);
+	}
+
+	@JavascriptInterface
+	public void updateUser(String fname, String lname, String gender,
+			String username, String password) {
+
+		User user = mUDB.getUser(Integer.parseInt(getPref("user_id")));
+
+		if (!fname.trim().equalsIgnoreCase(""))
+			user.setFirstName(fname);
+
+		if (!lname.trim().equalsIgnoreCase(""))
+			user.setLastName(lname);
+
+		if (!gender.trim().equalsIgnoreCase(""))
+			user.setGender(gender);
+
+		if (!username.trim().equalsIgnoreCase(""))
+			user.setUsername(username);
+
+		if (!password.trim().equalsIgnoreCase(""))
+			user.setPassword(password);
+
+		mUDB.updateUser(user);
+	}
+
+	@JavascriptInterface
+	public String getUser(String user_id) {
+		User user = mUDB.getUser(Integer.parseInt(user_id));
+
+		JSONObject json = new JSONObject();
+
+		try {
+
+			json.put("fname", user.getFirstName());
+			json.put("lname", user.getLastName());
+			json.put("gender", user.getGender());
+			json.put("username", user.getUsername());
+			json.put("user_id", user.getUserId());
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			showMsg("Sorry, there was an error!");
+		}
+
+		return json.toString();
+	}
+
+	@JavascriptInterface
+	public String getUsers(String page) {
+		JSONObject json = new JSONObject();
+
+		List<String> result = new ArrayList<String>();
+
+		int count = mUDB.getUserCount();
+
+		int current_page = Integer.parseInt(page);
+
+		int next_page = ((current_page * mUDB.PAGE_SIZE) < count ? current_page + 1
+				: current_page);
+
+		int previous_page = (current_page > 1 ? current_page - 1 : current_page);
+
+		int last_page = (int) Math.floor((double) (count / mUDB.PAGE_SIZE)) + 1;
+
+		List<User> users = mUDB.getAllUsers(current_page);
+
+		for (int i = 0; i < users.size(); i++) {
+			JSONObject pjson = new JSONObject();
+
+			User user = users.get(i);
+
+			try {
+				pjson.put("user_id", user.getUserId());
+				pjson.put("Username", user.getUsername());
+				pjson.put("Name",
+						user.getFirstName() + " " + user.getLastName());
+				pjson.put("Gender", user.getGender());
+				pjson.put("Status", user.getStatus());
+
+				json.put(user.getUserId() + "", pjson);
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				showMsg("Sorry, there was an error!");
+			}
+
+		}
+
+		int start = ((current_page - 1) * mDB.PAGE_SIZE) + 1;
+
+		result.add(json.toString());
+
+		result.add(previous_page + "");
+
+		result.add(next_page + "");
+
+		result.add(last_page + "");
+
+		result.add(count + "");
+
+		result.add(start + "");
+
+		result.add(users.size() + "");
+
+		return result.toString();
+	}
+
+	@JavascriptInterface
+	public void addUser(String fname, String lname, String gender,
+			String username, String password) {
+
+		User user = mUDB.getUser(Integer.parseInt(getPref("user_id")));
+
+		if (!fname.trim().equalsIgnoreCase(""))
+			user.setFirstName(fname);
+
+		if (!lname.trim().equalsIgnoreCase(""))
+			user.setLastName(lname);
+
+		if (!gender.trim().equalsIgnoreCase(""))
+			user.setGender(gender);
+
+		if (!username.trim().equalsIgnoreCase(""))
+			user.setUsername(username);
+
+		if (!password.trim().equalsIgnoreCase(""))
+			user.setPassword(password);
+
+		user.setStatus("Suspended");
+
+		mUDB.addUser(user);
 	}
 
 }
