@@ -837,13 +837,15 @@ public class WebAppInterface {
 
 	@JavascriptInterface
 	public void getDailySummary(String date) {
+		
 		int today_count = mDB.getAssignedByDate(date, date);
-		int cul_count = mDB.getAssignedByDate("01/01/1900", date);
+		int count = mDB.getPeopleCount();
+		
 		int cul_male = mDB.getGenderCount(date, "Male");
 		int cul_female = mDB.getGenderCount(date, "Female");
 
 		setPref("new_popln", String.valueOf(today_count));
-		setPref("popln", String.valueOf(cul_count));
+		setPref("popln", String.valueOf(count));
 		setPref("male", String.valueOf(cul_male));
 		setPref("female", String.valueOf(cul_female));
 	}

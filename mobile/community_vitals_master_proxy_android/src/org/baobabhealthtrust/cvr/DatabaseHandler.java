@@ -1566,19 +1566,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 
 	public int getAssignedByDate(String min_date, String max_date) {
+	/*	String countQuery = "SELECT  * FROM " + TABLE_PEOPLE;
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+
+		// return count
+		return cursor.getCount();
+*/
 		int result = 0;
 
 		String countQuery = "SELECT  count(*) FROM "
 				+ TABLE_PEOPLE
 				+ " WHERE COALESCE(voided,0) = 0 AND Date(created_at) >= Date('"
-				+ min_date + "') AND " + "Date('" + max_date + "')";
+				+ min_date + "') AND " + "AND Date(created_at) <= Date('" + max_date + "')";
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
 		// looping through all rows and adding to list
-		if (cursor.moveToFirst()) {
-			result = Integer.parseInt(cursor.getString(0));
-		}
+		
+		result = cursor.getCount();
+		
 
 		return result;
 	}
