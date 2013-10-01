@@ -824,4 +824,26 @@ function selectDate(){
     window.location = "daily_summary.html"
 }
 
+function updateUser(){
+    var fname = (__$("1.1") ? __$("1.1").value : "");
+    var lname = (__$("1.2") ? __$("1.2").value : "");
+    var gender = (__$("1.3") ? __$("1.3").value : "");
+    var username = (__$("1.4") ? __$("1.4").value : "");
+    var password = (__$("1.5") ? __$("1.5").value : "");
+    
+    Android.updateUser(fname, lname, gender, username, password);
+    
+    window.location = "select_user_task.html";
+}
 
+function addUser(){
+    var fname = (__$("1.1") ? __$("1.1").value : "");
+    var lname = (__$("1.2") ? __$("1.2").value : "");
+    var gender = (__$("1.3") ? __$("1.3").value : "");
+    var username = (__$("1.4") ? __$("1.4").value : "");
+    var password = (__$("1.5") ? __$("1.5").value : "");
+    
+    Android.addUser(fname, lname, gender, username, password);
+    
+    window.location = "user_list.html";
+}

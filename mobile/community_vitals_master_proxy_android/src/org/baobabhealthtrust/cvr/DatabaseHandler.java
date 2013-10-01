@@ -155,7 +155,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	 * 
 	 * @return
 	 */
-	private boolean databaseExists() {
+	public boolean databaseExists() {
 		File dbFile = mContext.getDatabasePath(DATABASE_NAME);
 		return dbFile.exists();
 	}

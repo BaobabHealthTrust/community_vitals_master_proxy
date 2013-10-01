@@ -53,11 +53,25 @@ public class CVRSyncServices extends IntentService {
 
 		mDB = new DatabaseHandler(mContext);
 
+		if (!mDB.databaseExists())
+			return;
+
 		mUDB = new UserDatabaseHandler(mContext);
+
+		if (!mUDB.databaseExists())
+			return;
 
 		String mode = getPref("dde_mode");
 
-		getSettings();
+		String settings = getSettings();
+
+		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + settings + " server "
+				+ getPref("target_server"));
+
+		if (settings.trim().equalsIgnoreCase("{}"))
+			return;
+
+		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + settings + " past");
 
 		String host = getPref("target_server");
 		int timeOut = 3000;
@@ -102,21 +116,23 @@ public class CVRSyncServices extends IntentService {
 
 		try {
 
-			json.put("mode", mode);
-			json.put("username", settings.getDdeUsername());
-			json.put("password", settings.getDdePassword());
-			json.put("ip", settings.getDdeIp());
-			json.put("port", settings.getDdePort());
-			json.put("code", settings.getDdeSiteCode());
-			json.put("count", settings.getDdeBatchSize());
+			if (settings != null) {
+				json.put("mode", mode);
+				json.put("username", settings.getDdeUsername());
+				json.put("password", settings.getDdePassword());
+				json.put("ip", settings.getDdeIp());
+				json.put("port", settings.getDdePort());
+				json.put("code", settings.getDdeSiteCode());
+				json.put("count", settings.getDdeBatchSize());
 
-			setPref("dde_mode", mode);
-			setPref("target_username", settings.getDdeUsername());
-			setPref("target_password", settings.getDdePassword());
-			setPref("target_server", settings.getDdeIp());
-			setPref("target_port", settings.getDdePort() + "");
-			setPref("site_code", settings.getDdeSiteCode());
-			setPref("batch_count", settings.getDdeBatchSize());
+				setPref("dde_mode", mode);
+				setPref("target_username", settings.getDdeUsername());
+				setPref("target_password", settings.getDdePassword());
+				setPref("target_server", settings.getDdeIp());
+				setPref("target_port", settings.getDdePort() + "");
+				setPref("site_code", settings.getDdeSiteCode());
+				setPref("batch_count", settings.getDdeBatchSize());
+			}
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -252,13 +268,14 @@ public class CVRSyncServices extends IntentService {
 			ext = "national_identifiers/update_gvh_demographics";
 
 			JSONArray to_post = new JSONArray();
-			
-			List<NationalIdentifiers> people = mDB.getAllGVHPostNationalIdentifiers();
-			
-			for(int i = 0; i < people.size(); i++){
+
+			List<NationalIdentifiers> people = mDB
+					.getAllGVHPostNationalIdentifiers();
+
+			for (int i = 0; i < people.size(); i++) {
 				to_post.put(people.get(i).getIdentifier());
 			}
-			
+
 			wst.addNameValuePair("details", to_post.toString());
 
 			wst.targetTaskType = wst.TASK_POST_GVH_DATA;
