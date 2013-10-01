@@ -16,6 +16,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class UserDatabaseHandler extends SQLiteOpenHelper {
 
@@ -241,8 +242,12 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 			mCurrentUserId = user.getUserId();
 
+			cursor.close();
+
 			return output;
 		} else {
+			cursor.close();
+
 			return "";
 		}
 
@@ -270,6 +275,7 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 					new String[] { String.valueOf(user.getUserId()) });
 
 		}
+		cursor.close();
 	}
 
 	// Getting All Users
@@ -301,6 +307,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 
+		cursor.close();
+
 		// return person list
 		return userList;
 	}
@@ -314,8 +322,12 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 		// looping through all rows and adding to list
 		if (cursor.moveToFirst()) {
+			cursor.close();
+
 			return true;
 		} else {
+			cursor.close();
+
 			return false;
 		}
 	}
@@ -329,8 +341,12 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 		// looping through all rows and adding to list
 		if (cursor.moveToFirst()) {
+			cursor.close();
+
 			return true;
 		} else {
+			cursor.close();
+
 			return false;
 		}
 	}
@@ -370,6 +386,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 				Integer.parseInt(cursor.getString(2)), cursor.getString(3),
 				cursor.getString(4), cursor.getString(5), cursor.getString(6),
 				cursor.getString(7));
+
+		cursor.close();
 
 		// return user
 		return user;
@@ -446,21 +464,29 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 				KEY_ID, KEY_DDE_IP }, KEY_MODE + "=?",
 				new String[] { String.valueOf(mode) }, null, null, null, null);
 
-		if (cursor != null)
-			cursor.moveToFirst();
+		Log.i("",
+				"$$$$$$$$$$$$$$$$$$$$$$$$$$$$ in settings " + cursor.getCount()
+						+ " mode: " + mode);
 
-		DdeSettings dde_settings = null;
+		if (cursor != null) {
+			if (cursor.moveToFirst()) {
+				DdeSettings dde_settings = new DdeSettings(cursor.getString(0),
+						cursor.getString(1), cursor.getString(2),
+						cursor.getString(3), cursor.getString(4),
+						cursor.getString(5), Integer.parseInt(cursor
+								.getString(6)), Integer.parseInt(cursor
+								.getString(7)), cursor.getString(8));
 
-		if (cursor.getCount() > 0) {
-			dde_settings = new DdeSettings(cursor.getString(0),
-					cursor.getString(1), cursor.getString(2),
-					cursor.getString(3), cursor.getString(4),
-					cursor.getString(5), Integer.parseInt(cursor.getString(6)),
-					Integer.parseInt(cursor.getString(7)), cursor.getString(8));
+				cursor.close();
+
+				return dde_settings;
+			}
 		}
 
+		cursor.close();
+
 		// return dde_settings
-		return dde_settings;
+		return null;
 	}
 
 	void addDdeSettings(DdeSettings dde_settings) {
@@ -499,6 +525,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 				Integer.parseInt(cursor.getString(6)), Integer.parseInt(cursor
 						.getString(7)), cursor.getString(8));
 
+		cursor.close();
+
 		// return dde_settings
 		return dde_settings;
 	}
@@ -527,6 +555,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 				dde_settingsList.add(dde_settings);
 			} while (cursor.moveToNext());
 		}
+
+		cursor.close();
 
 		// return dde_settings list
 		return dde_settingsList;
@@ -563,8 +593,12 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
 
+		int count = cursor.getCount();
+
+		cursor.close();
+
 		// return count
-		return cursor.getCount();
+		return count;
 	}
 
 	public int getThreshold(String mode) {
@@ -581,6 +615,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		if (cursor.moveToFirst()) {
 			result = Integer.parseInt(cursor.getString(0));
 		}
+
+		cursor.close();
 
 		return result;
 	}
@@ -599,6 +635,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		if (cursor.moveToFirst()) {
 			result = cursor.getString(0);
 		}
+
+		cursor.close();
 
 		return result;
 	}

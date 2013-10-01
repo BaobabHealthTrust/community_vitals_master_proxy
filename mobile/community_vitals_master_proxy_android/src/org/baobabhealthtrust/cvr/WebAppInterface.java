@@ -22,12 +22,17 @@ import org.baobabhealthtrust.cvr.models.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.AssetManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
@@ -44,6 +49,9 @@ public class WebAppInterface {
 
 	SharedPreferences mPrefs;
 
+	private Handler mHandler;
+	private int mInterval = 30000;
+
 	/** Instantiate the interface and set the context */
 	WebAppInterface(Context c, Home parent) {
 		mContext = c;
@@ -55,6 +63,61 @@ public class WebAppInterface {
 
 		mPrefs = c.getSharedPreferences("PrefFile", 0);
 
+		/*
+		 * Calendar cal = Calendar.getInstance();
+		 * 
+		 * Intent intent = new Intent(c, CVRSyncServices.class);
+		 * 
+		 * Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$ dde_mode: " +
+		 * getPref("dde_mode"));
+		 * 
+		 * intent.putExtra("mode", getPref("dde_mode"));
+		 * 
+		 * PendingIntent pintent = PendingIntent.getService(c, 0, intent, 0);
+		 * 
+		 * AlarmManager alarm = (AlarmManager)
+		 * c.getSystemService(Context.ALARM_SERVICE); // Start every 30 seconds
+		 * alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 30
+		 * * 1000, pintent);
+		 */
+
+		mHandler = new Handler();
+
+		startRepeatingTask();
+	}
+
+	Runnable mStatusChecker = new Runnable() {
+		@Override
+		public void run() {
+			runService(); // this function can change value of mInterval.
+			mHandler.postDelayed(mStatusChecker, mInterval);
+		}
+	};
+
+	void startRepeatingTask() {
+		mStatusChecker.run();
+	}
+
+	void stopRepeatingTask() {
+		mHandler.removeCallbacks(mStatusChecker);
+	}
+
+	public void runService() {
+		Intent intent = new Intent(mContext, CVRSyncServices.class);
+
+		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$ dde_mode: " + getPref("dde_mode"));
+
+		intent.putExtra("mode", getPref("dde_mode"));
+		intent.putExtra("target_username", getPref("target_username"));
+		intent.putExtra("target_password", getPref("target_password"));
+		intent.putExtra("target_server", getPref("target_server"));
+		intent.putExtra("target_port", getPref("target_port"));
+		intent.putExtra("site_code", getPref("site_code"));
+		intent.putExtra("batch_count", getPref("batch_count"));
+		intent.putExtra("gvh", getPref("gvh"));
+		intent.putExtra("vh", getPref("vh"));		
+
+		mContext.startService(intent);
 	}
 
 	/** Show a toast from the web page */
@@ -610,6 +673,8 @@ public class WebAppInterface {
 
 		int result = mUDB.updateDdeSettings(settings);
 
+		// confirmRestart("Will restart app!");
+
 	}
 
 	@JavascriptInterface
@@ -1127,4 +1192,36 @@ public class WebAppInterface {
 		mUDB.addUser(user);
 	}
 
+	@JavascriptInterface
+	public void confirmRestart(String msg) {
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+		builder.setCancelable(true);
+		builder.setTitle(msg);
+		builder.setInverseBackgroundForced(true);
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+
+				Intent mStartActivity = new Intent(mContext, Home.class);
+				int mPendingIntentId = 123456;
+
+				PendingIntent mPendingIntent = PendingIntent.getActivity(
+						mContext, mPendingIntentId, mStartActivity,
+						PendingIntent.FLAG_CANCEL_CURRENT);
+				AlarmManager mgr = (AlarmManager) mContext
+						.getSystemService(Context.ALARM_SERVICE);
+				mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100,
+						mPendingIntent);
+
+				System.exit(0);
+
+				dialog.dismiss();
+			}
+		});
+
+		AlertDialog alert = builder.create();
+		alert.show();
+
+	}
 }
