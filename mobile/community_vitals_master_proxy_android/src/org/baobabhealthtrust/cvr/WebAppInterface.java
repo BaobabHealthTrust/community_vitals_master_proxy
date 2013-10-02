@@ -1311,4 +1311,15 @@ public class WebAppInterface {
 		}
 	}
 
+	@JavascriptInterface
+	public String getUseRoles(){
+
+		User user = mUDB.getUser(Integer.parseInt(getPref("user_id")));
+
+		String roles = mUDB.getRoles(user.getUserId());
+
+		return roles;
+		
+	}
+	
 }

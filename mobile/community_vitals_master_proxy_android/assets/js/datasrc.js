@@ -906,7 +906,7 @@ function revokeUserRole(){
     window.location = "user_list.html";
 }
 
-function listCurrentUserRoles(value){
+function listCurrentUserRoles(value, exclude){
     var list = {
         "Superuser":"Superuser",
         "Group Village Headman":"Group Village Headman",
@@ -921,7 +921,7 @@ function listCurrentUserRoles(value){
         var ex = JSON.parse(exceptions);
         
         for(var i = 0; i < ex.length; i++){
-            if(list[ex[i]]){
+            if(list[ex[i]] && list[ex[i]] != exclude){
                 result[ex[i]] = list[ex[i]];
             }
         }
@@ -994,4 +994,53 @@ function updateUserStatus(){
     Android.updateUserStatus(status);
     
     window.location = "user_list.html";
+}
+
+function setCategory(){
+    Android.setPref("usertype", __$("1.1").value.trim());
+            
+    var mode = "";
+    
+    if(__$("1.2").value.trim().toLowerCase().length > 0){
+        switch(__$("1.2").value.trim().toLowerCase()){
+            case "traditional authority":
+                mode = "ta";
+                break;
+            case "group village headman":
+                mode = "gvh";
+                break;
+            case "village headman":
+                mode = "vh";
+                break;
+        }
+    } else {
+        switch(__$("1.1").value.trim().toLowerCase()){
+            case "traditional authority":
+                mode = "ta";
+                break;
+            case "group village headman":
+                mode = "gvh";
+                break;
+            case "village headman":
+                mode = "vh";
+                break;
+        }
+    }
+         
+    Android.debugPrint("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + mode);
+         
+    Android.setPref("dde_mode", mode);
+    Android.setPref("ta", __$("1.3").value.trim());
+    Android.setPref("gvh", __$("1.4").value.trim());
+    Android.setPref("vh", __$("1.5").value.trim());
+            
+    if(__$("1.1").value.trim().toLowerCase() == "superuser"){
+        Android.setPref("advanced", true);
+    } else {
+        Android.setPref("advanced", false);
+    }
+
+    Android.setPref("current_category", __$("1.1").value);
+
+    window.location = "index.html"; 
 }

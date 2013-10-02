@@ -39,7 +39,13 @@ function doLogin(){
 
         if(token.trim().length > 0){
             Android.setPref("username", __$("1.1").value.trim());
-            Android.setPref("usertype", __$("1.3").value.trim());
+            
+            var exceptions = Android.getUseRoles();
+            
+            Android.setPref("exceptions", exceptions);
+            
+           /* Android.setPref("usertype", __$("1.3").value.trim());
+            
             Android.setPref("location", __$("1.4").value.trim());
             
             Android.setPref("dde_mode", __$("1.3").value.trim());
@@ -55,7 +61,9 @@ function doLogin(){
 
             Android.setPref("current_category", __$("1.3").selectedIndex);
 
-            window.location = "index.html";
+            window.location = "index.html";*/
+            
+            window.location = "select_category.html";
             
             return;
         }
