@@ -33,7 +33,7 @@ public class User {
 	}
 
 	// constuctor
-	public User(String password, String token, int user_id, String username,
+	/*public User(String password, String token, int user_id, String username,
 			String date_created, String fname, String lname, String gender) {
 
 		this._password = password;
@@ -45,7 +45,7 @@ public class User {
 		this._last_name = lname;
 		this._gender = gender;
 
-	}
+	}*/
 
 	// constuctor
 	public User(String password, String token, int user_id, String username,

@@ -10,6 +10,8 @@ import java.util.Random;
 import org.baobabhealthtrust.cvr.models.AeSimpleSHA1;
 import org.baobabhealthtrust.cvr.models.DdeSettings;
 import org.baobabhealthtrust.cvr.models.User;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -176,7 +178,7 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 		String INITIALISE_USER_ROLES = "INSERT INTO " + TABLE_USER_ROLES + "("
 				+ KEY_USER_ID + ", " + KEY_ROLE_ID
-				+ ") VALUES (1, 1), (1, 2), (1, 3), (1, 4)";
+				+ ") VALUES (1, 1), (1, 3), (1, 4)";
 
 		db.execSQL(INITIALISE_USER_ROLES);
 
@@ -375,7 +377,7 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 		Cursor cursor = db.query(TABLE_USER, new String[] { KEY_PASSWORD,
 				KEY_TOKEN, KEY_USER_ID, KEY_USERNAME, KEY_DATE_CREATED,
-				KEY_FIRST_NAME, KEY_LAST_NAME, KEY_GENDER },
+				KEY_FIRST_NAME, KEY_LAST_NAME, KEY_GENDER, KEY_USER_STATUS },
 				KEY_USER_ID + "=?", new String[] { String.valueOf(id) }, null,
 				null, null, null);
 
@@ -385,7 +387,34 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		User user = new User(cursor.getString(0), cursor.getString(1),
 				Integer.parseInt(cursor.getString(2)), cursor.getString(3),
 				cursor.getString(4), cursor.getString(5), cursor.getString(6),
-				cursor.getString(7));
+				cursor.getString(7), cursor.getString(8));
+
+		cursor.close();
+
+		// return user
+		return user;
+	}
+
+	User getUserByUsername(String username) {
+		SQLiteDatabase db = this.getReadableDatabase();
+
+		Cursor cursor = db.query(TABLE_USER, new String[] { KEY_PASSWORD,
+				KEY_TOKEN, KEY_USER_ID, KEY_USERNAME, KEY_DATE_CREATED,
+				KEY_FIRST_NAME, KEY_LAST_NAME, KEY_GENDER, KEY_USER_STATUS },
+				KEY_USERNAME + "=?", new String[] { username }, null, null,
+				null, null);
+
+		User user = null;
+
+		if (cursor != null)
+			if (cursor.moveToFirst()) {
+
+				user = new User(cursor.getString(0), cursor.getString(1),
+						Integer.parseInt(cursor.getString(2)),
+						cursor.getString(3), cursor.getString(4),
+						cursor.getString(5), cursor.getString(6),
+						cursor.getString(7), cursor.getString(8));
+			}
 
 		cursor.close();
 
@@ -433,6 +462,7 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_FIRST_NAME, user.getFirstName());
 		values.put(KEY_LAST_NAME, user.getLastName());
 		values.put(KEY_GENDER, user.getGender());
+		values.put(KEY_USER_STATUS, user.getStatus());
 
 		// updating row
 		return db.update(TABLE_USER, values, KEY_USER_ID + " = ?",
@@ -640,4 +670,77 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 		return result;
 	}
+
+	public String getRoles(int user_id) {
+		JSONArray roles = new JSONArray();
+
+		// Select All Query
+		String selectQuery = "SELECT " + KEY_ROLE + " FROM " + TABLE_USER_ROLES
+				+ " LEFT OUTER JOIN " + TABLE_ROLES + " ON " + TABLE_ROLES
+				+ "." + KEY_ROLE_ID + " = " + TABLE_USER_ROLES + "."
+				+ KEY_ROLE_ID + " WHERE " + KEY_USER_ID + " = " + user_id;
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			do {
+				roles.put(cursor.getString(0));
+			} while (cursor.moveToNext());
+		}
+
+		cursor.close();
+
+		return roles.toString();
+	}
+
+	void addUserRole(User user, String role) {
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		int role_id = 0;
+
+		String selectQuery = "SELECT " + KEY_ROLE_ID + " FROM " + TABLE_ROLES
+				+ " WHERE " + KEY_ROLE + " = '" + role + "'";
+
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			role_id = Integer.parseInt(cursor.getString(0));
+		}
+
+		ContentValues values = new ContentValues();
+		values.put(KEY_USER_ID, user.getUserId());
+		values.put(KEY_ROLE_ID, role_id);
+
+		// Insert Row
+		db.insert(TABLE_USER_ROLES, null, values);
+		db.close();
+	}
+
+	void revokeUserRole(User user, String role) {
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		int role_id = 0;
+
+		String selectQuery = "SELECT " + KEY_ROLE_ID + " FROM " + TABLE_ROLES
+				+ " WHERE " + KEY_ROLE + " = '" + role + "'";
+
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			role_id = Integer.parseInt(cursor.getString(0));
+		}
+
+		if (role_id > 0) {
+			// Delete Row
+			db.delete(TABLE_USER_ROLES, KEY_USER_ID + " = ? AND " + KEY_ROLE_ID
+					+ " = ?", new String[] { String.valueOf(user.getUserId()),
+					String.valueOf(role_id) });
+		}
+
+		db.close();
+	}
+
 }

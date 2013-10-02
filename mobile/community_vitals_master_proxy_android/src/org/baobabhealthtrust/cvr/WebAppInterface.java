@@ -115,7 +115,7 @@ public class WebAppInterface {
 		intent.putExtra("site_code", getPref("site_code"));
 		intent.putExtra("batch_count", getPref("batch_count"));
 		intent.putExtra("gvh", getPref("gvh"));
-		intent.putExtra("vh", getPref("vh"));		
+		intent.putExtra("vh", getPref("vh"));
 
 		mContext.startService(intent);
 	}
@@ -1137,6 +1137,10 @@ public class WebAppInterface {
 				pjson.put("Gender", user.getGender());
 				pjson.put("Status", user.getStatus());
 
+				String roles = mUDB.getRoles(user.getUserId());
+
+				pjson.put("Roles", roles);
+
 				json.put(user.getUserId() + "", pjson);
 
 			} catch (JSONException e) {
@@ -1168,9 +1172,9 @@ public class WebAppInterface {
 
 	@JavascriptInterface
 	public void addUser(String fname, String lname, String gender,
-			String username, String password) {
+			String username, String password, String role) {
 
-		User user = mUDB.getUser(Integer.parseInt(getPref("user_id")));
+		User user = new User();
 
 		if (!fname.trim().equalsIgnoreCase(""))
 			user.setFirstName(fname);
@@ -1190,6 +1194,19 @@ public class WebAppInterface {
 		user.setStatus("Suspended");
 
 		mUDB.addUser(user);
+
+		String usernm = (!username.trim().equalsIgnoreCase("") ? username
+				.trim() : "");
+
+		if (usernm.trim().length() == 0) {
+			usernm = getPref("target_user");
+		}
+
+		if (usernm.toString().trim().length() > 0) {
+			User result = mUDB.getUserByUsername(usernm.trim());
+
+			mUDB.addUserRole(result, role);
+		}
 	}
 
 	@JavascriptInterface
@@ -1224,4 +1241,74 @@ public class WebAppInterface {
 		alert.show();
 
 	}
+
+	@JavascriptInterface
+	public void updateSelectedUser(String fname, String lname, String gender,
+			String username, String password, String role) {
+
+		User user = mUDB.getUser(Integer.parseInt(getPref("target_user_id")));
+
+		if (!fname.trim().equalsIgnoreCase(""))
+			user.setFirstName(fname);
+
+		if (!lname.trim().equalsIgnoreCase(""))
+			user.setLastName(lname);
+
+		if (!gender.trim().equalsIgnoreCase(""))
+			user.setGender(gender);
+
+		if (!username.trim().equalsIgnoreCase(""))
+			user.setUsername(username);
+
+		if (!password.trim().equalsIgnoreCase(""))
+			user.setPassword(password);
+
+		mUDB.updateUser(user);
+
+		String usernm = (!username.trim().equalsIgnoreCase("") ? username
+				.trim() : "");
+
+		if (usernm.trim().length() == 0) {
+			usernm = getPref("target_user");
+		}
+
+		if (usernm.toString().trim().length() > 0) {
+			mUDB.addUserRole(user, role);
+		}
+	}
+
+	@JavascriptInterface
+	public void revokeUserRole(String role) {
+
+		User user = mUDB.getUser(Integer.parseInt(getPref("target_user_id")));
+
+		mUDB.revokeUserRole(user, role);
+	}
+
+	@JavascriptInterface
+	public void updateUserStatus(String status) {
+
+		User user = mUDB.getUser(Integer.parseInt(getPref("target_user_id")));
+
+		user.setStatus(status);
+
+		mUDB.updateUser(user);
+	}
+
+	@JavascriptInterface
+	public boolean checkUsername(String user) {
+
+		User suser = mUDB.getUserByUsername(user);
+
+		try {			
+			if (String.valueOf(suser.getUserId()).length() == 0) {
+				return false;
+			} else {
+				return true;
+			}
+		} catch (Exception e) {			
+			return false;
+		}
+	}
+
 }

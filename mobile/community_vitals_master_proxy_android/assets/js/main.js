@@ -48,9 +48,9 @@ function doLogin(){
             Android.setPref("vh", __$("1.6").value.trim());
             
             if(__$("advanced").checked){
-              Android.setPref("advanced", true);
+                Android.setPref("advanced", true);
             } else {
-              Android.setPref("advanced", false);
+                Android.setPref("advanced", false);
             }
 
             Android.setPref("current_category", __$("1.3").selectedIndex);
@@ -398,7 +398,7 @@ function showKeyboard(numeric, showAgain){
                 cell.appendChild(btn);
                 
                 new FastButton(document.getElementById(btn.id), function() {
-					        if(this.innerHTML == del){
+                    if(this.innerHTML == del){
                         if(__$("inputField").value.trim().toLowerCase() == unknown.toLowerCase()){
                             __$("inputField").value = "";
                             
@@ -407,7 +407,7 @@ function showKeyboard(numeric, showAgain){
                             __$("inputField").value = __$("inputField").value.trim().substr(0,
                                 __$("inputField").value.trim().length - 1);
                                 
-                                __$('inputField').setAttribute("tstValue", __$("inputField").value)
+                            __$('inputField').setAttribute("tstValue", __$("inputField").value)
                         }
                     } else {
                         if(__$("inputField").value.trim().toLowerCase() == unknown.toLowerCase()){
@@ -428,7 +428,7 @@ function showKeyboard(numeric, showAgain){
                             __$('inputField').setAttribute("tstValue", __$("inputField").value);
                         }
                     }					        
-					      });
+                });
 
             }
         }
@@ -562,7 +562,7 @@ function showKeyboard(numeric, showAgain){
                     if(dynamicLoader){                        
                         eval(dynamicLoader);
                     }	 
-					      });									
+                });									
 
             }
         }
@@ -725,7 +725,7 @@ function showPage(s, back){
     if(typeof(order[s]) == "undefined"){
         return;
     }
-
+    
     if(typeof(order[s][3]) != "undefined"){
         if(typeof(order[s][3]["condition"]) != "undefined"){
             if(eval(order[s][3]["condition"]) == false){
@@ -740,14 +740,15 @@ function showPage(s, back){
     }
 
     if((typeof(back) != "undefined" ? back : false)){
-      if(__$("inputField")){
-        if(__$("inputField").getAttribute('srcControl')){
-          if(__$(__$("inputField").getAttribute('srcControl'))){
-            __$(__$("inputField").getAttribute('srcControl')).value = "";
-          }
+        if(__$("inputField")){
+            
+            if(__$("inputField").getAttribute('srcControl')){
+                if(__$(__$("inputField").getAttribute('srcControl'))){
+                    __$(__$("inputField").getAttribute('srcControl')).value = "";
+                }
+            }
         }
-      }
-    }
+    } 
 
     if(typeof(order[s][3]["field_type"]) != "undefined"){
         if(order[s][3]["field_type"].toLowerCase() == "number"){
@@ -760,7 +761,7 @@ function showPage(s, back){
     }
 
     if(__$("keyboard")){
-      __$("keyboard").style.display = "none";
+        __$("keyboard").style.display = "none";
     }
 
     __$("parent").style.minHeight = "500px";
@@ -922,63 +923,63 @@ function showPage(s, back){
 
     if(input.getAttribute("tt_showToggleKeyboard") != null){
         if(eval(input.getAttribute("tt_showToggleKeyboard"))){
-          if(__$("showKeyboard")){
-            __$("showKeyboard").style.display = "block";
-          }
+            if(__$("showKeyboard")){
+                __$("showKeyboard").style.display = "block";
+            }
         } else {
-          if(__$("showKeyboard")){
-            __$("showKeyboard").style.display = "none";
-          }
+            if(__$("showKeyboard")){
+                __$("showKeyboard").style.display = "none";
+            }
         }
     } else if(__$("showKeyboard")){
-      __$("showKeyboard").style.display = "none";
+        __$("showKeyboard").style.display = "none";
     }
 
     if(__$(input.getAttribute('srcControl'))){
         
-      input.setAttribute("tstValue", __$(input.getAttribute('srcControl')).value);
+        input.setAttribute("tstValue", __$(input.getAttribute('srcControl')).value);
         
-      if(__$(input.getAttribute('srcControl')).tagName.toUpperCase() == "INPUT"){
+        if(__$(input.getAttribute('srcControl')).tagName.toUpperCase() == "INPUT"){
       
-        if(input.getAttribute('dynamicLoader') == null){
+            if(input.getAttribute('dynamicLoader') == null){
         
-          var stored = __$(input.getAttribute('srcControl')).value;
+                var stored = __$(input.getAttribute('srcControl')).value;
               
-          stored = search(stored);
+                stored = search(stored);
           
-          input.value = stored;  
+                input.value = stored;  
              
-        } else {
-          if(__$(input.getAttribute('srcControl')).value.trim().match(/^\d+$/)){
-            input.value = "";
-          } else {
-            var stored = __$(input.getAttribute('srcControl')).value;
+            } else {
+                if(__$(input.getAttribute('srcControl')).value.trim().match(/^\d+$/)){
+                    input.value = "";
+                } else {
+                    var stored = __$(input.getAttribute('srcControl')).value;
             
+                    stored = search(stored);
+            
+                    input.value = stored; 
+          
+                }
+            }
+        } else if(__$(input.getAttribute('srcControl')).tagName.toUpperCase() == "SELECT"){
+      
+            var stored = __$(input.getAttribute('srcControl')).options[__$(input.getAttribute('srcControl')).selectedIndex].innerHTML;
+        
             stored = search(stored);
-            
+        
             input.value = stored; 
           
-          }
         }
-      } else if(__$(input.getAttribute('srcControl')).tagName.toUpperCase() == "SELECT"){
-      
-        var stored = __$(input.getAttribute('srcControl')).options[__$(input.getAttribute('srcControl')).selectedIndex].innerHTML;
-        
-        stored = search(stored);
-        
-        input.value = stored; 
-          
-      }
     }
 
     input.focus();
 
     if(typeof(input.getAttribute("tt_customKeyboard")) != "undefined"){
-      if(!input.getAttribute("tt_customKeyboard")){
-        showKeyboard(kybdnumeric, showKeys);  
-      }
+        if(!input.getAttribute("tt_customKeyboard")){
+            showKeyboard(kybdnumeric, showKeys);  
+        }
     } else {
-      showKeyboard(kybdnumeric, showKeys);
+        showKeyboard(kybdnumeric, showKeys);
     }
     
     return "";
@@ -1258,6 +1259,8 @@ function loadNumbers(startYr, endYr){
 }
 
 function loadSingleSelect(values, selected, initialtext){
+    Android.debugPrint("$$$$$$$$$$$$$$$$$$$$$$$$$$$$ got in single select");
+    
     __$("dropdowns").innerHTML = "";
     
     var panel = document.createElement("div");
@@ -1296,7 +1299,7 @@ function loadSingleSelect(values, selected, initialtext){
         li.setAttribute("tstValue", (values[y][1] ? values[y][1] : values[y][0]));
 
         if(initialtext == values[y][0]){
-          selectedControl = y;
+            selectedControl = y;
         }
 
         if(y % 2 > 0){
@@ -1312,7 +1315,7 @@ function loadSingleSelect(values, selected, initialtext){
 
         ul.appendChild(li);
         
-	      new FastButton(document.getElementById(li.id), function() {
+        new FastButton(document.getElementById(li.id), function() {
 	        
             if(__$("inputField")){
                 __$("inputField").value = this.getElementsByTagName("span")[0].innerHTML;
@@ -1335,14 +1338,14 @@ function loadSingleSelect(values, selected, initialtext){
             this.style.color = "#fff";
             this.getElementsByTagName("img")[0].src = "images/checked.png";
         			 
-	      });
+        });
 
     }
 
     if(selectedControl != null) {
-      if(__$(selectedControl)){
-        __$(selectedControl).click();
-      }
+        if(__$(selectedControl)){
+            __$(selectedControl).click();
+        }
     }
 }
 
@@ -1394,10 +1397,10 @@ function loadMultipleSelect(values, selected){
             li.style.backgroundColor = "#ccc";
         }
 
-        li.onkeydown = function(event){
+        /*li.onkeydown = function(event){
             if (event.keyCode == 13)
                 document.getElementById('next').click()
-        }
+        }*/
 
         li.onmousedown = function(){
             if(__$("inputField")){
@@ -1537,7 +1540,7 @@ function clear(){
     }	 
     
     if(__$("ulOptions")){
-      var lis = __$("ulOptions").getElementsByTagName("li");
+        var lis = __$("ulOptions").getElementsByTagName("li");
 
         for(var l = 0; l < lis.length; l++){
             lis[l].style.color = "#254061";
@@ -1564,58 +1567,58 @@ function showMessage(msg){
 }
 
 function search(word){
-  if(navigator.userAgent.toLowerCase().match(/android/)){
-      var result = Android.search(word);
+    if(navigator.userAgent.toLowerCase().match(/android/)){
+        var result = Android.search(word);
       
-      return result;
-  } else {
-      return word;        
-  }
+        return result;
+    } else {
+        return word;        
+    }
 }
 
 function checkConnection(){
   
-  var host = Android.getPref("target_server");
-  var timeOut = 3000;
+    var host = Android.getPref("target_server");
+    var timeOut = 3000;
   
-  if(String(host).match(/unknown|null/i)){
-    setTimeout("checkConnection()", 1000);
+    if(String(host).match(/unknown|null/i)){
+        setTimeout("checkConnection()", 1000);
   
-    return;
-  }
-  
-  if(!__$("network")){
-    setTimeout("checkConnection()", 1000);
-  
-    return;
-  }
-  
-  __$("network").setAttribute("src", "images/nsync.png");
-  
-  var conn = Android.checkConnection(host, timeOut);
-  
-  if(conn){
-    __$("network").setAttribute("src", "images/nup.png");
-  } else {
-    __$("network").setAttribute("src", "images/ndown.png");
-  }
-  
-  var threshold = parseInt(Android.getThreshold());
-  var availableIDs = parseInt(Android.getAvailableIds());
-  
-  if(availableIDs <= threshold){
-    if(__$("threshold")){					          
-      __$("threshold").style.color = "red";				          
-      __$("threshold").style.border = "2px solid red";
+        return;
     }
-  } else {					          
-    __$("threshold").style.color = "#38b038";				          
-    __$("threshold").style.border = "2px solid #38b038";
-  }
   
-  __$("threshold").innerHTML = availableIDs;
+    if(!__$("network")){
+        setTimeout("checkConnection()", 1000);
+  
+        return;
+    }
+  
+    __$("network").setAttribute("src", "images/nsync.png");
+  
+    var conn = Android.checkConnection(host, timeOut);
+  
+    if(conn){
+        __$("network").setAttribute("src", "images/nup.png");
+    } else {
+        __$("network").setAttribute("src", "images/ndown.png");
+    }
+  
+    var threshold = parseInt(Android.getThreshold());
+    var availableIDs = parseInt(Android.getAvailableIds());
+  
+    if(availableIDs <= threshold){
+        if(__$("threshold")){					          
+            __$("threshold").style.color = "red";				          
+            __$("threshold").style.border = "2px solid red";
+        }
+    } else {					          
+        __$("threshold").style.color = "#38b038";				          
+        __$("threshold").style.border = "2px solid #38b038";
+    }
+  
+    __$("threshold").innerHTML = availableIDs;
 					      
-  setTimeout("checkConnection()", 5000);
+    setTimeout("checkConnection()", 5000);
 }
 
 // loadLocale();
