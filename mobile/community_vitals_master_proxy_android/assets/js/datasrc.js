@@ -783,7 +783,7 @@ function selectBirthMonth(){
     var year = __$("1.1").value;
     var month = __$("1.2").value;
 
-    var rep_month = selectMonth(month)+"/"+ year.trim();
+    var rep_month = year.trim()+"-"+selectMonth(month);
     var dis_month =month.trim() +" "+ year.trim();
 
     Android.setReportMonth(rep_month, dis_month);
@@ -803,6 +803,8 @@ function selectDate(){
     var month = __$("1.2").value;
     var day = __$("1.3").value;
 
+
+
     var months = {
         "January":"1",
         "February":"2",
@@ -817,9 +819,13 @@ function selectDate(){
         "November":"11",
         "December":"12"
     };
-
-    var date = day.trim() + '/' + months[month].trim() +'/' + year.trim();
     var display_date = day.trim() + ' ' + __$("1.2").value.trim() +' ' + year.trim();
+
+    if (parseInt(day) < 10)
+    {
+        day = "0"+ day;
+    }
+    var date = year.trim() + '-' + months[month].trim() +'-' + day.trim();
     Android.setReportDate(date,display_date)
     window.location = "daily_summary.html"
 }
