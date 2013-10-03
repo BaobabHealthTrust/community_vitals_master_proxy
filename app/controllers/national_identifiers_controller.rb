@@ -129,8 +129,8 @@ class NationalIdentifiersController < ApplicationController
             Relationship.create(
                 :person_national_id => relationship['person'],
                 :relation_national_id => relationship['relative'],
-                :person_is_to_relation => relationship['relationship']
-            )
+                :person_is_to_relation => relationship['relationship'].to_i
+            ) rescue nil
           end
 
           (records[pnid]["outcomes"] || []).each do |outcome|

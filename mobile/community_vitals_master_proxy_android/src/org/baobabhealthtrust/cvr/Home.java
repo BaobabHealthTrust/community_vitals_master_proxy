@@ -80,15 +80,6 @@ public class Home extends Activity {
 		// i.putExtra("KEY1", "Value to be used by the service");
 		// this.startService(i);
 
-		Calendar cal = Calendar.getInstance();
-
-		Intent intent = new Intent(this, CVRSyncServices.class);
-		PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
-
-		AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-		// Start every 30 seconds
-		alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
-				30 * 1000, pintent);
 	}
 
 	@Override

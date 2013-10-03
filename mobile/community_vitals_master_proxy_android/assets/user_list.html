@@ -113,21 +113,82 @@
                         } else if(i == 3){
                             if(__$(roots[i] + j)){
                                 
+                                var roles = JSON.parse(result[0][id][fields[i]]);
+                                
+                                __$(roots[i] + j).innerHTML = "<ol style='list-style: none;'>";
+                                
+                                for(var k = 0; k < roles.length; k++){
+                                    __$(roots[i] + j).innerHTML += "<li>" + Android.search(roles[k]) + "</li>";
+                                }
+                                
+                                __$(roots[i] + j).innerHTML += "</ol>";
+                                
                             }
                         } else if (i == 4){
+                            
                             if(__$(roots[i] + j)){
                                 
-                                __$(roots[i] + j).innerHTML = "<img src='images/" + 
-                                    (result[0][id][fields[i]] == "Active" ? 
-                                    "active" : (result[0][id][fields[i]] == "Suspended" ? "suspend" : "block")) + 
-                                    ".png' height='30' style='margin-top: 0px' />";
+                                if(id != Android.getPref("user_id")){
+                                    
+                                    __$(roots[i] + j).innerHTML = "<img id='state" + j + 
+                                        "' user_id='" + id + "' src='images/" + 
+                                        (result[0][id][fields[i]] == "Active" ? 
+                                        "active" : (result[0][id][fields[i]] == "Suspended" ? "suspend" : "block")) + 
+                                        ".png' height='30' style='margin-top: 0px' />";
                                 
+                                    new FastButton(document.getElementById('state' + j), function() {
+                                        Android.setPref("target_user_id", this.getAttribute("user_id"));
+                                    
+                                        window.location = "update_user_status.html";					 
+                                    });
+                                    
+                                } else {
+                                    
+                                    __$(roots[i] + j).innerHTML = "&nbsp;";
+                                    
+                                }
+		
                             }
                         } else if (i == 5){
+                        
                             if(__$(roots[i] + j)){
-                                __$(roots[i] + j).innerHTML = "<img src='images/pencil.png' " + 
-                                    "height='30' style='margin-top: 0px' />";
-                            }                        
+                            
+                                if(id != Android.getPref("user_id")){
+                                    
+                                    __$(roots[i] + j).innerHTML = "<img id='edit" + j + "' src='images/pencil.png' " + 
+                                        "height='30' style='margin-top: 0px' username='" + result[0][id][fields[1]] + 
+                                        "' user_id='" + id + "' exceptions='" + result[0][id][fields[3]] + "' />" + 
+                                        "<img id='del" + j + "' src='images/cancel_flat_small_red.png' " + 
+                                        "height='30' style='margin-top: 0px; margin-left: 25px;' exceptions='" + 
+                                        result[0][id][fields[3]] + "' user_id='" + id + "' />";
+                                
+                                    new FastButton(document.getElementById('edit' + j), function() {
+                                        Android.setPref("target_user", this.getAttribute("username"));
+                                    
+                                        Android.setPref("target_user_id", this.getAttribute("user_id"));
+                                    
+                                        Android.setPref("exceptions", this.getAttribute("exceptions"));
+                                    
+                                        window.location = "update_user.html?user=" + this.getAttribute("user") + 
+                                            "&f=role&ex=" + this.getAttribute("exceptions");					 
+                                    });
+		
+                                    new FastButton(document.getElementById('del' + j), function() {
+                                        Android.setPref("target_user_id", this.getAttribute("user_id"));
+                                    
+                                        Android.setPref("exceptions", this.getAttribute("exceptions"));
+                                    
+                                        window.location = "revoke_user_role.html";					 
+                                    });
+		
+                                }  
+                                
+                            } else {
+                            
+                                __$(roots[i] + j).innerHTML = "&nbsp;";
+                                
+                            }
+                            
                         } else {
                             if(__$(roots[i] + j)){
                                 __$(roots[i] + j).innerHTML = result[0][id][fields[i]];
@@ -577,7 +638,7 @@
 
             <a id="back" style="float: right;">
                 <img src="images/home.png" alt="Back" style="margin: 0px;
-                     margin-right: 15px;" height="60" />
+                     margin-right: 15px; margin-left: 15px;" height="60" />
             </a>                                                
 
             <a id="add" style="float: right;">

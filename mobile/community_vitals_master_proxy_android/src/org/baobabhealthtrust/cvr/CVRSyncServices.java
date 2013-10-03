@@ -30,6 +30,16 @@ public class CVRSyncServices extends IntentService {
 	UserDatabaseHandler mUDB;
 	boolean mRunning = false;
 
+	String mDDEMode;
+	String mTargetServer;
+	String mTargetUsername;
+	String mTargetPassword;
+	String mTargetPort;
+	String mSiteCode;
+	String mBatchCount;
+	String mGVH;
+	String mVH;
+
 	Context mContext;
 
 	public CVRSyncServices() {
@@ -41,6 +51,21 @@ public class CVRSyncServices extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent arg0) {
 		// TODO Auto-generated method stub
+
+		mDDEMode = arg0.getStringExtra("mode");
+		mTargetUsername = arg0.getStringExtra("target_username");
+		mTargetPassword = arg0.getStringExtra("target_password");
+		mTargetServer = arg0.getStringExtra("target_server");
+		mTargetPort = arg0.getStringExtra("target_port");
+		mSiteCode = arg0.getStringExtra("site_code");
+		mBatchCount = arg0.getStringExtra("batch_count");
+		mGVH = arg0.getStringExtra("gvh");
+		mVH = arg0.getStringExtra("vh");
+
+		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + mDDEMode + "; "
+				+ mTargetServer + "; " + mTargetUsername + "; "
+				+ mTargetPassword + "; " + mTargetPort + "; " + mSiteCode
+				+ "; " + mBatchCount + "; " + mGVH + "; " + mVH);
 
 		if (mRunning)
 			return;
@@ -61,20 +86,24 @@ public class CVRSyncServices extends IntentService {
 		if (!mUDB.databaseExists())
 			return;
 
-		String mode = getPref("dde_mode");
+		// String settings = getSettings();
 
-		String settings = getSettings();
+		String mode = mDDEMode;
 
-		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + settings + " server "
-				+ getPref("target_server"));
+		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ mode: " + mode
+				+ "; server: " + mTargetServer);
 
-		if (settings.trim().equalsIgnoreCase("{}"))
-			return;
+		// if (settings.trim().equalsIgnoreCase("{}"))
+		// return;
 
-		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + settings + " past");
+		// Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + settings +
+		// " past");
 
-		String host = getPref("target_server");
+		String host = mTargetServer;
 		int timeOut = 3000;
+
+		if (host.trim().length() == 0)
+			return;
 
 		if (host.equalsIgnoreCase("unknown"))
 			return;
@@ -110,7 +139,7 @@ public class CVRSyncServices extends IntentService {
 	public String getSettings() {
 		JSONObject json = new JSONObject();
 
-		String mode = getPref("dde_mode");
+		String mode = mDDEMode;
 
 		DdeSettings settings = mUDB.getDdeSettingsByMode(mode);
 
@@ -152,16 +181,16 @@ public class CVRSyncServices extends IntentService {
 
 	public void getNationalIds() {
 
-		String mode = getPref("dde_mode");
+		String mode = mDDEMode;
 
-		String target_username = getPref("target_username");
-		String target_password = getPref("target_password");
-		String target_server = getPref("target_server");
-		String target_port = getPref("target_port");
-		String site_code = getPref("site_code");
-		String batch_count = getPref("batch_count");
-		String gvh = getPref("gvh");
-		String vh = getPref("vh");
+		String target_username = mTargetUsername;
+		String target_password = mTargetPassword;
+		String target_server = mTargetServer;
+		String target_port = mTargetPort;
+		String site_code = mSiteCode;
+		String batch_count = mBatchCount;
+		String gvh = mGVH;
+		String vh = mVH;
 
 		String ext = "";
 
@@ -248,16 +277,16 @@ public class CVRSyncServices extends IntentService {
 
 	public void postData() {
 
-		String mode = getPref("dde_mode");
+		String mode = mDDEMode;
 
-		String target_username = getPref("target_username");
-		String target_password = getPref("target_password");
-		String target_server = getPref("target_server");
-		String target_port = getPref("target_port");
-		String site_code = getPref("site_code");
-		String batch_count = getPref("batch_count");
-		String gvh = getPref("gvh");
-		String vh = getPref("vh");
+		String target_username = mTargetUsername;
+		String target_password = mTargetPassword;
+		String target_server = mTargetServer;
+		String target_port = mTargetPort;
+		String site_code = mSiteCode;
+		String batch_count = mBatchCount;
+		String gvh = mGVH;
+		String vh = mVH;
 
 		String ext = "";
 
@@ -390,16 +419,16 @@ public class CVRSyncServices extends IntentService {
 	public void syncData() {
 		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ");
 
-		String mode = getPref("dde_mode");
+		String mode = mDDEMode;
 
-		String target_username = getPref("target_username");
-		String target_password = getPref("target_password");
-		String target_server = getPref("target_server");
-		String target_port = getPref("target_port");
-		String site_code = getPref("site_code");
-		String batch_count = getPref("batch_count");
-		String gvh = getPref("gvh");
-		String vh = getPref("vh");
+		String target_username = mTargetUsername;
+		String target_password = mTargetPassword;
+		String target_server = mTargetServer;
+		String target_port = mTargetPort;
+		String site_code = mSiteCode;
+		String batch_count = mBatchCount;
+		String gvh = mGVH;
+		String vh = mVH;
 
 		String ext = "";
 

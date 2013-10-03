@@ -23,12 +23,17 @@ import org.baobabhealthtrust.cvr.models.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.AssetManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
@@ -45,6 +50,9 @@ public class WebAppInterface {
 
 	SharedPreferences mPrefs;
 
+	private Handler mHandler;
+	private int mInterval = 30000;
+
 	/** Instantiate the interface and set the context */
 	WebAppInterface(Context c, Home parent) {
 		mContext = c;
@@ -56,6 +64,61 @@ public class WebAppInterface {
 
 		mPrefs = c.getSharedPreferences("PrefFile", 0);
 
+		/*
+		 * Calendar cal = Calendar.getInstance();
+		 * 
+		 * Intent intent = new Intent(c, CVRSyncServices.class);
+		 * 
+		 * Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$ dde_mode: " +
+		 * getPref("dde_mode"));
+		 * 
+		 * intent.putExtra("mode", getPref("dde_mode"));
+		 * 
+		 * PendingIntent pintent = PendingIntent.getService(c, 0, intent, 0);
+		 * 
+		 * AlarmManager alarm = (AlarmManager)
+		 * c.getSystemService(Context.ALARM_SERVICE); // Start every 30 seconds
+		 * alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 30
+		 * * 1000, pintent);
+		 */
+
+		mHandler = new Handler();
+
+		startRepeatingTask();
+	}
+
+	Runnable mStatusChecker = new Runnable() {
+		@Override
+		public void run() {
+			runService(); // this function can change value of mInterval.
+			mHandler.postDelayed(mStatusChecker, mInterval);
+		}
+	};
+
+	void startRepeatingTask() {
+		mStatusChecker.run();
+	}
+
+	void stopRepeatingTask() {
+		mHandler.removeCallbacks(mStatusChecker);
+	}
+
+	public void runService() {
+		Intent intent = new Intent(mContext, CVRSyncServices.class);
+
+		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$ dde_mode: " + getPref("dde_mode"));
+
+		intent.putExtra("mode", getPref("dde_mode"));
+		intent.putExtra("target_username", getPref("target_username"));
+		intent.putExtra("target_password", getPref("target_password"));
+		intent.putExtra("target_server", getPref("target_server"));
+		intent.putExtra("target_port", getPref("target_port"));
+		intent.putExtra("site_code", getPref("site_code"));
+		intent.putExtra("batch_count", getPref("batch_count"));
+		intent.putExtra("gvh", getPref("gvh"));
+		intent.putExtra("vh", getPref("vh"));
+
+		mContext.startService(intent);
 	}
 
 	/** Show a toast from the web page */
@@ -611,6 +674,8 @@ public class WebAppInterface {
 
 		int result = mUDB.updateDdeSettings(settings);
 
+		// confirmRestart("Will restart app!");
+
 	}
 
 	@JavascriptInterface
@@ -1120,6 +1185,10 @@ public class WebAppInterface {
 				pjson.put("Gender", user.getGender());
 				pjson.put("Status", user.getStatus());
 
+				String roles = mUDB.getRoles(user.getUserId());
+
+				pjson.put("Roles", roles);
+
 				json.put(user.getUserId() + "", pjson);
 
 			} catch (JSONException e) {
@@ -1151,9 +1220,9 @@ public class WebAppInterface {
 
 	@JavascriptInterface
 	public void addUser(String fname, String lname, String gender,
-			String username, String password) {
+			String username, String password, String role) {
 
-		User user = mUDB.getUser(Integer.parseInt(getPref("user_id")));
+		User user = new User();
 
 		if (!fname.trim().equalsIgnoreCase(""))
 			user.setFirstName(fname);
@@ -1173,6 +1242,132 @@ public class WebAppInterface {
 		user.setStatus("Suspended");
 
 		mUDB.addUser(user);
+
+		String usernm = (!username.trim().equalsIgnoreCase("") ? username
+				.trim() : "");
+
+		if (usernm.trim().length() == 0) {
+			usernm = getPref("target_user");
+		}
+
+		if (usernm.toString().trim().length() > 0) {
+			User result = mUDB.getUserByUsername(usernm.trim());
+
+			mUDB.addUserRole(result, role);
+		}
 	}
 
+	@JavascriptInterface
+	public void confirmRestart(String msg) {
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+		builder.setCancelable(true);
+		builder.setTitle(msg);
+		builder.setInverseBackgroundForced(true);
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+
+				Intent mStartActivity = new Intent(mContext, Home.class);
+				int mPendingIntentId = 123456;
+
+				PendingIntent mPendingIntent = PendingIntent.getActivity(
+						mContext, mPendingIntentId, mStartActivity,
+						PendingIntent.FLAG_CANCEL_CURRENT);
+				AlarmManager mgr = (AlarmManager) mContext
+						.getSystemService(Context.ALARM_SERVICE);
+				mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100,
+						mPendingIntent);
+
+				System.exit(0);
+
+				dialog.dismiss();
+			}
+		});
+
+		AlertDialog alert = builder.create();
+		alert.show();
+
+	}
+
+	@JavascriptInterface
+	public void updateSelectedUser(String fname, String lname, String gender,
+			String username, String password, String role) {
+
+		User user = mUDB.getUser(Integer.parseInt(getPref("target_user_id")));
+
+		if (!fname.trim().equalsIgnoreCase(""))
+			user.setFirstName(fname);
+
+		if (!lname.trim().equalsIgnoreCase(""))
+			user.setLastName(lname);
+
+		if (!gender.trim().equalsIgnoreCase(""))
+			user.setGender(gender);
+
+		if (!username.trim().equalsIgnoreCase(""))
+			user.setUsername(username);
+
+		if (!password.trim().equalsIgnoreCase(""))
+			user.setPassword(password);
+
+		mUDB.updateUser(user);
+
+		String usernm = (!username.trim().equalsIgnoreCase("") ? username
+				.trim() : "");
+
+		if (usernm.trim().length() == 0) {
+			usernm = getPref("target_user");
+		}
+
+		if (usernm.toString().trim().length() > 0) {
+			mUDB.addUserRole(user, role);
+		}
+	}
+
+	@JavascriptInterface
+	public void revokeUserRole(String role) {
+
+		User user = mUDB.getUser(Integer.parseInt(getPref("target_user_id")));
+
+		mUDB.revokeUserRole(user, role);
+	}
+
+	@JavascriptInterface
+	public void updateUserStatus(String status) {
+
+		User user = mUDB.getUser(Integer.parseInt(getPref("target_user_id")));
+
+		user.setStatus(status);
+
+		mUDB.updateUser(user);
+	}
+
+	@JavascriptInterface
+	public boolean checkUsername(String user) {
+
+		User suser = mUDB.getUserByUsername(user);
+
+		try {			
+			if (String.valueOf(suser.getUserId()).length() == 0) {
+				return false;
+			} else {
+				return true;
+			}
+		} catch (Exception e) {			
+			return false;
+		}
+	}
+
+	@JavascriptInterface
+	public String getUseRoles(){
+
+		User user = mUDB.getUser(Integer.parseInt(getPref("user_id")));
+
+		String roles = mUDB.getRoles(user.getUserId());
+
+		return roles;
+		
+	}
+	
 }

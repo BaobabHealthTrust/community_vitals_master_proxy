@@ -3,6 +3,15 @@
         <title>CVR</title>
         <link rel="stylesheet" type="text/css" href="css/main.css" />
 
+        <script>        
+            Ext.Loader.setConfig({
+                enabled: true,
+                disableCaching: false
+            });
+
+            Ext.Ajax.setDisableCaching(false);
+        </Script>
+
         <script type="text/javascript" src="js/md5.js"></script>
         <script type="text/javascript" src="js/vocab.js"></script>
         <script type="text/javascript" src="js/datasrc.js"></script>
@@ -12,7 +21,7 @@
         <script type="text/javascript" defer>
             <!--
 
-            setTimeout("loadPage('spec/login.spec')", 200);
+            setTimeout("loadPage('spec/update_user.spec')", 200);
 
             function load(){
             
@@ -20,23 +29,27 @@
                     "font-style: italic; font-size: 2em; font-weight: normal;'>" + 
                     search("Loading. Please Wait") + "...</h2>";
             
-					      new FastButton(document.getElementById('next'), function() {
-					        goForward();				 
-					      });
+                new FastButton(document.getElementById('next'), function() {
+                    goForward();				 
+                });
 					
-					      new FastButton(document.getElementById('prev'), function() {
-					        goBackwards();				 
-					      });
+                new FastButton(document.getElementById('prev'), function() {
+                    goBackwards();				 
+                });
 					
-					      new FastButton(document.getElementById('clear'), function() {
-					        clear();				 
-					      });
+                new FastButton(document.getElementById('clear'), function() {
+                    clear();				 
+                });
 					
-					      new FastButton(document.getElementById('showKeyboard'), function() {					        
-					        showKeyboard(kybdnumeric);				 
-					      });
+                new FastButton(document.getElementById('showKeyboard'), function() {					        
+                    showKeyboard(kybdnumeric);				 
+                });
 					
-					  }
+                new FastButton(document.getElementById('home'), function() {
+                    window.location = "user_list.html";				 
+                });
+					
+            }
             //-->
         </script>
 
@@ -51,7 +64,7 @@
                 <div class="cell center" style="position: relative; width: 100%; height: 80%;">
                     <div id="parent" style="background-color: #f1f1f1; min-height: 500px;
                          width: 100%; margin: 0px; margin-top: -5px; padding: 0px;">
-                       
+
                     </div>
                     <div id="keyboard_container" style="position: absolute; bottom: 10px;
                          width: 97%; left: 5x; margin: 10px;">
@@ -59,9 +72,12 @@
                     <div class="nav" style="position: absolute; bottom: 0px; border: 1px #fff solid; height: 62px;
                          width: 100%; background-color: #666; margin: 0px; margin-bottom: -52px; 
                          margin-left: -5px; ">
-                        
-                        <!--input type="checkbox" id="advanced" style="display: block; float: left;" value="" /-->
-                        
+
+                        <a id="home" style="float: left;">
+                            <img src="images/home.png" alt="Home" style="margin: 0px;
+                                 margin-left: 15px;" height="60" />
+                        </a>                                                
+
                         <a id="next" style="float: right;">
                             <img src="images/bt_right.png" alt="Next" style="margin: 2px;
                                  margin-right: 15px;" height="60" />
@@ -70,12 +86,12 @@
                             <img src="images/bt_left.png" alt="Back" style="margin: 2px;
                                  margin-right: 15px;" height="60" />
                         </a>
-                        
+
                         <a id="clear" style="float: right;">
                             <img src="images/clear.png" alt="Clear" style="margin: 0px;
                                  margin-right: 15px;" height="60" />
                         </a>
-                        
+
                         <a id="showKeyboard" style="float: right;">
                             <img src="images/hp_keyboard.png" alt="Keyboard"
                                  style="margin: 0px; margin-right: 15px;" height="60" />
