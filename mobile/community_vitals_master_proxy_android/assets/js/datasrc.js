@@ -16,6 +16,10 @@ function savePerson(){
         "Unknown" : __$("1.5").value);
     var age = (__$("1.5").value.trim().toLowerCase() == "unknown" ?
         parseInt(__$("1.6").value) : "0");
+    
+    var relate = (__$("1.9").value.trim().toLowerCase() == "yes" ? "yes" : "no");
+    var person_b = (__$("1.9").value.trim().toLowerCase() == "yes" ? __$("1.13").value.trim() : "");
+    var relation = (__$("1.9").value.trim().toLowerCase() == "yes" ? __$("1.14").value.trim() : "");
         
     var months = {
         "January":"1",
@@ -39,9 +43,10 @@ function savePerson(){
     var failed = "Person save failed!";
 
     var result = Android.savePerson(fName, mName, lName, gender, age,
-        occ, yob, mob, dob, success, failed);
+        occ, yob, mob, dob, success, failed, relate, person_b, relation);
 
     window.location = "person_summary.html";
+    
 }
 
 function listFirstNames(fname){
@@ -1043,4 +1048,18 @@ function setCategory(){
     Android.setPref("current_category", __$("1.1").value);
 
     window.location = "index.html"; 
+}
+
+function listValues(value, list){    
+    var arr = [];
+
+    for(var el in list){
+        if(list[el].trim().toLowerCase().match(value.toLowerCase().trim())){
+            arr.push([search(list[el]), el]);
+        } else if (value.toLowerCase().trim().length == 0){
+            arr.push([search(list[el]), el]);
+        }
+    }
+
+    loadSingleSelect(arr);
 }
