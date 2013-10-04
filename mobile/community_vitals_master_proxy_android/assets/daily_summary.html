@@ -21,7 +21,7 @@
             });
             var mode = Android.getPref("dde_mode");
             var day =  Android.getPref("query_date");
-            var result =  Android.getDailySummary(day);
+            Android.getDailySummary(day);
             document.getElementById('duration').innerHTML += ( " " +  Android.getPref("report_date"));
             if (mode == 'gvh')
             {
@@ -47,7 +47,7 @@
 
             __$("parent").innerHTML = "<table style='width: 100%'>" +
                     "<tr class='heading' ><td style='text-align: center;width:60%'>Indicator</td>"+
-                    "<td style='text-align: center;width:20%'>Today</td><td style='text-align:center;'>Cumulative</td>"+
+                    "<td style='text-align: center;width:20%'>Registered Today</td><td style='text-align:center;'>Cumulative</td>"+
                     "</tr><tr class='headings'><td colspan='3' >General Population Statistics</td></tr><tr>" +
                     "<td>Total Population</td><td class='count'>"+ Android.getPref("new_popln")+"</td>"+
                     "<td class='count'>" +Android.getPref('popln') + "</td></tr>"+

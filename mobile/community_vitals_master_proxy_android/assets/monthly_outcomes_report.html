@@ -47,16 +47,21 @@
                 document.getElementById('gvh').innerHTML = Android.getPref("gvh");
                 document.getElementById('vh').innerHTML = Android.getPref("vh");
             }
+            var currentTime = new Date()
+            var date = currentTime.getFullYear() +"-"+ (currentTime.getMonth() + 1) +"-31";
 
             __$("parent").innerHTML = "<table style='width: 100%'>" +
-                    "<tr class='heading'><td colspan='3'> Population Outcome Statistics</td></tr>"+
-                    "<tr class='heading' ><td style='text-align: center;width:60%'>&nbsp;</td>"+
-                    "<td style='text-align: center;width:20%'>Month Total</td><td style='text-align:center;'>Cumulative</td></tr>"+
-                    "<tr class='headings'><td>Total Population </td><td>&nbsp;</td><td class='count'>0</td></tr>"+
-                    "<tr><td>Alive</td><td class='count'>0</td><td class='count'>0</td></tr>"+
-                    "<tr class='headings'><td>Dead</td><td class='count'>0</td><td class='count'>0</td></tr>"+
-                    "<tr><td>Transferred Out</td><td class='count'>0</td><td class='count'>0</td></tr>"+
-                    "</table>"
+                 "<tr class='heading'><td colspan='3'> Population Outcome Statistics</td></tr>"+
+                 "<tr class='heading' ><td style='text-align: center;width:60%'>&nbsp;</td>"+
+                 "<td style='text-align: center;width:20%'>Month Total</td><td style='text-align:center;'>Cumulative</td></tr>"+
+                 "<tr class='headings'><td>Total Population </td><td>&nbsp;</td><td class='count'>"+Android.getPeople()+"</td></tr>"+
+                 "<tr><td>Alive</td><td class='count'>"+Android.getAlive(Android.getPref('report_month'))+
+                 "</td><td class='count'>"+Android.getAlive(date)+"</td></tr><tr class='headings'>"+
+                 "<td>Dead</td><td class='count'>"+Android.getOutcomeCount(Android.getPref('report_month'),1)+
+                 "</td><td class='count'>"+Android.getOutcomeCount(date,1)+"</td></tr>"+
+                 "<tr><td>Transferred Out</td><td class='count'>" + Android.getOutcomeCount(Android.getPref('report_month'),1)+
+                 "</td><td class='count'>"+Android.getOutcomeCount(date,2)+"</td></tr>"+
+                "</table>"
         }
         //-->
     </script>
@@ -71,7 +76,7 @@
         tr.headings{
             background-color: #dcdcdc;
             height: 40px;
-            font-size: 17px;
+            font-size: 16px;
             text-align: left;
         }
         tr{

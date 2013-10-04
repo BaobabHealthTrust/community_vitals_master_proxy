@@ -764,7 +764,7 @@ function selectOutcomeMonth(){
     var year = __$("1.1").value;
     var month = __$("1.2").value;
 
-    var rep_month = selectMonth(month)+"/"+ year.trim();
+    var rep_month = year.trim()+"-"+selectMonth(month);
     var dis_month =month.trim() +" "+ year.trim();
 
     Android.setReportMonth(rep_month, dis_month);

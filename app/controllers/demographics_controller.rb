@@ -28,7 +28,7 @@ class DemographicsController < ApplicationController
     date = params[:start_date].to_date
     @duration = date.strftime('%B, %Y')
     @mode = YAML.load_file("#{Rails.root}/config/application.yml")['dde_mode'] rescue 'vh'
-    @gvh = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["gvh"] rescue nil
+    @gvh = YAML.load_0file("#{Rails.root}/config/application.yml")[Rails.env]["gvh"] rescue nil
     @ta = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["ta"] rescue nil
     @outcomes, @ids = specific_outcome_sorter(NationalIdentifier.find(:all,:conditions => ['person_id IS NOT NULL']),date.end_of_month,'assigned_vh')
     render :layout => 'report'

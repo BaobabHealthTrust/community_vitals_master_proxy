@@ -6,6 +6,7 @@ production:
   village: Mtema
   gvh: Mtema
   ta: Mtema
+  district: lilongwe
 
 development:
   user.management.url: http://localhost:3004
@@ -13,6 +14,7 @@ development:
   village: Mtema
   gvh: Mtema
   ta: Mtema
+  district: lilongwe
 
 test: &TEST
   user.management.url: http://localhost:3004
@@ -22,11 +24,11 @@ test: &TEST
   ta: Mtema
   
 dde_mode: ta
-  
+
 dde_ta:
   username: admin
   password: admin
-  target_server: localhost:3002
+  target_server: 192.168.6.173:3002
   site_code: 009
   batch_count: 10
   threshold: 5

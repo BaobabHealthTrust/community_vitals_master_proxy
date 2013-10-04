@@ -800,7 +800,7 @@ public class WebAppInterface {
 
 	@JavascriptInterface
 	public void setReportMonth(String months, String month) {
-		setPref("report_month", (months+"-01"));
+		setPref("report_month", (months+"-31"));
 		setPref("display_month", month);
 	}
 
@@ -811,9 +811,9 @@ public class WebAppInterface {
 	}
 
 	@JavascriptInterface
-	public int getGenderCount(String date_selected, String gender) {
+	public int getGenderCount(String date_min,String date_max, String gender) {
 		int result = 0;
-		result = mDB.getGenderCount(date_selected,date_selected, gender);
+		result = mDB.getGenderCount(date_min,date_max, gender);
 		return result;
 	}
 
@@ -823,7 +823,7 @@ public class WebAppInterface {
 		return mDB.getBirthsInMonth(duration);
 	}
 	@JavascriptInterface
-	public int getOutcomeCount(String date_selected, String outcome) {
+	public int getOutcomeCount(String date_selected, int outcome) {
 		
 		return mDB.getOutcomeCount("1900-01-01",date_selected, outcome);	
 	}
@@ -881,24 +881,24 @@ public class WebAppInterface {
 	}
 
 	@JavascriptInterface
-	public Hashtable getDailySummary(String date) {
+	public void getDailySummary(String date) {
 		
-		Hashtable results = new Hashtable();
+		
 		
 		int today_count = mDB.getPeopleCountOnDate(date);
 		int count = mDB.getPeopleCount();
 		
 		int male = mDB.getGenderCount(date,date, "Male");
 		int female = mDB.getGenderCount(date, date, "Female");
-		int dead = mDB.getOutcomeCount(date,date,"1");
-		int transfer = mDB.getOutcomeCount(date,date,"2");
+		int dead = mDB.getOutcomeCount(date,date,mDB.getOutcomeByType("dead"));
+		int transfer = mDB.getOutcomeCount(date,date,mDB.getOutcomeByType("transfer out"));
 		int alive =  mDB.getAlive(date, date);
 		int children = mDB.getCountInAgeGroup(0, 12, date, date);
 		int youth = mDB.getCountInAgeGroup(13, 21, date, date);
 		int adult = mDB.getCountInAgeGroup(22, 59, date, date);
 		int granny = mDB.getCountInAgeGroup(60, 200, date, date);
-		int cul_dead = mDB.getOutcomeCount("1900-01-01",date,"1");
-		int cul_transfer = mDB.getOutcomeCount("1900-01-01",date,"2");
+		int cul_dead = mDB.getOutcomeCount("1900-01-01",date,mDB.getOutcomeByType("dead"));
+		int cul_transfer = mDB.getOutcomeCount("1900-01-01",date,mDB.getOutcomeByType("transfer out"));
 		int cul_alive =  mDB.getAlive(date, date);
 		int cul_male = mDB.getGenderCount("1900-01-01",date, "Male");
 		int cul_female = mDB.getGenderCount("1900-01-01", date, "Female");
@@ -907,7 +907,7 @@ public class WebAppInterface {
 		int cul_adult = mDB.getCountInAgeGroup(22, 59, "1900-01-01", date);
 		int cul_granny = mDB.getCountInAgeGroup(60, 200, "1900-01-01", date);
 
-		results.put("new_popln", String.valueOf(today_count));
+		
 		setPref("new_popln", String.valueOf(today_count));
 		setPref("popln", String.valueOf(count));
 		setPref("male", String.valueOf(male));
@@ -929,7 +929,7 @@ public class WebAppInterface {
 		setPref("cul_adult", String.valueOf(cul_adult));
 		setPref("cul_granny", String.valueOf(cul_granny));
 		
-		return results;
+		
 	}
 
 	@JavascriptInterface
@@ -1369,5 +1369,21 @@ public class WebAppInterface {
 		return roles;
 		
 	}
+
+	@JavascriptInterface
+	public int getPeople(){
+		return mDB.getPeopleCount();
+	}
 	
+	@JavascriptInterface
+	public int getCulAlive(){
+		return mDB.getCulAlive();
+	}
+	
+	@JavascriptInterface
+	public int getCulOutcome(String outcome){
+		
+		return mDB.getCulOutcome(outcome);
+		
+	}
 }
