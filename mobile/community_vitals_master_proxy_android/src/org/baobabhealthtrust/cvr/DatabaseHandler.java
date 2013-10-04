@@ -1566,55 +1566,85 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 
 	public int getAssignedByDate(String min_date, String max_date) {
+
 		int result = 0;
 
 		String countQuery = "SELECT  count(*) FROM "
 				+ TABLE_PEOPLE
 				+ " WHERE COALESCE(voided,0) = 0 AND Date(created_at) >= Date('"
-				+ min_date + "') AND " + "Date('" + max_date + "')";
+				+ min_date + "') AND " + "AND Date(created_at) <= Date('" + max_date + "')";
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
 		// looping through all rows and adding to list
-		if (cursor.moveToFirst()) {
-			result = Integer.parseInt(cursor.getString(0));
-		}
+		
+		result = cursor.getCount();
+		
 
 		return result;
 	}
 
-	public int getGenderCount(String date_selected, String gender) {
+	public int getGenderCount(String date_min, String date_max, String gender) {
 
-		int result = 0;
 		// Select All Query
-		String countQuery = "SELECT COUNT(*) FROM " + TABLE_PEOPLE
+		String countQuery = "SELECT * FROM " + TABLE_PEOPLE
 				+ " WHERE voided = 0 AND Date(" + KEY_CREATED_AT
-				+ ") <= Date('" + date_selected + "')  AND gender ='" + gender
+				+ ") BETWEEN Date('" + date_min + "') AND Date('" + date_max + "') AND gender ='" + gender
 				+ "'";
-		SQLiteDatabase db = this.getWritableDatabase();
+		
+		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
-		// looping through all rows and adding to list
-		if (cursor.moveToFirst()) {
-			result = Integer.parseInt(cursor.getString(0));
-		}
 
-		return result;
+		// return count
+		return cursor.getCount();
 
 	}
 
-	public int getOutcomeCount(String date_selected, String outcome) {
-		int result = 0;
+	public int getPeopleCountOnDate(String date) {
+		String countQuery = "SELECT * FROM "+TABLE_PEOPLE+" WHERE COALESCE(voided,0) = 0 AND DATE(created_at) = DATE('"+ date + "')";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+
+		// return count
+		return cursor.getCount();
+	}
+
+	public int getCountInAgeGroup(int min, int max, String date_min, String date_max){
+
+		String countQuery = "SELECT * FROM "+TABLE_PEOPLE+" WHERE COALESCE(voided,0) = 0 AND " + 
+							"DATE('" + date_max + "') - DATE(birthdate) BETWEEN " + min +" AND " +max +
+							" AND DATE(created_at) BETWEEN Date('" + date_min + "') AND Date('" + date_max + "')";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+
+		// return count
+		return cursor.getCount();
+		
+	}
+	public int getOutcomeCount(String date_min,String date_max, String outcome) {
+		
 		// Select All Query
-		String selectQuery = "SELECT COUNT(*) FROM " + TABLE_PEOPLE
-				+ " WHERE voided != 1 AND outcome ='" + outcome + "'";
+		String selectQuery = "SELECT * FROM " + TABLE_PEOPLE
+				+ " WHERE voided != 1 AND outcome ='" + outcome 
+				+ "' AND Date(outcome_date) BETWEEN Date('" + date_min 
+				+ "') AND Date('" + date_max + "')";
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
-		// looping through all rows and adding to list
-		if (cursor.moveToFirst()) {
-			result = Integer.parseInt(cursor.getString(0));
-		}
-
-		return result;
+		//return count
+		return cursor.getCount();
+	}
+	
+	public int getAlive(String date_min,String date_max) {
+		
+		// Select All Query
+		String selectQuery = "SELECT * FROM people WHERE Date(created_at) <= DATE('"+ date_max+
+							"') AND id NOT IN (SELECT  person_id FROM outcomes" + 
+							" WHERE DATE(outcome_date) AND Date(created_at) BETWEEN Date('" + date_min + 
+							"') AND Date('" + date_max + "'))";
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		//return count
+		return cursor.getCount();
 	}
 
 	public int getAgegroupCount(String date_selected, String[] age_group) {
@@ -1846,4 +1876,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return national_identifiersList;
 	}
 
+	public int getBirthsInMonth(String duration){
+		String countQuery = "SELECT * FROM "+TABLE_PEOPLE+" WHERE COALESCE(voided,0) = 0 AND " +
+							"strftime('%Y-%m',DATE(birthdate)) = strftime('%Y-%m',DATE('"+ duration + "'))";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+
+		// return count
+		return cursor.getCount();
+		
+	}
 }

@@ -48,22 +48,25 @@
                 document.getElementById('vh').innerHTML = Android.getPref("vh");
             }
 
-            var result = Android.getMonthBirthReport(Android.getPref("report_month"));
+            var result = Android.getMonthBirthReport(Android.getPref("display_month"));
 
             __$("parent").innerHTML ="<table style='width: 100%'>" +
                     "<tr class='heading'><td colspan='3'> Population Birth Statistics</td></tr>"+
                     "<tr class='heading' ><td style='text-align: center;width:60%'>&nbsp;</td>"+
                     "<td style='text-align: center;width:20%'>Month Total</td><td style='text-align:center;'>Cumulative</td></tr>"+
-                    "<tr class='headings'><td>Total Population </td><td class='count'>0</td><td class='count'>0</td></tr>"+
+                    "<tr class='headings'><td>Total Population </td><td class='count'>"+
+                    Android.getMonthBirths(Android.getPref('report_month'))+
+                    "</td><td class='count'>"+ Android.getTakenIds() +"</td></tr>"+
                     "<tr><td>Females</td><td class='count'>0</td><td class='count'>0</td></tr>"+
                     "<tr class='headings'><td>Males</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
                     "<tr><td >&nbsp;</td></tr>"+
                     "<tr class='heading'><td colspan='3'> Population Survival Statistics</td></tr>"+
                     "<tr class='heading' ><td style='text-align: center;width:60%'>&nbsp;</td>"+
                     "<td style='text-align: center;width:20%'>Month Total</td><td style='text-align:center;'>Cumulative</td></tr>"+
-                    "<tr class='headings'><td>Alive</td><td class='count'>0</td><td class='count'>0</td></tr>"+
-                    "<tr><td>Dead</td><td class='count'>0</td><td class='count'>0</td></tr>"+
-                    "<tr class='headings'><td>Transferred Out</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
+                    "<tr class='headings'><td>Alive</td><td class='count'>0</td><td class='count'>"+Android.getAlive(date)+"</td></tr>"+
+                    "<tr><td>Dead</td><td class='count'>0</td><td class='count'>"+Android.getOutcomeCount(date,'1')+"</td></tr>"+
+                    "<tr class='headings'><td>Transferred Out</td><td class='count'>0</td><td class='count'>"+
+                    Android.getOutcomeCount(date,'2')+"</td></tr><tr>"+
                     "</table>";
 
         }

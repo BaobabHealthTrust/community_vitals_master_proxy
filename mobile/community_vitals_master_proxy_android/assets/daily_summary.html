@@ -21,7 +21,7 @@
             });
             var mode = Android.getPref("dde_mode");
             var day =  Android.getPref("query_date");
-             Android.getDailySummary(day);
+            var result =  Android.getDailySummary(day);
             document.getElementById('duration').innerHTML += ( " " +  Android.getPref("report_date"));
             if (mode == 'gvh')
             {
@@ -49,20 +49,29 @@
                     "<tr class='heading' ><td style='text-align: center;width:60%'>Indicator</td>"+
                     "<td style='text-align: center;width:20%'>Today</td><td style='text-align:center;'>Cumulative</td>"+
                     "</tr><tr class='headings'><td colspan='3' >General Population Statistics</td></tr><tr>" +
-                    "<td>Total Population</td><td class='count'>"+ Android.getPref('new_popln')+"</td>"+
+                    "<td>Total Population</td><td class='count'>"+ Android.getPref("new_popln")+"</td>"+
                     "<td class='count'>" +Android.getPref('popln') + "</td></tr>"+
                     "<tr class='headings'><td colspan='3' >Total Population by Gender</td></tr>"+
-                    "<tr><td>Females</td><td class='count'>0</td><td class='count'>"+ Android.getPref('female') +"</td></tr>"+
-                    "<tr><td>Males</td><td class='count'>0</td><td class='count'>"+ Android.getPref('male') +"</td></tr><tr>"+
+                    "<tr><td>Females</td><td class='count'>"+ Android.getPref('female') +
+                    "</td><td class='count'>"+ Android.getPref('cul_female') +"</td></tr>"+
+                    "<tr><td>Males</td><td class='count'>"+ Android.getPref('male') +
+                    "</td><td class='count'>"+ Android.getPref('cul_male') +"</td></tr><tr>"+
                     "<tr class='headings'><td colspan='3' >Total Population By Age</td></tr>"+
-                    "<tr><td>Children( < 12 Years)</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
-                    "<tr><td>Youths (12-21 Years)</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
-                    "<tr><td>Working Population (22-59 Years)</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
-                    "<tr><td>Older Population (>= 60 years)</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
+                    "<tr><td>Children( < 12 Years)</td><td class='count'>"+ Android.getPref('children') +
+                    "</td><td class='count'>"+ Android.getPref('cul_children') +"</td></tr><tr>"+
+                    "<tr><td>Youths (12-21 Years)</td><td class='count'>"+ Android.getPref('youth') +
+                    "</td><td class='count'>"+ Android.getPref('cul_youth') +"</td></tr><tr>"+
+                    "<tr><td>Working Population (22-59 Years)</td><td class='count'>"+ Android.getPref('adult') +
+                    "</td><td class='count'>"+ Android.getPref('cul_adult') +"</td></tr><tr>"+
+                    "<tr><td>Older Population (>= 60 years)</td><td class='count'>"+ Android.getPref('granny') +
+                    "</td><td class='count'>"+ Android.getPref('cul_granny') +"</td></tr><tr>"+
                     "<tr class='headings'><td colspan='3' >Total Population By Outcome</td></tr>"+
-                    "<tr><td>Alive</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
-                    "<tr><td>Transferred</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
-                    "<tr><td>Dead</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
+                    "<tr><td>Alive</td><td class='count'>"+ Android.getPref('alive') +
+                    "</td><td class='count'>"+ Android.getPref('cul_alive') +"</td></tr><tr>"+
+                    "<tr><td>Transferred</td><td class='count'>"+ Android.getPref('transfer') +
+                    "</td><td class='count'>"+ Android.getPref('cul_transfer') +"</td></tr><tr>"+
+                    "<tr><td>Dead</td><td class='count'>"+ Android.getPref('dead') +
+                    "</td><td class='count'>"+ Android.getPref('cul_dead') +"</td></tr><tr>"+
                     "</table>";
 
         }

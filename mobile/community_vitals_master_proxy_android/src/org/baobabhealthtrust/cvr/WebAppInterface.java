@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.baobabhealthtrust.cvr.models.AeSimpleSHA1;
@@ -809,7 +810,7 @@ public class WebAppInterface {
 
 	@JavascriptInterface
 	public void setReportMonth(String months, String month) {
-		setPref("report_month", months);
+		setPref("report_month", (months+"-01"));
 		setPref("display_month", month);
 	}
 
@@ -822,22 +823,30 @@ public class WebAppInterface {
 	@JavascriptInterface
 	public int getGenderCount(String date_selected, String gender) {
 		int result = 0;
-		result = mDB.getGenderCount(date_selected, gender);
+		result = mDB.getGenderCount(date_selected,date_selected, gender);
 		return result;
 	}
 
+	@JavascriptInterface
+	public int getMonthBirths(String duration)
+	{
+		return mDB.getBirthsInMonth(duration);
+	}
 	@JavascriptInterface
 	public int getOutcomeCount(String date_selected, String outcome) {
-		int result = 0;
-		result = mDB.getOutcomeCount(date_selected, outcome);
-		return result;
+		
+		return mDB.getOutcomeCount("1900-01-01",date_selected, outcome);	
+	}
+	
+	@JavascriptInterface
+	public int getAlive(String date){
+		return mDB.getAlive("1900-01-01", date);
 	}
 
 	@JavascriptInterface
-	public int getAgegroupCount(String date_selected, String[] age_group) {
-		int result = 0;
-		// result = mDB.getAgegroupCount(date_selected, age_group);
-		return result;
+	public int getAgegroupCount(int min, int max, String date_min, String date_max) {
+		
+		return mDB.getCountInAgeGroup(min, max, date_min, date_max);
 	}
 
 	@JavascriptInterface
@@ -882,16 +891,55 @@ public class WebAppInterface {
 	}
 
 	@JavascriptInterface
-	public void getDailySummary(String date) {
-		int today_count = mDB.getAssignedByDate(date, date);
-		int cul_count = mDB.getAssignedByDate("01/01/1900", date);
-		int cul_male = mDB.getGenderCount(date, "Male");
-		int cul_female = mDB.getGenderCount(date, "Female");
+	public Hashtable getDailySummary(String date) {
+		
+		Hashtable results = new Hashtable();
+		
+		int today_count = mDB.getPeopleCountOnDate(date);
+		int count = mDB.getPeopleCount();
+		
+		int male = mDB.getGenderCount(date,date, "Male");
+		int female = mDB.getGenderCount(date, date, "Female");
+		int dead = mDB.getOutcomeCount(date,date,"1");
+		int transfer = mDB.getOutcomeCount(date,date,"2");
+		int alive =  mDB.getAlive(date, date);
+		int children = mDB.getCountInAgeGroup(0, 12, date, date);
+		int youth = mDB.getCountInAgeGroup(13, 21, date, date);
+		int adult = mDB.getCountInAgeGroup(22, 59, date, date);
+		int granny = mDB.getCountInAgeGroup(60, 200, date, date);
+		int cul_dead = mDB.getOutcomeCount("1900-01-01",date,"1");
+		int cul_transfer = mDB.getOutcomeCount("1900-01-01",date,"2");
+		int cul_alive =  mDB.getAlive(date, date);
+		int cul_male = mDB.getGenderCount("1900-01-01",date, "Male");
+		int cul_female = mDB.getGenderCount("1900-01-01", date, "Female");
+		int cul_children = mDB.getCountInAgeGroup(0, 12, "1900-01-01", date);
+		int cul_youth = mDB.getCountInAgeGroup(13, 21, "1900-01-01", date);
+		int cul_adult = mDB.getCountInAgeGroup(22, 59, "1900-01-01", date);
+		int cul_granny = mDB.getCountInAgeGroup(60, 200, "1900-01-01", date);
 
+		results.put("new_popln", String.valueOf(today_count));
 		setPref("new_popln", String.valueOf(today_count));
-		setPref("popln", String.valueOf(cul_count));
-		setPref("male", String.valueOf(cul_male));
-		setPref("female", String.valueOf(cul_female));
+		setPref("popln", String.valueOf(count));
+		setPref("male", String.valueOf(male));
+		setPref("female", String.valueOf(female));
+		setPref("alive", String.valueOf(alive));
+		setPref("dead", String.valueOf(dead));
+		setPref("children", String.valueOf(children));
+		setPref("youth", String.valueOf(youth));
+		setPref("adult", String.valueOf(adult));
+		setPref("granny", String.valueOf(granny));
+		setPref("transfer", String.valueOf(transfer));
+		setPref("cul_male", String.valueOf(cul_male));
+		setPref("cul_female", String.valueOf(cul_female));
+		setPref("cul_alive", String.valueOf(cul_alive));
+		setPref("cul_dead", String.valueOf(cul_dead));
+		setPref("cul_transfer", String.valueOf(cul_transfer));
+		setPref("cul_children", String.valueOf(cul_children));
+		setPref("cul_youth", String.valueOf(cul_youth));
+		setPref("cul_adult", String.valueOf(cul_adult));
+		setPref("cul_granny", String.valueOf(cul_granny));
+		
+		return results;
 	}
 
 	@JavascriptInterface
