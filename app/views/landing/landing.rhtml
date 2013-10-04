@@ -378,10 +378,40 @@
           setTimeout("checkConnection()", 1000);
         }
 
+        function padZeros(number, positions){
+            var zeros = parseInt(positions) - String(number).length;
+            var padded = "";
+
+            for(var i = 0; i < zeros; i++){
+                padded += "0";
+            }
+
+            padded += String(number);
+
+            return padded;
+        }
+
+        function setTime(){
+            if(__$("time")){
+                var time = new Date();
+                
+                var hr = padZeros(time.getHours(), 2);
+                var min = padZeros(time.getMinutes(), 2);
+                
+                if(__$("time").innerHTML.trim().match(/\:/)){
+                    __$("time").innerHTML = hr + " " + min;
+                } else {
+                    __$("time").innerHTML = hr + ":" + min;
+                }
+            }
+            
+            setTimeout("setTime()", 500);
+        }
+            
       //-->
     </script>
   </head>
-  <body onresize="adjustView()" onload="adjustView(); load_menu(); checkConnection();">
+  <body onresize="adjustView()" onload="adjustView(); load_menu(); checkConnection(); setTime();">
     <table width="100%" cellspacing="0" cellpadding="10">
       <tr>
         <td id="application" class="menu" style="border-bottom: 5px solid #5496ef; font-size: 18px;
@@ -431,8 +461,12 @@
     <div id="nav" style="width: 100%; height: 90px; 
         left: 0px; position: absolute; bottom: 0px;">
       <div style="float: left; margin-left: 20px; font-size: 42px; padding: 30px; color: #666; min-width: 50%; 
-          margin-top: -25px; background-image: -moz-linear-gradient(center right , #FFFFFF, #89b4ef);">
-        <%= Vocabulary.search("Village Register") %>
+          margin-top: -25px; background-image: -moz-linear-gradient(center right , #FFFFFF, #89b4ef); padding-top: 20px;">
+        <%= Vocabulary.search("Village Register") %><br />
+        <div style='font-size: 0.5em; margin-left: 3px;'>
+          <%= (@mode.downcase.strip == "vh" ? "VH #{@vh}, GVH #{@gvh}, T/A #{@ta}" : 
+              (@mode.downcase.strip == "gvh" ? "GVH #{@gvh}, T/A #{@ta}" : "T/A #{@ta}") ) %>
+        </div>
       </div>
       
       <img src="/images/<%= (File.exists?("#{Rails.root}/public/images/app.png") ? 
@@ -444,6 +478,17 @@
       <div id="threshold" style="margin-right: -25px; margin-top: 15px; float: right; color: red;
            border: 2px solid red; border-radius: 50px; width: 40px; font-size: 18px; padding-bottom: 0px;
            height: 30px; text-align: center; vertical-align: middle; padding-top: 10px; background-color: rgba(255,255,255,0.6);">
-    </div>
+      </div>
+      
+      <div id="date" style="float: right; width: 100px; color: #666; 
+           margin-top: -10px; margin-right: -85px; font-size: 1em; text-align: right;">
+          <%= Date.today.strftime("%d %b, %Y") %>
+      </div>
+           
+      <div id="time" style="float: right; color: #666;  margin-right: -10px;
+           margin-top: 45px; font-size: 2em; text-align: right;">
+          08:00
+      </div>
+ 
   </body>
 </html>

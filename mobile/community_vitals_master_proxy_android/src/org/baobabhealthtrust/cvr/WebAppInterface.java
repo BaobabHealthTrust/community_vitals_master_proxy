@@ -343,7 +343,8 @@ public class WebAppInterface {
 	@JavascriptInterface
 	public void savePerson(String fname, String mname, String lname,
 			String gender, String age, String occupation, String yob,
-			String mob, String dob, String success, String failed) {
+			String mob, String dob, String success, String failed,
+			String relationship, String person_b_id, String relation) {
 
 		People person = new People();
 
@@ -446,6 +447,12 @@ public class WebAppInterface {
 
 			setPref("dobest", result[6]);
 
+			if (relationship.equalsIgnoreCase("yes")) {
+				Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ create relationship");
+
+				savePersonRelationship(result[3], person_b_id, relation);
+			}
+
 			showMsg(success);
 		}
 	}
@@ -533,6 +540,9 @@ public class WebAppInterface {
 	@JavascriptInterface
 	public void savePersonRelationship(String person_a_id, String person_b_id,
 			String relation) {
+
+		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ create relationship with "
+				+ person_a_id + " and " + person_b_id);
 
 		int rtype = mDB.getRelationByType(relation);
 
@@ -1348,26 +1358,26 @@ public class WebAppInterface {
 
 		User suser = mUDB.getUserByUsername(user);
 
-		try {			
+		try {
 			if (String.valueOf(suser.getUserId()).length() == 0) {
 				return false;
 			} else {
 				return true;
 			}
-		} catch (Exception e) {			
+		} catch (Exception e) {
 			return false;
 		}
 	}
 
 	@JavascriptInterface
-	public String getUseRoles(){
+	public String getUseRoles() {
 
 		User user = mUDB.getUser(Integer.parseInt(getPref("user_id")));
 
 		String roles = mUDB.getRoles(user.getUserId());
 
 		return roles;
-		
+
 	}
 
 	@JavascriptInterface

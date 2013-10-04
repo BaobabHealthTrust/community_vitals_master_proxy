@@ -323,25 +323,27 @@
                 });
 										      
                 setTimeout("checkConnection()", 500);
-					      
-                var app = search("Application");
-                var reports = search("Reports");
-                var my_activities = search("My Activities");
-                var admin = search("Administration");
-                var reg = search("Village Register");
-					      
-                __$("application").innerHTML = app;
-                __$("reports").innerHTML = reports;
-                __$("my_activities").innerHTML = my_activities;
-                __$("administration").innerHTML = admin;
-                __$("reg").innerHTML = reg;
-					
+						
                 var cat = Android.getPref("dde_mode");
 					      
                 if(cat.trim().length == 0){
                     cat = "vh";
                 }
 					      
+                var app = search("Application");
+                var reports = search("Reports");
+                var my_activities = search("My Activities");
+                var admin = search("Administration");
+                var reg = search((cat == "gvh" ? "GVH Register" : "Village Register"));
+					      
+                __$("application").innerHTML = app;
+                __$("reports").innerHTML = reports;
+                __$("my_activities").innerHTML = my_activities;
+                __$("administration").innerHTML = admin;
+                __$("reg").innerHTML = reg + "<br/><div style='font-size: 0.5em; margin-left: 3px;'>" + 
+                    (cat == "gvh" ? "GVH " + Android.getPref("gvh") + ", T/A " + Android.getPref("ta") : 
+                    "VH " + Android.getPref("vh") + ", GVH "+ Android.getPref("gvh") + ", T/A " + Android.getPref("ta"));
+				      
                 var advanced = eval(Android.getPref("advanced"));
 					      
                 switch(cat){
@@ -370,7 +372,50 @@
                         switchTab("reports");	
                         break;
                 }
+                
+                var months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "Jul", 
+                    "Aug", "Sep", "Oct", "Nov", "Dec"];
+                
+                var today = new Date();
+                
+                if(__$("date")){
+                    __$("date").innerHTML = today.getDate() + " " + months[today.getMonth()] + 
+                        ", " + today.getFullYear();
+                }
+                
+                setTime();
             }
+            
+            function padZeros(number, positions){
+                var zeros = parseInt(positions) - String(number).length;
+                var padded = "";
+    
+                for(var i = 0; i < zeros; i++){
+                    padded += "0";
+                }
+    
+                padded += String(number);
+    
+                return padded;
+            }
+
+            function setTime(){
+                if(__$("time")){
+                    var time = new Date();
+                    
+                    var hr = padZeros(time.getHours(), 2);
+                    var min = padZeros(time.getMinutes(), 2);
+                    
+                    if(__$("time").innerHTML.trim().match(/\:/)){
+                        __$("time").innerHTML = hr + " " + min;
+                    } else {
+                        __$("time").innerHTML = hr + ":" + min;
+                    }
+                }
+                
+                setTimeout("setTime()", 500);
+            }
+            
             //-->
         </script>
     </head>
@@ -418,7 +463,8 @@
         <div id="nav" style="width: 100%; height: 90px; background:url(images/pad.png) left repeat-y;
              left: 0px; position: absolute; bottom: 0px; ">
             <div id="reg" style="float: left; margin-left: 0px; font-size: 42px; padding: 30px; color: #666; min-width: 50%; 
-                 margin-top: -15px; background-image: -moz-linear-gradient(center right , #FFFFFF, #89b4ef); padding-left: 45px;">
+                 margin-top: -15px; background-image: -moz-linear-gradient(center right , #FFFFFF, #89b4ef); 
+                 padding-left: 45px; padding-top: 20px;">
                 Village Register
             </div>
             <img src="images/baobab.png" height="80" style="margin-right: 20px; float: right;" />
@@ -430,6 +476,17 @@
                  border: 2px solid red; border-radius: 50px; width: 40px; font-size: 18px; padding-bottom: 0px;
                  height: 30px; text-align: center; vertical-align: middle; padding-top: 10px; background-color: rgba(255,255,255,0.6);">
             </div>
+
+            <div id="date" style="float: right; width: 100px; color: #666; 
+                 margin-top: -6px; margin-right: -85px; font-size: 1em; text-align: right;">
+                DD MMM, YYYY
+            </div>
+
+            <div id="time" style="float: right; color: #666;  margin-right: -10px;
+                 margin-top: 45px; font-size: 2em; text-align: right;">
+                08:00
+            </div>
+
         </div>
     </body>
 </html>

@@ -5,6 +5,13 @@ class LandingController < ApplicationController
     
     protocol = YAML.load_file("#{Rails.root}/config/protocol_task_flow.yml")["associations"] rescue {}
     @mode = YAML.load_file("#{Rails.root}/config/application.yml")['dde_mode'] rescue 'vh'
+    
+    @vh = YAML.load_file("#{Rails.root}/config/application.yml")["#{Rails.env}"]["village"] rescue ''
+    
+    @gvh = YAML.load_file("#{Rails.root}/config/application.yml")["#{Rails.env}"]["gvh"] rescue ''
+    
+    @ta = YAML.load_file("#{Rails.root}/config/application.yml")["#{Rails.env}"]["ta"] rescue ''
+    
     @links = {}
     
     protocol.each do |key, value|
