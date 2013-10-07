@@ -1637,10 +1637,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	public int getAlive(String date_min,String date_max) {
 		
 		// Select All Query
-		String selectQuery = "SELECT * FROM people WHERE COALESCE(voided,0) = 0 AND Date(created_at) <= DATE('"+ date_max+
-							"') AND id NOT IN (SELECT  person_id FROM " + TABLE_OUTCOMES +
-							" WHERE DATE(outcome_date) BETWEEN Date('" + date_min +	"') AND Date('" 
-							+ date_max + "') AND COALESCE(voided,0) = 0)";
+		String selectQuery = "SELECT * FROM people WHERE COALESCE(voided,0) = 0 AND " + 
+							 "Date(created_at) <= DATE('" + date_max +"') AND id NOT IN (SELECT  person_id FROM outcomes"+
+							 " WHERE DATE(outcome_date) BETWEEN Date('" + date_min +"') AND Date('" + date_max + "') AND COALESCE(voided,0) = 0)";
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		//return count

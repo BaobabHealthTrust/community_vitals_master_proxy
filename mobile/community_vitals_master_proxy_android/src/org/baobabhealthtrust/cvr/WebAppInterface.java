@@ -902,14 +902,14 @@ public class WebAppInterface {
 		int female = mDB.getGenderCount(date, date, "Female");
 		int dead = mDB.getOutcomeCount(date,date,mDB.getOutcomeByType("dead"));
 		int transfer = mDB.getOutcomeCount(date,date,mDB.getOutcomeByType("transfer out"));
-		int alive =  mDB.getAlive(date, date);
+		int alive =  mDB.getAlive("1900-01-01", date);
 		int children = mDB.getCountInAgeGroup(0, 12, date, date);
 		int youth = mDB.getCountInAgeGroup(13, 21, date, date);
 		int adult = mDB.getCountInAgeGroup(22, 59, date, date);
 		int granny = mDB.getCountInAgeGroup(60, 200, date, date);
 		int cul_dead = mDB.getOutcomeCount("1900-01-01",date,mDB.getOutcomeByType("dead"));
 		int cul_transfer = mDB.getOutcomeCount("1900-01-01",date,mDB.getOutcomeByType("transfer out"));
-		int cul_alive =  mDB.getAlive(date, date);
+		int cul_alive =  mDB.getAlive("1900-01-01", date);
 		int cul_male = mDB.getGenderCount("1900-01-01",date, "Male");
 		int cul_female = mDB.getGenderCount("1900-01-01", date, "Female");
 		int cul_children = mDB.getCountInAgeGroup(0, 12, "1900-01-01", date);
