@@ -1297,6 +1297,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return cursor.getCount();
 	}
 
+	public int getPeopleCount(String date) {
+		String countQuery = "SELECT  * FROM " + TABLE_PEOPLE +" WHERE Date("+KEY_CREATED_AT+") <= Date('"+date+"') AND COALESCE(voided,0) = 0 ";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+
+		// return count
+		return cursor.getCount();
+	}
+
+	
 	public int getNationalIdentifiersCount() {
 		String countQuery = "SELECT  * FROM " + TABLE_NATIONAL_IDENTIFIERS;
 		SQLiteDatabase db = this.getReadableDatabase();
@@ -1621,25 +1631,73 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return cursor.getCount();
 		
 	}
-	public int getOutcomeCount(String date_min,String date_max, int outcome) {
+	public int getOutcomeCount(String date_min,String date_max, String outcome) {
 		
 		// Select All Query
 		String selectQuery = "SELECT * FROM people WHERE COALESCE(voided,0) = 0 AND Date(created_at) <= DATE('"+ date_max+
-				"') AND id IN (SELECT  person_id FROM " + TABLE_OUTCOMES +
-				" WHERE DATE(outcome_date) BETWEEN Date('" + date_min +	"') AND Date('" 
-				+ date_max + "') AND outcome_type ="+outcome+" AND COALESCE(voided,0) = 0)";
+				"') AND UPPER(outcome) = UPPER('"+ outcome +"') AND DATE('" + KEY_OUTCOME_DATE +"') <= DATE('" + date_max + "') ";
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		//return count
 		return cursor.getCount();
 	}
+
+	public int getOutcomesOnDate(String date, String outcome)
+	{
+		// Select All Query
+		String selectQuery = "SELECT * FROM " + TABLE_PEOPLE + " WHERE UPPER(" + KEY_OUTCOME + ") = UPPER('" + outcome +"')" + 
+				" AND DATE(" + KEY_OUTCOME_DATE +") = DATE('" + date + "') AND DATE(" + KEY_CREATED_AT +") <= DATE('"+ date +
+				"')  AND COALESCE(voided,0) = 0";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		//return count
+		return cursor.getCount();
+	}
+
+	public int getOutcomesByDate(String date, String outcome){
+		String selectQuery = "SELECT * FROM " + TABLE_PEOPLE + " WHERE UPPER(" + KEY_OUTCOME + ") = UPPER('" + outcome +"')" + 
+				" AND DATE(" + KEY_OUTCOME_DATE +") <= DATE('" + date + "') AND DATE(" + KEY_CREATED_AT +") <= DATE('" + 
+				date + "') AND COALESCE(voided,0) = 0";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		//return count
+		return cursor.getCount();
+
+	}
+	
+	public int getOutcomesInMonth(String date, String outcome)
+	{
+		// Select All Query
+		String selectQuery = "SELECT * FROM " + TABLE_PEOPLE + " WHERE UPPER(" + KEY_OUTCOME + ") = UPPER('" + outcome +"')" + 
+				" AND strftime('%Y-%m',DATE(" + KEY_OUTCOME_DATE +")) = strftime('%Y-%m',DATE('" + date + "')) "+
+				" AND strftime('%Y-%m',Date("+KEY_CREATED_AT+")) = strftime('%Y-%m',DATE('"+ date +"')) AND COALESCE(voided,0) = 0";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		//return count
+		return cursor.getCount();
+	}
+
+	public int getOutcomesByMonth(String date, String outcome){
+		String selectQuery = "SELECT * FROM " + TABLE_PEOPLE + " WHERE UPPER(" + KEY_OUTCOME + ") = UPPER('" + outcome +"')" + 
+				" AND strftime('%Y-%m',DATE(" + KEY_OUTCOME_DATE +")) <= strftime('%Y-%m',DATE('" + date + "')) "+
+				" AND strftime('%Y-%m',Date("+KEY_CREATED_AT+")) <= strftime('%Y-%m',DATE('"+ date +"')) AND COALESCE(voided,0) = 0";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		//return count
+		return cursor.getCount();
+
+	}
 	
 	public int getAlive(String date_min,String date_max) {
 		
 		// Select All Query
-		String selectQuery = "SELECT * FROM people WHERE COALESCE(voided,0) = 0 AND " + 
-							 "Date(created_at) <= DATE('" + date_max +"') AND id NOT IN (SELECT  person_id FROM outcomes"+
-							 " WHERE DATE(outcome_date) BETWEEN Date('" + date_min +"') AND Date('" + date_max + "') AND COALESCE(voided,0) = 0)";
+		String selectQuery = "SELECT * FROM " + TABLE_PEOPLE +
+		" WHERE Date("+KEY_CREATED_AT+") <= Date('" + date_max + "') AND " +
+		" COALESCE("+KEY_OUTCOME+",0) = 0 AND COALESCE(voided,0) = 0";
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		//return count
@@ -1888,7 +1946,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	
 	public int getCulAlive(){
 		String countQuery = "SELECT * FROM "+TABLE_PEOPLE+" WHERE COALESCE(voided,0) = 0 AND " +
-				" outcome IS NULL";
+				" COALESCE(outcome,0) = 0";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+		
+		// return count
+		return 100;
+		
+	}
+	
+	public int getCulAlive(String date){
+		String countQuery = "SELECT * FROM "+TABLE_PEOPLE+" WHERE COALESCE(voided,0) = 0 AND " +
+				" COALESCE(outcome,0) = 0 AND Date("+KEY_CREATED_AT+") <= Date('" + date + "')";
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
 		

@@ -22,7 +22,7 @@
           __$("parent").innerHTML =
             "<table style='width: 100%'><tr class='heading'><td colspan='2'>"+
             "General Population Statistics</td></tr><tr><td>Total Population</td><td style='text-align: center'>"
-            + Android.getPeople() +"</td></tr><tr><td>&nbsp;</td></tr>"+
+            + Android.getPeople(date) +"</td></tr><tr><td>&nbsp;</td></tr>"+
             "<tr class='heading'><td colspan='2' >Total Population by Gender</td></tr>"+
             "<tr><td>Females</td><td style='text-align: center'>"+Android.getGenderCount('1900-01-01',date,'Female')+"</td></tr><tr>"+
             "<tr><td>Males</td><td style='text-align: center'>"+ Android.getGenderCount('1900-01-01',date,'Male') +"</td></tr><tr>"+
@@ -36,7 +36,7 @@
             "<tr><td>Older Population (>= 60 years)</td><td style='text-align: center'>" +
             Android.getAgegroupCount(60, 200, '1900-01-01' ,date) +"</td></tr><tr>"+
             "<tr class='heading'><td colspan='2' >Total Population By Outcome</td></tr>"+
-            "<tr><td>Alive</td><td style='text-align: center'>"+Android.getCulAlive()+"</td></tr><tr>"+
+            "<tr><td>Alive</td><td style='text-align: center'>"+Android.getCulAlive(date)+"</td></tr><tr>"+
             "<tr><td>Transferred</td><td style='text-align: center'>"+Android.getCulOutcome('Dead')+"</td></tr><tr>"+
             "<tr><td>Dead</td><td style='text-align: center'>"+Android.getCulOutcome('Transfer Out')+"</td></tr><tr>"+
             "</table>";

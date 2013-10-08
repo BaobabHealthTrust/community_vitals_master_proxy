@@ -24,7 +24,7 @@
             new FastButton(document.getElementById('home'), function() {
                 window.location = "index.html";
             });
-            document.getElementById('title').innerHTML += ( " " + Android.getPref("display_month"));
+            document.getElementById('title').innerHTML += ( " " + Android.getPref('display_month'));
             var mode = Android.getPref("dde_mode");
 
             if (mode == 'gvh')
@@ -54,13 +54,13 @@
                  "<tr class='heading'><td colspan='3'> Population Outcome Statistics</td></tr>"+
                  "<tr class='heading' ><td style='text-align: center;width:60%'>&nbsp;</td>"+
                  "<td style='text-align: center;width:20%'>Month Total</td><td style='text-align:center;'>Cumulative</td></tr>"+
-                 "<tr class='headings'><td>Total Population </td><td>&nbsp;</td><td class='count'>"+Android.getPeople()+"</td></tr>"+
+                 "<tr class='headings'><td>Total Population </td><td>&nbsp;</td><td class='count'>"+Android.getPeople(Android.getPref('report_month'))+"</td></tr>"+
                  "<tr><td>Alive</td><td class='count'>"+Android.getAlive(Android.getPref('report_month'))+
-                 "</td><td class='count'>"+Android.getAlive(date)+"</td></tr><tr class='headings'>"+
-                 "<td>Dead</td><td class='count'>"+Android.getOutcomeCount(Android.getPref('report_month'),1)+
-                 "</td><td class='count'>"+Android.getOutcomeCount(date,1)+"</td></tr>"+
-                 "<tr><td>Transferred Out</td><td class='count'>" + Android.getOutcomeCount(Android.getPref('report_month'),1)+
-                 "</td><td class='count'>"+Android.getOutcomeCount(date,2)+"</td></tr>"+
+                 "</td><td class='count'>"+Android.getAlive(Android.getPref('report_month'))+"</td></tr><tr class='headings'>"+
+                 "<td>Dead</td><td class='count'>"+Android.getOutcomesInMonth(Android.getPref('report_month'),'dead')+
+                 "</td><td class='count'>"+Android.getOutcomesByMonth(Android.getPref('report_month'),'dead')+"</td></tr>"+
+                 "<tr><td>Transferred Out</td><td class='count'>" + Android.getOutcomesInMonth(Android.getPref('report_month'),'transfer out')+
+                 "</td><td class='count'>"+Android.getOutcomesByMonth(Android.getPref('report_month'),'transfer out')+"</td></tr>"+
                 "</table>"
         }
         //-->

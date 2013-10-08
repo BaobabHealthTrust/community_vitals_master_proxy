@@ -68,10 +68,10 @@
                     "<tr class='headings'><td colspan='3' >Total Population By Outcome</td></tr>"+
                     "<tr><td>Alive</td><td class='count'>"+ Android.getPref('alive') +
                     "</td><td class='count'>"+ Android.getPref('cul_alive') +"</td></tr><tr>"+
-                    "<tr><td>Transferred</td><td class='count'>"+ Android.getPref('transfer') +
-                    "</td><td class='count'>"+ Android.getPref('cul_transfer') +"</td></tr><tr>"+
-                    "<tr><td>Dead</td><td class='count'>"+ Android.getPref('dead') +
-                    "</td><td class='count'>"+ Android.getPref('cul_dead') +"</td></tr><tr>"+
+                    "<tr><td>Transferred</td><td class='count'>"+ Android.getOutcomesByDate(day, 'transfer out') +
+                    "</td><td class='count'>"+ Android.getOutcomesByDate(day,'transfer out') +"</td></tr><tr>"+
+                    "<tr><td>Dead</td><td class='count'>"+ Android.getOutcomesOnDate(day,'dead') +
+                    "</td><td class='count'>"+ Android.getOutcomesByDate(day,'dead') +"</td></tr><tr>"+
                     "</table>";
 
         }
