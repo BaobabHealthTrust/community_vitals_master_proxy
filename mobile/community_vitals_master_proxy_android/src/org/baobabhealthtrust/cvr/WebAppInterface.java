@@ -832,6 +832,25 @@ public class WebAppInterface {
 	{
 		return mDB.getBirthsInMonth(duration);
 	}
+	
+	@JavascriptInterface
+	public int getMonthBirthsGender(String duration, String gender)
+	{
+		return mDB.getBirthsInMonthGender(duration, gender);
+	}
+	
+	@JavascriptInterface
+	public int getMonthBirthsOutcome(String duration, String outcome)
+	{
+		return mDB.getBirthsInMonthOutcome(duration, outcome);
+	}
+	
+	@JavascriptInterface
+	public int getMonthBirthsAlive(String duration)
+	{
+		return mDB.getBirthsInMonthAlive(duration);
+	}
+	
 	@JavascriptInterface
 	public int getOutcomeCount(String date_selected, String outcome) {
 		
@@ -903,11 +922,6 @@ public class WebAppInterface {
 		result = mUDB.getDDESetting(mode, setting);
 
 		return result;
-	}
-
-	@JavascriptInterface
-	public void getMonthBirthReport(String month) {
-
 	}
 
 	@JavascriptInterface

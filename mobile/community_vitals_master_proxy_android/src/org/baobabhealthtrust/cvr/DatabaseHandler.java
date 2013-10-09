@@ -1934,14 +1934,51 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 
 	public int getBirthsInMonth(String duration){
-		String countQuery = "SELECT * FROM "+TABLE_PEOPLE+" WHERE COALESCE(voided,0) = 0 AND " +
-							"strftime('%Y-%m',DATE(birthdate)) = strftime('%Y-%m',DATE('"+ duration + "'))";
+		String countQuery = "SELECT * FROM "+TABLE_PEOPLE+" WHERE COALESCE(voided,0) = 0 AND COALESCE("+KEY_NATIONAL_ID+",0) != 0 AND " +
+							"strftime('%Y-%m',DATE(birthdate)) = strftime('%Y-%m',DATE('"+ duration + 
+							"')) AND Date("+KEY_CREATED_AT+") <= Date(current_date)";
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
 		return cursor.getCount();
 		
+	}
+	
+	public int getBirthsInMonthGender(String duration, String gender)
+	{
+		 
+		String countQuery = "SELECT * FROM "+TABLE_PEOPLE+" WHERE COALESCE(voided,0) = 0 AND COALESCE("+KEY_NATIONAL_ID+",0) != 0 AND " +
+				"strftime('%Y-%m',DATE(birthdate)) = strftime('%Y-%m',DATE('"+ duration + 
+				"')) AND gender ='" + gender+"' AND Date("+KEY_CREATED_AT+") <= Date(current_date)";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+		
+		// return count
+		return cursor.getCount();
+	}
+	
+	public int getBirthsInMonthOutcome(String duration, String outcome)
+	{
+		String countQuery = "SELECT * FROM "+TABLE_PEOPLE+" WHERE COALESCE(voided,0) = 0 AND " +
+				"strftime('%Y-%m',DATE(birthdate)) = strftime('%Y-%m',DATE('"+ duration + "')) AND UPPER(outcome) = UPPER('" + outcome +"')";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+		
+		// return count
+		return cursor.getCount();
+	}
+	
+	public int getBirthsInMonthAlive(String duration)
+	{
+		String countQuery = "SELECT * FROM "+TABLE_PEOPLE+" WHERE COALESCE(voided,0) = 0 AND " +
+				" strftime('%Y-%m',DATE(birthdate)) = strftime('%Y-%m',DATE('"+ duration + "')) "+
+				" AND COALESCE("+KEY_OUTCOME+",0) = 0";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+		
+		// return count
+		return cursor.getCount();
 	}
 	
 	public int getCulAlive(){

@@ -16,10 +16,7 @@
 
         function load(){
 
-            var currentTime = new Date()
-            var date = currentTime.getDate() +"/"+ (currentTime.getMonth() + 1) +"/" +currentTime.getFullYear();
-            var var_date = currentTime.getDate() +"/"+ (currentTime.getMonth() + 1) +"/";
-            var var_year = currentTime.getFullYear();
+
 
             new FastButton(document.getElementById('home'), function() {
                 window.location = "index.html";
@@ -48,25 +45,28 @@
                 document.getElementById('vh').innerHTML = Android.getPref("vh");
             }
 
-            var result = Android.getMonthBirthReport(Android.getPref("report_month"));
+            var result = Android.getPref("report_month");
 
             __$("parent").innerHTML ="<table style='width: 100%'>" +
                     "<tr class='heading'><td colspan='3'> Population Birth Statistics</td></tr>"+
                     "<tr class='heading' ><td style='text-align: center;width:60%'>&nbsp;</td>"+
                     "<td style='text-align: center;width:20%'>Month Total</td><td style='text-align:center;'>Cumulative</td></tr>"+
-                    "<tr class='headings'><td>Total Population </td><td class='count'>"+
-                    Android.getMonthBirths(result)+
-                    "</td><td class='count'>"+ Android.getTakenIds() +"</td></tr>"+
-                    "<tr><td>Females</td><td class='count'>0</td><td class='count'>0</td></tr>"+
-                    "<tr class='headings'><td>Males</td><td class='count'>0</td><td class='count'>0</td></tr><tr>"+
-                    "<tr><td >&nbsp;</td></tr>"+
+                    "<tr class='headings'><td>Total Births </td><td class='count'>"+Android.getMonthBirths(result)+
+                    "</td><td class='count'>"+ Android.getPeople(result) +"</td></tr>"+
+                    "<tr><td>Females</td><td class='count'>"+Android.getMonthBirthsGender(result,'Female')+
+                    "</td><td class='count'>"+Android.getGenderCount('1900-01-01',result,'Female') +"</td></tr>"+
+                    "<tr class='headings'><td>Males</td><td class='count'>"+Android.getMonthBirthsGender(result,'Male')+
+                    "</td><td class='count'>"+Android.getGenderCount('1900-01-01',result,'Male') +"</td></tr><tr><tr><td >&nbsp;</td></tr>"+
                     "<tr class='heading'><td colspan='3'> Population Survival Statistics</td></tr>"+
                     "<tr class='heading' ><td style='text-align: center;width:60%'>&nbsp;</td>"+
                     "<td style='text-align: center;width:20%'>Month Total</td><td style='text-align:center;'>Cumulative</td></tr>"+
-                    "<tr class='headings'><td>Alive</td><td class='count'>0</td><td class='count'>"+Android.getAlive(date)+"</td></tr>"+
-                    "<tr><td>Dead</td><td class='count'>"+Android.getOutcomesInMonth(date,'transfer out')+"</td><td class='count'>"+Android.getOutcomesByMonth(date,'dead')+"</td></tr>"+
-                    "<tr class='headings'><td>Transferred Out</td><td class='count'>"+Android.getOutcomesInMonth(date,'transfer out')+"</td><td class='count'>"+
-                    Android.getOutcomesByMonth(date,'transfer out')+"</td></tr><tr>"+
+                    "<tr class='headings'><td>Alive</td><td class='count'>"+Android.getMonthBirthsAlive(result)+
+                    "</td><td class='count'>"+Android.getAlive(result)+"</td></tr>"+
+                    "<tr><td>Dead</td><td class='count'>"+Android.getMonthBirthsOutcome(result,'dead')+
+                    "</td><td class='count'>"+Android.getOutcomesByMonth(result,'dead')+"</td></tr>"+
+                    "<tr class='headings'><td>Transferred Out</td><td class='count'>"+Android.getMonthBirthsOutcome(result,'transfer out')+
+                    "</td><td class='count'>"+
+                    Android.getOutcomesByMonth(result,'transfer out')+"</td></tr><tr>"+
                     "</table>";
 
         }
