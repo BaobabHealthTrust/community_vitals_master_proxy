@@ -1,0 +1,61 @@
+<script>
+    var tt_cancel_destination = "/" // /reports"
+</script>
+<style>
+    .inputFrameClass{
+        height:600px;
+    }
+    #viewport{
+        height:550px ! important;
+    }
+</style>
+
+<form id='quarter' action="quarterly_report" method='post'>
+
+  <%
+     qtrs = ['']
+     years = ['']
+     current_qtr = ""
+     date = Date.today
+     ydate = Date.today
+     if (date >= "#{date.year}-01-01".to_date and date <= "#{date.year}-03-31".to_date)
+       current_qtr = "1 #{date.year}"
+     elsif (date >= "#{date.year}-04-01".to_date and date <= "#{date.year}-06-30".to_date)
+       current_qtr = "2 #{date.year}"
+     elsif (date >= "#{date.year}-07-01".to_date and date <= "#{date.year}-09-30".to_date)
+       current_qtr = "3 #{date.year}"
+     else (date >= "#{date.year}-10-01".to_date and date <= "#{date.year}-12-31".to_date)
+     current_qtr = "4 #{date.year}"
+     end
+     count = current_qtr[0..0].to_i
+     20.times{|x|
+       qtrs << "Q#{count} #{date.year}"
+       count-=1 if count > 0
+       date = date - 1.year if count == 0
+       count+=4 if count == 0
+     }
+     i = 0
+     15.times{|y|
+      years << "#{ydate.year - i}"
+     i +=1
+     }
+
+  %>
+  <%= select_tag 'report_type', options_for_select([["Quarterly Report", "Quarterly"],["Annual Report", "Annual"]]),
+                 {:helpText => "Select Quarter",
+                  :tt_onLoad => "__$('keyboard').style.display = 'none'",
+                 } %>
+
+  <%= select_tag 'quarter', options_for_select( qtrs ),
+                 {:helpText => "Select Quarter",
+                  :tt_onLoad => "__$('keyboard').style.display = 'none'",
+                  :condition => "$('report_type').value == 'Quarterly'"
+                 } %>
+
+  <%= select_tag 'year', options_for_select( years ),
+                 {:helpText => "Select Year",
+                  :tt_onLoad => "__$('keyboard').style.display = 'none'",
+                  :condition => "$('report_type').value == 'Annual'"
+                 } %>
+
+</form>

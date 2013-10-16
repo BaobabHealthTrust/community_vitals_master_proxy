@@ -1,0 +1,93 @@
+<script type="text/javascript">
+    <!--
+    function load(){
+        document.getElementById('graphs').style.display='none';
+    }
+    function send_to(data, title){
+        window.location = "outcomes_drill_down?data=" + data + "&title=" +title;
+    }
+    //setTimeout('load();',10)
+    //-->
+</script>
+
+<style type="text/css">
+    .navButton {
+        min-width: 150px;
+    }
+    div{
+        -moz-user-select:none;
+    }
+    td{
+        border: 0.01em solid #4499CC;
+        font-size: 18px;
+    }
+    td.heading{
+        font-size:18px;
+        font-weight: bold;
+        text-align: center;
+        color: #FFFFFF;
+        background: #808080;
+
+    }
+    td.headings{
+        font-weight: bold;
+        font-size: 18px;
+    }
+    td.value{
+        text-align: center;
+        cursor: pointer;
+    }
+</style>
+
+
+<div style="height: 664px; overflow: auto;">
+  <div style="height: 60px; border: solid 1px #6281A7;
+          font-size: 2em; color: #fff; padding-top: 20px;
+          background-color: #6281A7; text-align: center; vertical-align: middle;">
+    <%=  @title %>
+  </div>
+  <div style="height: 580px; overflow: auto; border: solid 1px #6281A7;">
+    <table width="100%" border="0" cellpadding="10" cellspacing="0">
+
+      <tr >
+        <td class="heading">Category</td>
+        <td class="heading" style="width: 20%">Male</td>
+        <td class="heading" style="width: 20%">Female</td>
+        <td class="heading" style="width: 20%">All</td>
+      </tr>
+      <tr></tr>
+
+      <% (@keys || {}).each do |key| %>
+
+
+
+            <% if key == "Age Distribution" %>
+
+              <tr>
+                <td style="border: 0px" colspan="4">&nbsp;</td>
+              </tr>
+                <tr><td class="headings" style="border: 0px" colspan="4"><%= key %></td></tr>
+                <% (@report[key] || {}).each do |group, data| %>
+                  <tr>
+                    <td><%= group %></td>
+                    <td class="value"><%= "#{data[0]}" %></td>
+                    <td class="value"><%= "#{data[1]}" %></td>
+                    <td class="value"><%= "#{data[0]}".to_i + "#{data[1]}".to_i %></td>
+                  </tr>
+              <% end %>
+              <tr>
+                <td style="border: 0px" colspan="4">&nbsp;</td>
+              </tr>
+            <% else %>
+              <tr>
+                <td class="headings"><%= key %></td>
+                <td class="value"><%= @report[key][0] %></td>
+                <td class="value"><%= @report[key][1] %></td>
+                <td class="value"><%= "#{@report[key][0]}".to_i + "#{@report[key][1]}".to_i %></td>
+              </tr>
+            <% end %>
+
+      <% end %>
+    </table>
+  </div>
+</div>

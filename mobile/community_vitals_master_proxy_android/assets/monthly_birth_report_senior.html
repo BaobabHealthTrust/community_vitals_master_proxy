@@ -16,10 +16,6 @@
 
         function load(){
 
-            var currentTime = new Date()
-            var date = currentTime.getDate() +"/"+ (currentTime.getMonth() + 1) +"/" +currentTime.getFullYear();
-            var var_date = currentTime.getDate() +"/"+ (currentTime.getMonth() + 1) +"/";
-            var var_year = currentTime.getFullYear();
 
             new FastButton(document.getElementById('home'), function() {
                 window.location = "index.html";
@@ -31,24 +27,45 @@
             {
                 document.getElementById('ta').innerHTML = Android.getPref("ta");
                 document.getElementById('gvh').innerHTML = Android.getPref("gvh");
-                document.getElementById('title').innerHTML = 'Village Headman';
-                document.getElementById('vh_row').style.display = 'none';
                 document.getElementById('logo').setAttribute('rowspan', 3)
             }
+
             else if (mode == 'ta')
             {
                 document.getElementById('ta').innerHTML = Android.getPref("ta");
                 document.getElementById('gvh_row').style.display = 'none';
-                document.getElementById('vh_row').style.display = 'none';
                 document.getElementById('logo').setAttribute('rowspan', 2)
             }
+            var detail = JSON.parse(Android.getSeniorMonthlyBirthReport(Android.getPref("report_month")));
+            add_rows(detail);
 
+            //__$("parent").innerHTML = "";
+        }
 
-            __$("parent").innerHTML = "<table style='width: 100%'>" +
-                    "<tr class='heading'><td>&nbsp;</td><td colspan='2'> Gender</td><td colspan='3'>"+
-                    "Survival Stats</td><td>Total</td></tr><tr class='heading'><td>Village Headman</td>" +
-                    "<td>Male</td><td>Female</td><td>Alive</td><td>Dead</td><td>Transferred</td><td>Female</td></tr>"+
-                    "</table>";
+        function add_rows(data){
+            var table =document.getElementById('details');
+            document.getElementById('ta').innerHTML = data[0];
+/*
+            for(var i = 0; i < 5; i++)
+            {
+                var row_count = table.rows.length;
+                var row = table.insertRow(row_count);
+                var village_cell = row.insertCell(0);
+                village_cell.innerHTML = data[0];
+                var male_cell = row.insertCell(1);
+                male_cell.innerHTML = data[1];
+                var female_cell = row.insertCell(2);
+                female_cell.innerHTML = data[2];
+                var alive_cell = row.insertCell(3);
+                alive_cell.innerHTML = data[3];
+                var dead_cell = row.insertCell(4);
+                dead_cell.innerHTML = data[4];
+                var transfer_cell = row.insertCell(5);
+                transfer_cell.innerHTML = data[5];
+                var total_cell = row.insertCell(6);
+                total_cell.innerHTML = data[6];
+            }
+  */
         }
         //-->
     </script>
@@ -57,16 +74,25 @@
         tr.heading{
             background-color: silver;
             height: 45px;
-            font-size: 17px;
+            font-size: 20px;
             text-align: center;
         }
+
+        .heading td{
+            border:0px solid white !important;
+        }
+
         tr{
             font-size: 15px;
         }
 
-        td.count{
-            text-align: center;
-            cursor: pointer;
+        table.data{
+        }
+
+        .data td{
+            border: 0.1em solid black;
+            font-size: 17px;
+            text-align:center;
         }
 
     </style>
@@ -105,7 +131,22 @@
             <div id="parent" style="background-color: #f1f1f1; min-height: 400px;max-height: 80%;
               width: 100%; margin: 0px; margin-top: -5px; padding: 0px;overflow: auto;">
 
-
+                <table class="data" id="details" style='width: 100%'>
+                   <tr class='heading'>
+                       <td>&nbsp;</td>
+                       <td colspan='2'> Gender</td>
+                       <td colspan='3'>Survival Statistics</td><td>&nbsp;</td>
+                   </tr>
+                    <tr class='heading'>
+                        <td>Village</td>
+                        <td>Male</td>
+                        <td>Female</td>
+                        <td>Alive</td>
+                        <td>Dead</td>
+                        <td>Transferred</td>
+                        <td>Total Popln.</td>
+                    </tr>
+                </table>
 
             </div>
 

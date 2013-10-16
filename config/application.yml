@@ -28,7 +28,7 @@ dde_mode: ta
 dde_ta:
   username: admin
   password: admin
-  target_server: 192.168.6.173:3002
+  target_server: 192.168.18.173:3002
   site_code: 009
   batch_count: 10
   threshold: 5

@@ -202,10 +202,12 @@
                 
           <%else %>
           
-            var fields = ["Cohort Report","Monthly Outcomes Report","Monthly Birth Report", 
+            var fields = ["Cohort Report", "Cohort Report 2", "Monthly Outcomes Report","Monthly Birth Report",
                   "Daily Summary", "Village Summary", "Village Register" ];
 
             var images = [
+                "<%= (File.exists?("#{Rails.root}/public/images/cohort.png") ?
+                      "cohort.png" : "default.png") %>",
                 "<%= (File.exists?("#{Rails.root}/public/images/cohort.png") ?
                       "cohort.png" : "default.png") %>",
                 "<%= (File.exists?("#{Rails.root}/public/images/death.png") ?
@@ -220,7 +222,7 @@
                       "villageregister.png" : "report.png") %>"
             ]
 
-            var paths = [ "demographics/cohort_index","demographics/report_index?type=village_outcomes_by_month",
+            var paths = [ "demographics/cohort_index", "demographics/quarterly_select", "demographics/report_index?type=village_outcomes_by_month",
                 "demographics/report_index?type=village_births_by_month","demographics/report_index?type=daily_summary", 
                 "demographics/village_statistics", "demographics/village_register"];
           <%end%>

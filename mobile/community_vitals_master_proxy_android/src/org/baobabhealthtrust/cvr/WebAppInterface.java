@@ -1441,4 +1441,68 @@ public class WebAppInterface {
 		return mDB.getCulOutcome(outcome);
 		
 	}
+	
+	@JavascriptInterface
+	public String getSeniorMonthlyBirthReport(String date)
+	{
+		List<String> result = new ArrayList<String>();
+
+		JSONObject json = new JSONObject();
+
+		int count = mDB.getPeopleCount();
+
+		
+		int last_page = (int) Math.floor((double) (count / mDB.PAGE_SIZE)) + 1;
+
+
+		for (int i = 0; i < 1; i++) {
+			JSONObject pjson = new JSONObject();
+
+			try {
+				
+				pjson.put("Name","Jim");
+
+				pjson.put("First Name", "Jim");
+
+				pjson.put("Middle Name", "JANE");
+
+				pjson.put("Last Name", "JUN");
+
+				pjson.put("Birthdate", "5");
+
+				pjson.put("Gender", "2");
+
+				pjson.put("National ID", "9");
+
+				
+				json.put("h" + "", pjson);
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				showMsg("Sorry, there was an error!");
+			}
+
+		}
+
+		
+
+		result.add(json.toString());
+		
+		
+		return result.toString();
+
+		
+		
+		
+		//List village = mDB.getMonthBirthsSnr(date);
+/*		
+		List<String> result = new ArrayList<String>();
+
+		JSONObject json = new JSONObject();
+		
+		String[] village = {"Mtema", "3","5", "2","3", "3", "8" };
+		
+		return village.toString();*/
+	}
 }

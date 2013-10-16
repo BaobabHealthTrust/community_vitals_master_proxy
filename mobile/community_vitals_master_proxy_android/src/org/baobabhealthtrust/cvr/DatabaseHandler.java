@@ -2013,4 +2013,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return cursor.getCount();
 		
 	}
+	
+	public List getMonthBirthsSnr(String date){
+		List villageList = new ArrayList();
+		
+		return villageList;
+	}
 }

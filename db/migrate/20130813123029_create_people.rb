@@ -24,7 +24,7 @@ class CreatePeople < ActiveRecord::Migration
       t.string :village
       t.string :gvh
       t.string :ta
-      t.integer :voided
+      t.integer :voided, :default => 0
       t.string :void_reason
       t.date :date_voided
 

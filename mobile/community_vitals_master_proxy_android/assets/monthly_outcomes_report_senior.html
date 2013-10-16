@@ -35,7 +35,7 @@
                 document.getElementById('gvh').innerHTML = Android.getPref("gvh");
                 document.getElementById('vh_row').style.display = 'none';
                 document.getElementById('logo').setAttribute('rowspan', 3)
-                document.getElementById('title').innerHTML = 'Village Headman';
+
             }
             else if (mode == 'ta')
             {
@@ -51,7 +51,7 @@
                 document.getElementById('vh').innerHTML = Android.getPref("vh");
             }
 
-            __$("parent").innerHTML = "lkhkjn,vx";
+          //  __$("parent").innerHTML = "lkhkjn,vx";
         }
         //-->
     </script>
@@ -115,7 +115,21 @@
             <div id="parent" style="background-color: #f1f1f1; min-height: 400px;max-height: 80%;
               width: 100%; margin: 0px; margin-top: -5px; padding: 0px;overflow: auto;">
 
-
+                <table id="details" style='width: 100%'>
+                    <tr class='heading'><td>&nbsp;</td><td colspan='3'> Month</td><td colspan='3'>
+                        Cumulative</td><td>&nbsp;</td>
+                    </tr>
+                    <tr class='heading'>
+                        <td>Village</td>
+                        <td>Alive</td>
+                        <td>Dead</td>
+                        <td>Transferred</td>
+                        <td>Alive</td>
+                        <td>Dead</td>
+                        <td>Transferred</td>
+                        <td>Total  Popln.</td>
+                </tr>
+                </table>
 
             </div>
 
