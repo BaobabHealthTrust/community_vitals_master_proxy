@@ -36,36 +36,36 @@
                 document.getElementById('gvh_row').style.display = 'none';
                 document.getElementById('logo').setAttribute('rowspan', 2)
             }
-            var detail = JSON.parse(Android.getSeniorMonthlyBirthReport(Android.getPref("report_month")));
-            add_rows(detail);
+            var data= Android.getSeniorMonthlyBirthReport(Android.getPref("report_month"));
+            data = JSON.parse(data);
+            add_rows(data);
 
             //__$("parent").innerHTML = "";
         }
 
         function add_rows(data){
             var table =document.getElementById('details');
-            document.getElementById('ta').innerHTML = data[0];
-/*
-            for(var i = 0; i < 5; i++)
+
+            for(var i = 0; i < data.length; i++)
             {
                 var row_count = table.rows.length;
                 var row = table.insertRow(row_count);
                 var village_cell = row.insertCell(0);
-                village_cell.innerHTML = data[0];
+                village_cell.innerHTML = data[i]["village"];
                 var male_cell = row.insertCell(1);
-                male_cell.innerHTML = data[1];
+                male_cell.innerHTML = data[i]["male"];
                 var female_cell = row.insertCell(2);
-                female_cell.innerHTML = data[2];
+                female_cell.innerHTML = data[i]["female"];
                 var alive_cell = row.insertCell(3);
-                alive_cell.innerHTML = data[3];
+                alive_cell.innerHTML = data[i]["alive"];
                 var dead_cell = row.insertCell(4);
-                dead_cell.innerHTML = data[4];
+                dead_cell.innerHTML = data[i]["dead"];
                 var transfer_cell = row.insertCell(5);
-                transfer_cell.innerHTML = data[5];
+                transfer_cell.innerHTML = data[i]["transfer"];
                 var total_cell = row.insertCell(6);
-                total_cell.innerHTML = data[6];
+                total_cell.innerHTML = data[i]["total"];
             }
-  */
+
         }
         //-->
     </script>
@@ -90,7 +90,7 @@
         }
 
         .data td{
-            border: 0.1em solid black;
+            border: 0.1em solid silver;
             font-size: 17px;
             text-align:center;
         }
@@ -144,7 +144,7 @@
                         <td>Alive</td>
                         <td>Dead</td>
                         <td>Transferred</td>
-                        <td>Total Popln.</td>
+                        <td>Total New Births</td>
                     </tr>
                 </table>
 

@@ -22,6 +22,7 @@ import org.baobabhealthtrust.cvr.models.Relationships;
 import org.baobabhealthtrust.cvr.models.User;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -1445,64 +1446,108 @@ public class WebAppInterface {
 	@JavascriptInterface
 	public String getSeniorMonthlyBirthReport(String date)
 	{
-		List<String> result = new ArrayList<String>();
-
-		JSONObject json = new JSONObject();
-
-		int count = mDB.getPeopleCount();
-
 		
-		int last_page = (int) Math.floor((double) (count / mDB.PAGE_SIZE)) + 1;
 
-
-		for (int i = 0; i < 1; i++) {
-			JSONObject pjson = new JSONObject();
-
-			try {
+		List<String> villages = mDB.getVillages(); 
+		JSONArray details = new JSONArray();
+		
+		try{
+			
+			
+			for (int i = 0; i < villages.size(); i++) {			
+			
+				String village = villages.get(i);
+				JSONObject json = new JSONObject();
+				json.put("village", village);
+				json.put("male", getMonthBirthsGenderSnr(date, "Male", village));
+				json.put("female", getMonthBirthsGenderSnr(date, "Female", village));
+				json.put("alive", getMonthBirthsAliveSnr(date, village));
+				json.put("dead", getMonthBirthsOutcomeSnr(date, "dead",village));
+				json.put("transfer", getMonthBirthsOutcomeSnr(date, "transfer out", village));
+				json.put("total", getMonthBirthsSnr(date, village));
 				
-				pjson.put("Name","Jim");
-
-				pjson.put("First Name", "Jim");
-
-				pjson.put("Middle Name", "JANE");
-
-				pjson.put("Last Name", "JUN");
-
-				pjson.put("Birthdate", "5");
-
-				pjson.put("Gender", "2");
-
-				pjson.put("National ID", "9");
-
-				
-				json.put("h" + "", pjson);
-
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				showMsg("Sorry, there was an error!");
+				details.put(json);
 			}
-
+			return details.toString();
 		}
+		catch (JSONException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	        return e.toString();
+	    }
+		
+		
+		
+	}
 
+	@JavascriptInterface
+	public String getSeniorMonthlyOutcomesReport(String date)
+	{
 		
-
-		result.add(json.toString());
+		List<String> villages = mDB.getVillages(); 
+		JSONArray details = new JSONArray();
+		
+		try{
+			
+			
+			for (int i = 0; i < villages.size(); i++) {			
+			
+				String village = villages.get(i);
+				JSONObject json = new JSONObject();
+				json.put("village", village);
+				json.put("alive", getAlive(date,village));
+				json.put("dead", getOutcomesInMonth(date, "dead",village));
+				json.put("trans", getOutcomesInMonth(date, "transfer out",village));
+				json.put("cul_alive", getAlive(date,village));
+				json.put("cul_dead", getOutcomesByMonth(date,"dead",village));
+				json.put("cul_trans", getOutcomesByMonth(date,"transfer out",village));
+				json.put("total", getPeople(date, village));
+				details.put(json);
+			}
+			return details.toString();
+		}
+		catch (JSONException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	        return e.toString();
+	    }
 		
 		
-		return result.toString();
-
 		
-		
-		
-		//List village = mDB.getMonthBirthsSnr(date);
-/*		
-		List<String> result = new ArrayList<String>();
-
-		JSONObject json = new JSONObject();
-		
-		String[] village = {"Mtema", "3","5", "2","3", "3", "8" };
-		
-		return village.toString();*/
+	}
+	
+	public int getMonthBirthsGenderSnr(String duration, String gender, String village)
+	{
+		return mDB.getBirthsInMonthGender(duration, gender, village);
+	}
+	
+	public int getMonthBirthsSnr(String duration, String village)
+	{
+		return mDB.getBirthsInMonth(duration, village);
+	}
+	
+	public int getMonthBirthsOutcomeSnr(String duration, String outcome, String village)
+	{
+		return mDB.getBirthsInMonthOutcome(duration, outcome,village);
+	}
+	
+	public int getMonthBirthsAliveSnr(String duration, String village)
+	{
+		return mDB.getBirthsInMonthAlive(duration, village);
+	}
+	
+	public int getAlive(String date, String village){
+		return mDB.getAlive("1900-01-01", date, village);
+	}
+	public int getOutcomesInMonth(String date_chosen, String outcome, String village ){
+		return mDB.getOutcomesInMonth(date_chosen, outcome, village);
+	}
+	
+	public int getOutcomesByMonth(String date_chosen, String outcome, String village ){
+		return mDB.getOutcomesByMonth(date_chosen, outcome, village);
+	}
+	
+	public int getPeople(String date, String village){
+		return mDB.getPeopleCount(date, village);
 	}
 }

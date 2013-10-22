@@ -51,7 +51,36 @@
                 document.getElementById('vh').innerHTML = Android.getPref("vh");
             }
 
-          //  __$("parent").innerHTML = "lkhkjn,vx";
+            var data= Android.getSeniorMonthlyOutcomesReport(Android.getPref("report_month"));
+            data = JSON.parse(data);
+            add_rows(data);
+
+        }
+        function add_rows(data){
+            var table =document.getElementById('details');
+
+            for(var i = 0; i < data.length; i++)
+            {
+                var row_count = table.rows.length;
+                var row = table.insertRow(row_count);
+                var village_cell = row.insertCell(0);
+                village_cell.innerHTML = data[i]["village"];
+                var alive_cell = row.insertCell(1);
+                alive_cell.innerHTML = data[i]["alive"];
+                var dead_cell = row.insertCell(2);
+                dead_cell.innerHTML = data[i]["dead"];
+                var trans_cell = row.insertCell(3);
+                trans_cell.innerHTML = data[i]["trans"];
+                var cul_alive_cell = row.insertCell(4);
+                cul_alive_cell.innerHTML = data[i]["cul_alive"];
+                var cul_dead_cell = row.insertCell(5);
+                cul_dead_cell.innerHTML = data[i]["cul_dead"];
+                var cul_trans_cell = row.insertCell(6);
+                cul_trans_cell.innerHTML = data[i]["cul_trans"];
+                var total_cell = row.insertCell(7);
+                total_cell.innerHTML = data[i]["total"];
+            }
+
         }
         //-->
     </script>
@@ -72,9 +101,13 @@
             font-size: 15px;
         }
 
-        td.count{
-            text-align: center;
-            cursor: pointer;
+        table.data{
+        }
+
+        .data td{
+            border: 0.1em solid silver;
+            font-size: 17px;
+            text-align:center;
         }
 
     </style>
@@ -115,9 +148,9 @@
             <div id="parent" style="background-color: #f1f1f1; min-height: 400px;max-height: 80%;
               width: 100%; margin: 0px; margin-top: -5px; padding: 0px;overflow: auto;">
 
-                <table id="details" style='width: 100%'>
-                    <tr class='heading'><td>&nbsp;</td><td colspan='3'> Month</td><td colspan='3'>
-                        Cumulative</td><td>&nbsp;</td>
+                <table class="data" id="details" style='width: 100%'>
+                    <tr class='heading'><td style="width: 20%;">&nbsp;</td><td style="width: 30%;" colspan='3'> Month</td>
+                        <td colspan='3' style="width: 30%;">Cumulative</td><td style="width: 20%;">&nbsp;</td>
                     </tr>
                     <tr class='heading'>
                         <td>Village</td>
