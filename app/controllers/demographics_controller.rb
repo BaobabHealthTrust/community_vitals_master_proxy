@@ -3,9 +3,10 @@ class DemographicsController < ApplicationController
     @mode = YAML.load_file("#{Rails.root}/config/application.yml")['dde_mode'] rescue 'vh'
      day = params[:start_date].to_date
     new_nat_ids = NationalIdentifier.find(:all, :conditions => ["DATE(assigned_at) = ?", day])
-    @today_count = new_nat_ids.length
-    @today_gender_count,@today_gender_count_id = gender_counter(new_nat_ids.map{|x| x.person}, day)
-    @today_ages,@today_ages_ids = age_categorizer(new_nat_ids.map{|x| x.person})
+    people = new_nat_ids.map{|x| x.person}
+    @today_count = get_eligible(people,day)
+    @today_gender_count,@today_gender_count_id = gender_counter(people, day)
+    @today_ages,@today_ages_ids = age_categorizer(people, day)
     @today_outcomes_id,@today_outcomes = outcome_sorter(Outcome.find(:all, :conditions => ["DATE(outcome_date) = ?", day]))
     @cumulative = cumulative_summarizer(day)
     @village = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["village"] rescue nil
@@ -123,23 +124,30 @@ class DemographicsController < ApplicationController
     @village = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["village"] rescue nil
     @gvh = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["gvh"] rescue nil
     @ta = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["ta"] rescue nil
-    nat_ids = NationalIdentifier.find(:all, :conditions => ["MONTH(assigned_at) <= ? AND YEAR(assigned_at) <= ?", date.month, date.year])
-    month_nat_ids = NationalIdentifier.find(:all,
-                                            :joins => "INNER JOIN people ON person_id = people.id",
-                                            :conditions => ["person_id IS NOT NULL AND outcome_date IS NULL AND DATE(assigned_at) <= ?", date.end_of_month ])
+    nat_ids = NationalIdentifier.find(:all,
+                                      :joins => "INNER JOIN people on national_identifiers.person_id = people.id",
+                                      :conditions => ["birthdate <= ?", date.end_of_month])
+
+    month_nat_ids = Person.find_by_sql("SELECT * FROM people WHERE DATE(birthdate) <= DATE('#{date.end_of_month}')")
+
     @month_summary ={}
     @cumulative_summary = {}
-    @month_summary['count'] = ""
+    @month_summary['count'] = get_eligible(month_nat_ids, date.end_of_month)
     @month_summary['outcomes_id'],@month_summary['outcomes'] = outcome_sorter(Outcome.find(:all,
                                                              :conditions => ["MONTH(outcome_date) = ? AND YEAR(outcome_date) = ?",
                                                                              date.month, date.year]))
     (month_nat_ids || []).each do |r|
-      if r.person.outcome_date.blank?
+      if r.outcome_date.blank?
         @month_summary['outcomes_id']['Alive'] << r.id
         @month_summary['outcomes']['Alive'] += 1
+      else
+        if r.outcome_date.to_date > date.beginning_of_month
+          @month_summary['outcomes_id']['Alive'] << r.id
+          @month_summary['outcomes']['Alive'] += 1
+        end
       end
     end
-    @cumulative_summary['count'] = nat_ids.length
+    @cumulative_summary['count'] = get_eligible(nat_ids.map{|x| x.person},date.end_of_month)
     @cumulative_summary['outcomes_id'],@cumulative_summary['outcomes'] = outcome_sorter(nat_ids.map{|x| x.person.outcome_by_date(date.end_of_month)})
     render :layout => 'report'
   end
@@ -155,9 +163,9 @@ class DemographicsController < ApplicationController
     new_borns = Person.find(:all, :conditions => ["MONTH(birthdate) = ? AND YEAR(birthdate) = ?", date.month, date.year])
     @month_summary ={}
     @cumulative_summary = {}
-    @cumulative_summary['count'] = people.length
+    @cumulative_summary['count'] = get_eligible(people.map{|x| x.person}, date.end_of_month)
     @month_summary['count'] = new_borns.length
-    @month_summary['gender_count'],@month_summary['gender_count_id']  = gender_counter(new_borns.map{|x| x}, date )
+    @month_summary['gender_count'],@month_summary['gender_count_id']  = gender_sorter(new_borns.map{|x| x}, date )
     @month_summary['outcomes_id'],@month_summary['outcomes'] = outcome_sorter(new_borns.map{|x| x.outcome_by_date(date.end_of_month)})
     @month_summary['outcomes']['Alive'] = @month_summary['count'] - (@month_summary['outcomes']['Transferred'] + @month_summary['outcomes']['Dead'])
     @cumulative_summary['outcomes_id'],@cumulative_summary['outcomes'] = outcome_sorter(people.map{|x| x.person.outcome_by_date(date.end_of_month)})
@@ -322,6 +330,22 @@ class DemographicsController < ApplicationController
          genders['females'] +=1
          genders_id['females'] << person.id
        end
+    end
+
+    return [genders,genders_id]
+  end
+
+  def gender_sorter(people, date)
+    genders = {'males' => 0, 'females'=> 0 }
+    genders_id = {'males' => [], 'females'=> [] }
+    (people || []).each do |person|
+      if person.gender == "Male"
+        genders['males'] +=1
+        genders_id['males'] << person.id
+      else
+        genders['females'] +=1
+        genders_id['females'] << person.id
+      end
     end
 
     return [genders,genders_id]
