@@ -94,20 +94,21 @@ class DemographicsController < ApplicationController
 
     if params[:report_type] == "Quarterly"
       @start_date,@end_date = cohort_date_range(params[:quarter])
-      @title = "Quarterly Report From #{@start_date.strftime('%d %B %Y')} TO #{@end_date.strftime('%d %B %Y')}"
+      @title = "Cohort Report For #{params[:quarter]}  (#{@start_date.strftime('%d %B %Y')} TO #{@end_date.strftime('%d %B %Y')})"
     elsif params[:report_type] == "Annual"
-      @title = "Annual Report For #{params[:year]}"
       @start_date,@end_date = ["01/01/#{params[:year]}".to_date,"12/31/#{params[:year]}".to_date ]
+      @title = "Cohort Report For #{params[:year]}"
     end
 
 
-    @keys = ['People Alive','Age Distribution', 'New Births', 'Deaths', 'Transfer Out']
+    @keys = ['Registered People Alive','Age Distribution', 'New Births', 'Deaths', 'Transfer Out']
+    @age_key = ['0 to < 1' , '1-4','5-14', '15-24', '25-34','35-44', '45-54', '55-64', '65-74','75 and above']
     @report = Hash.new([])
     people = people = Person.find(:all,
                                   :conditions => ["COALESCE(voided,0) = ? AND (outcome IS NULL OR outcome_date > ? ) ",0,@end_date])
     @report['Age Distribution'] = age_sorter(people, @end_date)
 
-    @report['People Alive'] = getPeopleAlive(@start_date,@end_date, people)
+    @report['Registered People Alive'] = getPeopleAlive(@start_date,@end_date, people)
     @report['New Births'] = getBirths(@start_date,@end_date)
     @report['Deaths'] = getByOutcome(@start_date,@end_date,"Dead")
     @report['Transfer Out'] = getByOutcome(@start_date,@end_date,"Transfer Out")
@@ -348,15 +349,15 @@ class DemographicsController < ApplicationController
 
   def age_sorter(people, date)
 
-    age_groups = {'0-1' => [0,0], '1-4' => [0,0],'5-14' => [0,0], '15-24' => [0,0], '25-34'=> [0,0],
-                  '35-44'=> [0,0], '45-54' => [0,0], '55-64' => [0,0], '65-74'=> [0,0],'75+'=> [0,0] }
+    age_groups = {'0 to < 1' => [0,0], '1-4' => [0,0],'5-14' => [0,0], '15-24' => [0,0], '25-34'=> [0,0],
+                  '35-44'=> [0,0], '45-54' => [0,0], '55-64' => [0,0], '65-74'=> [0,0],'75 and above'=> [0,0] }
     gender = {'Male' => 0, 'Female' => 1}
     age_groups_ids = []
 
     (people || []).each do |person|
       age = date.year.to_i - person.birthdate.year.to_i
-      if (age > 0  && age < 1)
-        age_groups['0-1'][gender[person.gender].to_i] +=1
+      if (age >= 0  && age < 1)
+        age_groups['0 to < 1'][gender[person.gender].to_i] +=1
       elsif (age >= 1 && age <= 4 )
         age_groups['1-4'][gender[person.gender].to_i] +=1
       elsif (age >= 5 && age <= 14 )
@@ -374,7 +375,7 @@ class DemographicsController < ApplicationController
       elsif (age >= 65 && age <= 74 )
         age_groups['65-74'][gender[person.gender].to_i] +=1
       elsif (age >= 75)
-        age_groups['75+'][gender[person.gender].to_i] +=1
+        age_groups['75 and above'][gender[person.gender].to_i] +=1
       end
     end
     age_groups

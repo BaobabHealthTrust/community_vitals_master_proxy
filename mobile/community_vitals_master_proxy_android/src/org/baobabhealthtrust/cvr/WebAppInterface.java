@@ -884,6 +884,10 @@ public class WebAppInterface {
 	}
 
 	@JavascriptInterface
+	public int getAliveInMonth(String date){
+		return mDB.getAliveInMonth("1900-01-01", date);
+	}
+	@JavascriptInterface
 	public int getAgegroupCount(int min, int max, String date_min, String date_max) {
 		
 		return mDB.getCountInAgeGroup(min, max, date_min, date_max);
@@ -1513,6 +1517,54 @@ public class WebAppInterface {
 	    }
 		
 		
+		
+	}
+	
+	@JavascriptInterface
+	public String cohortReport(String start_date, String end_date)
+	{
+		
+		JSONObject cohort_category = new JSONObject();
+		
+		try{
+		
+			cohort_category.put("number alive males", mDB.getGenderCount(start_date, end_date, "Female"));
+			cohort_category.put("number alive females", mDB.getGenderCount(start_date, end_date, "Female"));
+			cohort_category.put("new births males",  mDB.getBirthsInRange(start_date, end_date, "Male"));
+			cohort_category.put("new births females", mDB.getBirthsInRange(start_date, end_date, "Female"));
+			cohort_category.put("deaths males", mDB.getOutcomesInRangeByGender(start_date, end_date, "Male", "dead"));
+			cohort_category.put("deaths females", mDB.getOutcomesInRangeByGender(start_date, end_date, "Female", "dead"));
+			cohort_category.put("transferred males", mDB.getOutcomesInRangeByGender(start_date, end_date, "Male", "transfer out"));
+			cohort_category.put("transferred females", mDB.getOutcomesInRangeByGender(start_date, end_date, "Female", "transfer out"));
+			cohort_category.put("under 1 males", mDB.getCountInAgeGroup(0, 0, start_date, end_date,"Male"));
+			cohort_category.put("under 1 females", mDB.getCountInAgeGroup(0, 0, start_date, end_date,"Female"));
+			cohort_category.put("1-4 males", mDB.getCountInAgeGroup(1, 4, start_date, end_date,"Male"));
+			cohort_category.put("1-4 females", mDB.getCountInAgeGroup(1, 4, start_date, end_date,"Female"));
+			cohort_category.put("5-14 males", mDB.getCountInAgeGroup(5, 14, start_date, end_date,"Male"));
+			cohort_category.put("5-14 females", mDB.getCountInAgeGroup(5, 14, start_date, end_date,"Female"));
+			cohort_category.put("15-24 males", mDB.getCountInAgeGroup(15, 24, start_date, end_date,"Male"));
+			cohort_category.put("15-24 females", mDB.getCountInAgeGroup(15, 24, start_date, end_date,"Female"));
+			cohort_category.put("25-34 males", mDB.getCountInAgeGroup(25, 34, start_date, end_date,"Male"));
+			cohort_category.put("25-34 females", mDB.getCountInAgeGroup(25, 34, start_date, end_date,"Female"));
+			cohort_category.put("35-44 males", mDB.getCountInAgeGroup(35, 44, start_date, end_date,"Male"));
+			cohort_category.put("35-44 females", mDB.getCountInAgeGroup(35, 44, start_date, end_date,"Female"));
+			cohort_category.put("45-54 males", mDB.getCountInAgeGroup(45, 54, start_date, end_date,"Male"));
+			cohort_category.put("45-54 females", mDB.getCountInAgeGroup(45, 54, start_date, end_date,"Female"));
+			cohort_category.put("55-64 males", mDB.getCountInAgeGroup(55, 64, start_date, end_date,"Male"));
+			cohort_category.put("55-64 females", mDB.getCountInAgeGroup(55, 64, start_date, end_date,"Female"));
+			cohort_category.put("65-74 males", mDB.getCountInAgeGroup(65, 74, start_date, end_date,"Male"));
+			cohort_category.put("65-74 females", mDB.getCountInAgeGroup(65, 74, start_date, end_date,"Female"));
+			cohort_category.put("75 and above males", mDB.getCountInAgeGroup(75, 200, start_date, end_date,"Male"));
+			cohort_category.put("75 and above females", mDB.getCountInAgeGroup(75, 200, start_date, end_date,"Female"));
+			
+			return cohort_category.toString();
+		}
+		catch (JSONException e){
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	        return e.toString();
+			
+		}
 		
 	}
 	

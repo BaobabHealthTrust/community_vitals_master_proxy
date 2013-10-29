@@ -55,9 +55,7 @@
                  "<tr class='heading' ><td style='text-align: center;width:60%'>&nbsp;</td>"+
                  "<td style='text-align: center;width:20%'>Month Total</td><td style='text-align:center;'>Cumulative</td></tr>"+
                  "<tr class='headings'><td>Total Population </td><td>&nbsp;</td><td class='count'>"+Android.getPeople(Android.getPref('report_month'))+"</td></tr>"+
-                 "<tr><td>Alive</td><td class='count'>"+Android.getAlive(Android.getPref('report_month'))+
-                 "</td><td class='count'>"+Android.getAlive(Android.getPref('report_month'))+"</td></tr><tr class='headings'>"+
-                 "<td>Dead</td><td class='count'>"+Android.getOutcomesInMonth(Android.getPref('report_month'),'dead')+
+                 "<tr class='headings'><td>Dead</td><td class='count'>"+Android.getOutcomesInMonth(Android.getPref('report_month'),'dead')+
                  "</td><td class='count'>"+Android.getOutcomesByMonth(Android.getPref('report_month'),'dead')+"</td></tr>"+
                  "<tr><td>Transferred Out</td><td class='count'>" + Android.getOutcomesInMonth(Android.getPref('report_month'),'transfer out')+
                  "</td><td class='count'>"+Android.getOutcomesByMonth(Android.getPref('report_month'),'transfer out')+"</td></tr>"+

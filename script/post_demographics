@@ -183,6 +183,36 @@ def post_transactions(mode)
 
     end
 
+    if to_post.blank?
+      puts "get new outcomes"
+      new_outcomes = Outcome.new_outcomes(mode.to_s.upcase) rescue []
+      outcomes = []
+
+      (new_outcomes || []).each do |outcome|
+        if to_post[outcome.person.npid].blank?
+          puts outcome.person.npid
+          person = outcome.person
+          person_details = {'fname' => person.given_name,
+                            'middle_name' => person.middle_name,
+                            'lname' => person.family_name,
+                            'gender' => person.gender,
+                            'dob' => person.birthdate,
+                            'dob_estimated' => person.birthdate_estimated,
+                            'outcome' => person.outcome,
+                            'outcome_date' => person.outcome_date,
+                            'village' => person.village,
+                            'gvh' => person.gvh,
+                            'ta' => person.ta,
+                            'assigned_at' => person.identifier.assigned_at}
+          to_post[outcome.person.npid] = { 'person_details' => person_details, 'relationships' => [], 'outcomes' => [] }
+        end
+
+        to_post[outcome.person.npid]['outcomes'] << {'outcome'=> outcome.outcome_type,'outcome_date' => outcome.outcome_date }
+
+      end
+
+    end
+
     if !to_post.blank?
       post = RestClient.post(url,{:details => to_post.to_json})
 
@@ -214,7 +244,7 @@ mode = YAML.load_file("#{Rails.root}/config/application.yml")["dde_mode"] rescue
 
 settings = YAML.load_file("#{Rails.root}/config/application.yml") rescue {}
     
-connected = false
+connected = true
 
 if !settings.empty?
   

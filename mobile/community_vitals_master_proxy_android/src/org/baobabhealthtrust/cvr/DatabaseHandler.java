@@ -1289,8 +1289,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 
 	public int getPeopleCount() {
-		String countQuery = "SELECT  * FROM " + TABLE_PEOPLE +" WHERE COALESCE(voided,0) = 0 AND COALESCE("+
-											KEY_OUTCOME+",0) = 0";
+		String countQuery = "SELECT * FROM " + TABLE_PEOPLE +
+				 " WHERE voided = 0 AND COALESCE("+KEY_OUTCOME+",0) == 0 ";
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
 
@@ -1299,13 +1299,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 
 	public int getPeopleCount(String date) {
-		String countQuery = "SELECT  * FROM " + TABLE_PEOPLE +" WHERE Date("+KEY_CREATED_AT+") <= Date('"+
-							date+"') AND COALESCE(voided,0) = 0  AND COALESCE("+KEY_OUTCOME+",0) = 0"+
-							" AND DATE("+KEY_BIRTHDATE+") <= DATE('"+date+"')" +
-							" UNION SELECT  * FROM " + TABLE_PEOPLE +" WHERE Date("+KEY_CREATED_AT+") <= Date('"+
-							date+"') AND COALESCE(voided,0) = 0  AND COALESCE("+KEY_OUTCOME+",0) != 0"+
-							" AND DATE("+KEY_OUTCOME_DATE+") > DATE('"+date+"')"+ 
-							" AND DATE("+KEY_BIRTHDATE+") <= DATE('"+date+"')" ;
+		String countQuery = "SELECT * FROM " + TABLE_PEOPLE +
+				 " WHERE voided == 0 AND COALESCE("+KEY_OUTCOME+",0) == 0 "+
+				 " AND Date(" + KEY_BIRTHDATE + ") <= Date('" + date + "')"+
+				 " UNION " +
+				 " SELECT * FROM " + TABLE_PEOPLE +
+				 " WHERE voided == 0 AND COALESCE("+KEY_OUTCOME+",0) != 0 "+
+				 " AND Date(" + KEY_BIRTHDATE + ") <= Date('" + date + "')"+
+				 " AND Date(" + KEY_OUTCOME_DATE + ") > Date('" + date + "')"				 ;
+							
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
 
@@ -1624,10 +1626,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	public int getGenderCount(String date_min, String date_max, String gender) {
 
 		// Select All Query
-		String countQuery = "SELECT * FROM " + TABLE_PEOPLE
-				+ " WHERE voided = 0 AND COALESCE("+KEY_OUTCOME+",0) = 0 AND Date(" + KEY_CREATED_AT
-				+ ") BETWEEN Date('" + date_min + "') AND Date('" + date_max + "') AND gender ='" + gender
-				+ "'";
+		String countQuery = "SELECT * FROM " + TABLE_PEOPLE +
+			 " WHERE voided = 0 AND COALESCE("+KEY_OUTCOME+",0) == 0 "+
+			 " AND Date(" + KEY_BIRTHDATE + ") <= Date('" + date_max + "')"+
+			 " AND gender =='" + gender+ "'" +
+			 " UNION " +
+			 " SELECT * FROM " + TABLE_PEOPLE +
+			 " WHERE voided = 0 AND COALESCE("+KEY_OUTCOME+",0) != 0 "+
+			 " AND Date(" + KEY_BIRTHDATE + ") <= Date('" + date_max + "')"+
+			 " AND Date(" + KEY_OUTCOME_DATE + ") > Date('" + date_max + "')"+
+			 " AND gender =='" + gender+ "'"
+			 ;
 		
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
@@ -1648,10 +1657,31 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	public int getCountInAgeGroup(int min, int max, String date_min, String date_max){
 
-		String countQuery = "SELECT * FROM "+TABLE_PEOPLE+" WHERE COALESCE(voided,0) = 0 AND COALESCE("+
-							KEY_OUTCOME+",0) = 0 AND " +"DATE('" + date_max + "') - DATE(birthdate) BETWEEN " + min +
-							" AND " +max +" AND DATE(created_at) BETWEEN Date('" + date_min 
-							+ "') AND Date('" + date_max + "')";
+		String countQuery ="SELECT  * FROM " + TABLE_PEOPLE +" WHERE "+KEY_VOIDED +"== 0 "+
+				" AND COALESCE("+KEY_OUTCOME+",0) == 0 AND " +"DATE('" + date_max + "') - DATE(birthdate) BETWEEN " 
+				+ min +	" AND " +max +" AND DATE("+KEY_BIRTHDATE+") <= DATE('"+date_max+"') UNION " + 
+				"SELECT  * FROM " + TABLE_PEOPLE +" WHERE "+KEY_VOIDED +"== 0 AND COALESCE("+KEY_OUTCOME+",0) != 0 AND " +
+				"DATE('" + date_max + "') - DATE(birthdate) BETWEEN "+ min +" AND " +max +
+				" AND DATE("+KEY_BIRTHDATE+") <= DATE('"+date_max+"') AND DATE("+ KEY_OUTCOME_DATE +") > DATE('"+ date_max +"')";
+				
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+
+		// return count
+		return cursor.getCount();
+		
+	}
+	
+	public int getCountInAgeGroup(int min, int max, String date_min, String date_max, String gender)
+	{
+		String countQuery ="SELECT  * FROM " + TABLE_PEOPLE +" WHERE "+KEY_VOIDED +"== 0 "+
+				" AND COALESCE("+KEY_OUTCOME+",0) == 0 AND " +"DATE('" + date_max + "') - DATE(birthdate) BETWEEN " 
+				+ min +	" AND " +max +" AND DATE("+KEY_BIRTHDATE+") <= DATE('"+date_max+"') AND " + KEY_GENDER +"='"+ gender +"'"
+				+ " UNION " + 
+				"SELECT  * FROM " + TABLE_PEOPLE +" WHERE "+KEY_VOIDED +"== 0 AND COALESCE("+KEY_OUTCOME+",0) != 0 AND " +
+				"DATE('" + date_max + "') - DATE(birthdate) BETWEEN "+ min +" AND " +max +" AND " + KEY_GENDER +"='"+ gender +"'"+
+				" AND DATE("+KEY_BIRTHDATE+") <= DATE('"+date_max+"') AND DATE("+ KEY_OUTCOME_DATE +") > DATE('"+ date_max +"')";
+				
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
 
@@ -1708,6 +1738,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return cursor.getCount();
 	}
 
+	public int getOutcomesInRangeByGender(String start, String end, String gender, String outcome)
+	{
+		// Select All Query
+		String selectQuery = "SELECT * FROM " + TABLE_PEOPLE + 
+			" WHERE UPPER(" + KEY_OUTCOME + ") = UPPER('" + outcome +"')" +
+			" AND "+ KEY_GENDER +" = '" + gender + "' "+
+			" AND strftime('%Y-%m=%d',DATE(" + KEY_OUTCOME_DATE +")) >= strftime('%Y-%m',DATE('" + start + "')) "+
+			" AND strftime('%Y-%m=%d',DATE(" + KEY_OUTCOME_DATE +")) <= strftime('%Y-%m',DATE('" + end + "')) "+
+			" AND COALESCE("+KEY_NATIONAL_ID+",0) != 0" +
+			" AND DATE("+KEY_BIRTHDATE+") <= DATE('"+end+"') AND COALESCE(voided,0) = 0";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		//return count
+		return cursor.getCount();
+	}
+	
 	public int getOutcomesInMonth(String date, String outcome, String village)
 	{
 		// Select All Query
@@ -1757,9 +1804,30 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		
 		// Select All Query
 		String selectQuery = "SELECT * FROM " + TABLE_PEOPLE +
-		" WHERE Date("+KEY_CREATED_AT+") <= Date('" + date_max + "') AND " +
-		" COALESCE("+KEY_OUTCOME+",0) = 0 AND COALESCE(voided,0) = 0 AND DATE("+
-		KEY_BIRTHDATE+") <= DATE('"+date_max+"')";
+		" WHERE COALESCE("+KEY_OUTCOME+",0) = 0 AND COALESCE(voided,0) = 0"+
+		" AND COALESCE("+ KEY_NATIONAL_ID+",0) != 0" +				
+		" AND DATE("+KEY_BIRTHDATE+") <= DATE('"+date_max+"') UNION " +
+		" SELECT * FROM " + TABLE_PEOPLE +" WHERE COALESCE("+KEY_OUTCOME+",0) != 0"+
+		" AND COALESCE("+ KEY_NATIONAL_ID+",0) != 0" +
+		" AND COALESCE(voided,0) = 0 AND DATE("+KEY_BIRTHDATE+") <= DATE('"+date_max+"')"+
+		" AND DATE("+KEY_OUTCOME_DATE+") > DATE('"+date_max+"')"
+		;
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		//return count
+		return cursor.getCount();
+	}
+	
+	public int getAliveInMonth(String date_min,String date_max) {
+		
+		// Select All Query
+		String selectQuery = "SELECT * FROM " + TABLE_PEOPLE +
+		" WHERE COALESCE("+KEY_OUTCOME+",0) == 0 AND COALESCE("+KEY_VOIDED+",0) == 0"+
+		" AND DATE("+KEY_BIRTHDATE+") <= DATE('"+date_max+"') AND COALESCE("+KEY_NATIONAL_ID+",0) != 0 UNION " +
+		" SELECT * FROM " + TABLE_PEOPLE +" WHERE COALESCE("+KEY_OUTCOME+",0) != 0 AND COALESCE("+KEY_NATIONAL_ID+",0) != 0"+
+		" AND COALESCE("+KEY_VOIDED+",0) == 0 AND DATE("+KEY_BIRTHDATE+") <= DATE('"+date_max+"')"+
+		" AND strftime('%Y-%m',"+KEY_OUTCOME_DATE+") > strftime('%Y-%m','"+date_max+"')";
+		
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		//return count
@@ -1776,7 +1844,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		date_max+"') UNION SELECT * FROM "+ TABLE_PEOPLE + " INNER JOIN " + TABLE_NATIONAL_IDENTIFIERS +
 		" ON " +TABLE_PEOPLE+"."+KEY_NATIONAL_ID +"="+TABLE_NATIONAL_IDENTIFIERS+"."+KEY_ID +
 		" WHERE COALESCE("+TABLE_PEOPLE +".voided,0) = 0 AND COALESCE("+TABLE_NATIONAL_IDENTIFIERS +".voided,0) = 0" +
-		" AND COALESCE("+KEY_OUTCOME+",0) != 0 AND DATE("+KEY_OUTCOME_DATE+") = DATE('"+date_max+"') AND assigned_vh = '" 
+		" AND COALESCE("+KEY_OUTCOME+",0) != 0 AND DATE("+KEY_OUTCOME_DATE+") <= DATE('"+date_max+"') AND assigned_vh = '" 
 		+ village +"' AND DATE("+KEY_BIRTHDATE+") <= DATE('"+date_max+"')";
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
@@ -2043,7 +2111,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		 
 		String countQuery = "SELECT * FROM "+TABLE_PEOPLE+" WHERE COALESCE(voided,0) = 0 AND COALESCE("+KEY_NATIONAL_ID+",0) != 0 AND " +
 				"strftime('%Y-%m',DATE(birthdate)) = strftime('%Y-%m',DATE('"+ duration + 
-				"')) AND gender ='" + gender+"' AND Date("+KEY_CREATED_AT+") <= Date(current_date)";
+				"')) AND gender ='" + gender+"'";
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
 		
@@ -2059,6 +2127,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				" WHERE COALESCE("+TABLE_NATIONAL_IDENTIFIERS+".voided,0) = 0 AND assigned_vh = '" + village +"' AND " +
 				" COALESCE("+TABLE_PEOPLE+".voided,0) = 0 AND "+"strftime('%Y-%m',DATE(birthdate)) = strftime('%Y-%m',DATE('"+ duration + 
 				"')) AND gender ='" + gender+"'";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+		
+		// return count
+		return cursor.getCount();
+	}
+	
+	public int getBirthsInRange(String start, String end, String gender)
+	{
+		 
+		String countQuery = "SELECT * FROM "+TABLE_PEOPLE+ " INNER JOIN " + TABLE_NATIONAL_IDENTIFIERS +
+				" ON "+ TABLE_PEOPLE +"." + KEY_NATIONAL_ID + " = " + TABLE_NATIONAL_IDENTIFIERS +"." + KEY_ID +
+				" WHERE COALESCE("+TABLE_NATIONAL_IDENTIFIERS+".voided,0) = 0  AND " +
+				" COALESCE("+TABLE_PEOPLE+".voided,0) = 0 AND "+"strftime('%Y-%m-%d',DATE(birthdate)) >= strftime('%Y-%m-%d',DATE('"+start + 
+				"')) AND gender ='" + gender+"' AND strftime('%Y-%m-%d',DATE(birthdate)) <= strftime('%Y-%m-%d',DATE('"+end +"'))";
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
 		

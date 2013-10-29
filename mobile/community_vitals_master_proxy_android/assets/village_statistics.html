@@ -17,7 +17,7 @@
       function load(){
 
           var currentTime = new Date()
-          var date = currentTime.getFullYear() +"-"+ (currentTime.getMonth() + 1) +"-" + 31;
+          var date = currentTime.getFullYear() +"-"+ (currentTime.getMonth() + 1) +"-" + currentTime.getDate();
 
           __$("parent").innerHTML =
             "<table style='width: 100%'><tr class='heading'><td colspan='2'>"+
@@ -26,15 +26,27 @@
             "<tr class='heading'><td colspan='2' >Total Population by Gender</td></tr>"+
             "<tr><td>Females</td><td style='text-align: center'>"+Android.getGenderCount('1900-01-01',date,'Female')+"</td></tr><tr>"+
             "<tr><td>Males</td><td style='text-align: center'>"+ Android.getGenderCount('1900-01-01',date,'Male') +"</td></tr><tr>"+
-            "<tr class='heading'><td colspan='2' >Total Population By Age</td></tr>"+
-            "<tr><td>Children( < 12 Years)</td><td style='text-align: center'>" +
-            Android.getAgegroupCount( 0, 12, '1900-01-01' ,date) +"</td></tr><tr>"+
-            "<tr><td>Youths (12-21 Years)</td><td style='text-align: center'>" +
-            Android.getAgegroupCount( 13, 21, '1900-01-01' ,date) +"</td></tr><tr>"+
-            "<tr><td>Working Population (22-59 Years)</td><td style='text-align: center'>" +
-            Android.getAgegroupCount( 22, 59, '1900-01-01' ,date) +"</td></tr><tr>"+
-            "<tr><td>Older Population (>= 60 years)</td><td style='text-align: center'>" +
-            Android.getAgegroupCount(60, 200, '1900-01-01' ,date) +"</td></tr><tr>"+
+            "<tr class='heading'><td colspan='2' >Total Population By Age</td>"+
+            "<tr><td>0 to < 1</td><td style='text-align: center'>" +
+            Android.getAgegroupCount( 0, 0, '1900-01-01' ,date) +"</td></tr>"+
+            "<tr><td>1 - 4</td><td style='text-align: center'>" +
+            Android.getAgegroupCount( 1, 4, '1900-01-01' ,date) +"</td></tr>"+
+            "<tr><td>5 - 14</td><td style='text-align: center'>" +
+            Android.getAgegroupCount( 5, 14, '1900-01-01' ,date) +"</td></tr>"+
+            "<tr><td>15 - 24</td><td style='text-align: center'>" +
+            Android.getAgegroupCount(15, 24, '1900-01-01' ,date) +"</td></tr>"+
+            "<tr><td>25 - 34</td><td style='text-align: center'>" +
+            Android.getAgegroupCount( 25, 34, '1900-01-01' ,date) +"</td></tr>"+
+            "<tr><td>35 - 44</td><td style='text-align: center'>" +
+            Android.getAgegroupCount( 35, 44, '1900-01-01' ,date) +"</td></tr>"+
+            "<tr><td>45 - 54</td><td style='text-align: center'>" +
+            Android.getAgegroupCount( 45, 54, '1900-01-01' ,date) +"</td></tr>"+
+            "<tr><td>55 - 64</td><td style='text-align: center'>" +
+            Android.getAgegroupCount( 55, 64, '1900-01-01' ,date) +"</td></tr><tr>"+
+            "<tr><td>65 - 74</td><td style='text-align: center'>" +
+            Android.getAgegroupCount( 65, 74, '1900-01-01' ,date) +"</td></tr><tr>"+
+            "<tr><td>75 and above</td><td style='text-align: center'>" +
+            Android.getAgegroupCount(75, 200, '1900-01-01' ,date) +"</td></tr>"+
             "<tr class='heading'><td colspan='2' >Total Population By Outcome</td></tr>"+
             "<tr><td>Alive</td><td style='text-align: center'>"+Android.getCulAlive(date)+"</td></tr><tr>"+
             "<tr><td>Dead</td><td style='text-align: center'>"+Android.getCulOutcome('Dead')+"</td></tr><tr>"+

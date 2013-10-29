@@ -498,6 +498,77 @@ function loadGender(value){
     loadSingleSelect(arr);
 }
 
+function loadCohortType(value){
+
+    var list = {
+        "Annual":"Annual",
+        "Quarter":"Quarterly"
+    };
+
+    var arr = [];
+
+    for(var el in list){
+        if(list[el].trim().toLowerCase().match(value.toLowerCase().trim())){
+            arr.push([search(list[el]), el]);
+        } else if (value.toLowerCase().trim().length == 0){
+            arr.push([search(list[el]), el]);
+        }
+    }
+
+    loadSingleSelect(arr);
+}
+
+function load_quarters(value){
+
+    var currentTime = new Date();
+    var date = new Date(currentTime.getFullYear() , (currentTime.getMonth() + 1) , currentTime.getDate()).getTime();
+
+    var qtrs = [];
+    current_qtr = 0;
+    year = currentTime.getFullYear();
+
+    if (date >= new Date(currentTime.getFullYear(),1,1).getTime() && date <= new Date(currentTime.getFullYear(),3,31).getTime())
+        current_qtr = 1
+    else if (date >= new Date(currentTime.getFullYear(),4,1).getTime() && date <= new Date(currentTime.getFullYear(),6,30).getTime())
+        current_qtr = 2
+    else if (date >= new Date(currentTime.getFullYear(),7,1).getTime() && date <= new Date(currentTime.getFullYear(),9,30).getTime())
+        current_qtr = 3
+    else if (date >= new Date(currentTime.getFullYear(),10,1).getTime() && date <= new Date(currentTime.getFullYear(),12,31).getTime())
+        current_qtr = 4
+
+    for(i = 0; i < 20; i++)
+    {
+      if (current_qtr < 1 )
+      {
+        year -= 1
+        current_qtr = 4
+      }
+
+      qtrs.push([("Q" + current_qtr +" "+ year ), ("Q" + current_qtr +" "+ year )]);
+      current_qtr -=1
+
+    }
+    qtrs.push(["Q4 2014", "Q4 2014"]);
+
+    loadSingleSelect(qtrs);
+
+}
+
+function load_years(value){
+
+    var currentTime = new Date();
+    year = currentTime.getFullYear();
+
+    var years = [];
+
+    for(i = 0; i < 20; i++)
+    {
+        years.push([(year - i),(year - i)]);
+    }
+
+    loadSingleSelect(years);
+}
+
 function loadJobs(value){
     var list = {
         "Driver":"Driver",
@@ -1068,4 +1139,99 @@ function listValues(value, list){
     }
 
     loadSingleSelect(arr);
+}
+function loadMonthsFixed(value){
+    var list = {
+        "January":"January",
+        "February":"February",
+        "March":"March",
+        "April":"April",
+        "May":"May",
+        "June":"June",
+        "July":"July",
+        "August":"August",
+        "September":"September",
+        "October":"October",
+        "November":"November",
+        "December":"December"
+
+    };
+
+    var arr = [];
+
+    value = search(value);
+
+    for(var el in list){
+        var word = search(list[el]);
+
+        if(word.trim().toLowerCase().match(value.toLowerCase().trim())){
+            arr.push([word, el]);
+        } else if (value.toLowerCase().trim().length == 0){
+            arr.push([word, el]);
+        }
+    }
+
+    loadSingleSelect(arr);
+}
+
+function cohort_report(){
+
+    var type = __$("1.1").value;
+    var start_date = "";
+    var end_date = "";
+    var title = "";
+    var location = "";
+
+    if (type == "Quarter")
+    {
+        var param_quarter =  __$("1.2").value.trim();
+        year = param_quarter.substr(2,4);
+        quarter = year = param_quarter.substr(0,2);
+        title = "Cohort Report For " + param_quarter;
+
+        if (quarter == "Q1")
+        {
+            start_date = year.toString() + "-01-01";
+            end_date =  year.toString() + "-03-31";
+        }
+        else if (quarter == "Q2")
+        {
+            start_date = year.toString() + "-04-01";
+            end_date =  year.toString() + "-06-30";
+        }
+        else if (quarter == "Q3")
+        {
+            start_date = year.toString() + "-07-01";
+            end_date =  year.toString() + "-09-30";
+        }
+        else if (quarter == "Q4")
+        {
+            start_date = year.toString() + "-10-01";
+            end_date =  year.toString() + "-12-31";
+        }
+
+    }
+    else
+    {
+        var year =  __$("1.3").value.trim();
+        start_date = year.toString() + "-01-01";
+        end_date =  year.toString() + "-12-31";
+        title = "Cohort Report For Year " + year;
+    }
+
+    if  (Android.getPref("dde_mode") == "gvh")
+    {
+      location = "TA: " + Android.getPref("ta") + " GVH: " + Android.getPref("gvh");
+    }
+    else
+    {
+        location = "TA: " + Android.getPref("ta") + " GVH: " + Android.getPref("gvh")+ " VH: " + Android.getPref("vh");
+    }
+
+    Android.setPref("cohort_start", start_date);
+    Android.setPref("cohort_end", end_date);
+    Android.setPref("cohort_title", title);
+    Android.setPref("cohort_location", location);
+    window.location = "cohort_report.html"
+
 }

@@ -67,12 +67,12 @@
                 <td style="border: 0px" colspan="4">&nbsp;</td>
               </tr>
                 <tr><td class="headings" style="border: 0px" colspan="4"><%= key %></td></tr>
-                <% (@report[key] || {}).each do |group, data| %>
+                <% (@age_key || []).each do |guide| %>
                   <tr>
-                    <td><%= group %></td>
-                    <td class="value"><%= "#{data[0]}" %></td>
-                    <td class="value"><%= "#{data[1]}" %></td>
-                    <td class="value"><%= "#{data[0]}".to_i + "#{data[1]}".to_i %></td>
+                    <td><%= guide %></td>
+                    <td class="value"><%= "#{@report[key][guide][0]}" %></td>
+                    <td class="value"><%= "#{@report[key][guide][1]}" %></td>
+                    <td class="value"><%= "#{@report[key][guide][0]}".to_i + "#{@report[key][guide][1]}".to_i %></td>
                   </tr>
               <% end %>
               <tr>
