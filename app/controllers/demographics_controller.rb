@@ -4,7 +4,7 @@ class DemographicsController < ApplicationController
      day = params[:start_date].to_date
     new_nat_ids = NationalIdentifier.find(:all, :conditions => ["DATE(assigned_at) = ?", day])
     @today_count = new_nat_ids.length
-    @today_gender_count,@today_gender_count_id = gender_counter(new_nat_ids.map{|x| x.person})
+    @today_gender_count,@today_gender_count_id = gender_counter(new_nat_ids.map{|x| x.person}, day)
     @today_ages,@today_ages_ids = age_categorizer(new_nat_ids.map{|x| x.person})
     @today_outcomes_id,@today_outcomes = outcome_sorter(Outcome.find(:all, :conditions => ["DATE(outcome_date) = ?", day]))
     @cumulative = cumulative_summarizer(day)
@@ -68,7 +68,7 @@ class DemographicsController < ApplicationController
     @start_date,@end_date = cohort_date_range(params[:quarter])
     nat_ids = NationalIdentifier.find(:all, :conditions => ["DATE(assigned_at) >= ? AND DATE(assigned_at) <= ?", @start_date,@end_date])
     cumulative = cumulative_summarizer(@end_date)
-    cohort_gender_count,cohort_gender_count_ids = gender_counter(nat_ids.map{|x| x.person})
+    cohort_gender_count,cohort_gender_count_ids = gender_counter(nat_ids.map{|x| x.person}, @end_date)
     cohort_ages,cohort_ages_ids = age_categorizer(nat_ids.map{|x| x.person})
     cohort_outcomes_id, cohort_outcomes = outcome_sorter(nat_ids.map{|x| x.person.outcome_by_date(@end_date)})
     @keys = ['Registration Details','Registered People By Age','Registered People By Outcome']
@@ -157,11 +157,11 @@ class DemographicsController < ApplicationController
     @cumulative_summary = {}
     @cumulative_summary['count'] = people.length
     @month_summary['count'] = new_borns.length
-    @month_summary['gender_count'],@month_summary['gender_count_id']  = gender_counter(new_borns.map{|x| x})
+    @month_summary['gender_count'],@month_summary['gender_count_id']  = gender_counter(new_borns.map{|x| x}, date )
     @month_summary['outcomes_id'],@month_summary['outcomes'] = outcome_sorter(new_borns.map{|x| x.outcome_by_date(date.end_of_month)})
     @month_summary['outcomes']['Alive'] = @month_summary['count'] - (@month_summary['outcomes']['Transferred'] + @month_summary['outcomes']['Dead'])
     @cumulative_summary['outcomes_id'],@cumulative_summary['outcomes'] = outcome_sorter(people.map{|x| x.person.outcome_by_date(date.end_of_month)})
-    @cumulative_summary['gender_count'],@cumulative_summary['gender_count_id']  = gender_counter(people.map{|x| x.person})
+    @cumulative_summary['gender_count'],@cumulative_summary['gender_count_id']  = gender_counter(people.map{|x| x.person},date.end_of_month)
     render :layout => 'report'
   end
 
@@ -301,18 +301,20 @@ class DemographicsController < ApplicationController
   end
   def cumulative_summarizer(date)
     nat_ids = NationalIdentifier.find(:all, :conditions => ["DATE(assigned_at) <= ?", date])
+    people = nat_ids.map{|x| x.person}
     cumulative_summary = {}
-    cumulative_summary['count'] = nat_ids.length
-    cumulative_summary['gender_count'],cumulative_summary['gender_count_id'] = gender_counter(nat_ids.map{|x| x.person})
-    cumulative_summary['ages'],cumulative_summary['ages_id'] = age_categorizer(nat_ids.map{|x| x.person})
+    cumulative_summary['count'] = get_eligible(people, date)
+    cumulative_summary['gender_count'],cumulative_summary['gender_count_id'] = gender_counter(people, date)
+    cumulative_summary['ages'],cumulative_summary['ages_id'] = age_categorizer(people, date)
     cumulative_summary['outcomes_id'],cumulative_summary['outcomes'] = outcome_sorter(nat_ids.map{|x| x.person.outcome_by_date(date)})
     cumulative_summary
   end
 
-  def gender_counter(people)
+  def gender_counter(people, date)
     genders = {'males' => 0, 'females'=> 0 }
     genders_id = {'males' => [], 'females'=> [] }
     (people || []).each do |person|
+      next if person.outcome_date.to_date <= date rescue false
        if person.gender == "Male"
           genders['males'] +=1
           genders_id['males'] << person.id
@@ -325,24 +327,46 @@ class DemographicsController < ApplicationController
     return [genders,genders_id]
   end
 
-  def age_categorizer(people)
-    age_groups = {'children' => 0, 'youth' => 0, 'adults' => 0, 'grannies' => 0}
-    age_groups_ids = {'children' => [], 'youth' => [], 'adults' => [], 'grannies' => []}
+  def age_categorizer(people, date)
+    age_groups = {'0 to < 1' => 0, '1-4' => 0,'5-14' => 0, '15-24' => 0, '25-34'=> 0,
+                  '35-44'=> 0, '45-54' => 0, '55-64' => 0, '65-74'=> 0,'75 and above'=> 0 }
+    age_groups_ids = {'0 to < 1' => [], '1-4' => [],'5-14' => [], '15-24' => [], '25-34'=> [],
+                      '35-44'=> [], '45-54' => [], '55-64' => [], '65-74'=> [],'75 and above'=> []}
     (people || []).each do |person|
+      next if person.outcome_date.to_date <= date rescue false
       age = Date.today.year.to_i - person.birthdate.year.to_i
-      if (age < 12)
-        age_groups['children'] +=1
-        age_groups_ids['children'] << person.id
-      elsif (age >= 12 && age <= 21)
-        age_groups['youth'] +=1
-        age_groups_ids['youth'] << person.id
-      elsif (age >= 22 && age <= 59)
-        age_groups['adults'] +=1
-        age_groups_ids['adults'] << person.id
-      elsif (age >= 60)
-        age_groups['grannies'] +=1
-        age_groups_ids['grannies'] << person.id
+      if (age >= 0  && age < 1)
+        age_groups['0 to < 1'] +=1
+        age_groups_ids['0 to < 1'] << person.id
+      elsif (age >= 1 && age <= 4 )
+        age_groups['1-4'] +=1
+        age_groups_ids['1-4'] << person.id
+      elsif (age >= 5 && age <= 14 )
+        age_groups['5-14'] +=1
+        age_groups_ids['5-14'] << person.id
+      elsif (age >= 15 && age <= 24 )
+        age_groups['15-24'] +=1
+        age_groups_ids['15-24'] << person.id
+      elsif (age >= 25 && age <= 34 )
+        age_groups['25-34'] +=1
+        age_groups_ids['25-34'] << person.id
+      elsif (age >= 35 && age <= 44 )
+        age_groups['35-44'] +=1
+        age_groups_ids['35-44'] << person.id
+      elsif (age >= 45 && age <= 54 )
+        age_groups['45-54'] +=1
+        age_groups['45-54'] << person.id
+      elsif (age >= 55 && age <= 64 )
+        age_groups['55-64'] +=1
+        age_groups['55-64'] << person.id
+      elsif (age >= 65 && age <= 74 )
+        age_groups['65-74'] +=1
+        age_groups['65-74'] << person.id
+      elsif (age >= 75)
+        age_groups['75 and above'] +=1
+        age_groups_ids['75 and above'] << person.id
       end
+
     end
     [age_groups, age_groups_ids]
   end
@@ -604,5 +628,21 @@ class DemographicsController < ApplicationController
     return [[male],[female]]
   end
 
+  def get_eligible(people, date)
+    count = 0
+
+    (people || []).each do |person|
+      if person.outcome_date.blank?
+        count += 1
+      else
+        if person.outcome_date.to_date > date
+          count +=1
+        end
+      end
+    end
+
+    count
+
+  end
 end
 
