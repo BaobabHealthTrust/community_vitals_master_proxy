@@ -106,12 +106,11 @@ def sync_transactions(mode)
 
         end
 
-        to_post = [""] if to_post.empty?
-
         post = RestClient.post(url,{:ids => to_post.to_json, :site => site, :gvh => gvh})
 
         ids = []
         records = JSON.parse(post)
+
         (records || {}).each do |pnid, details|
 
           ActiveRecord::Base.transaction do
@@ -139,6 +138,7 @@ def sync_transactions(mode)
             )
 
             nat_id = NationalIdentifier.find_by_identifier(pnid)
+            outcome = (records[pnid]["person_details"]['outcome'].upcase == "NULL" ? nil : records[pnid]["person_details"]['outcome'])
             if nat_id.person_id.blank?
               person = Person.create(
                   :national_id => nat_id.id,
@@ -148,7 +148,7 @@ def sync_transactions(mode)
                   :gender => records[pnid]["person_details"]['gender'],
                   :birthdate => records[pnid]["person_details"]['dob'],
                   :birthdate_estimated => records[pnid]["person_details"]['dob_estimated'],
-                  :outcome => records[pnid]["person_details"]['outcome'],
+                  :outcome => outcome,
                   :outcome_date =>  records[pnid]["person_details"]['outcome_date'],
                   :village => records[pnid]["person_details"]['village'],
                   :gvh => records[pnid]["person_details"]['gvh'],
@@ -163,7 +163,7 @@ def sync_transactions(mode)
                   :gender => records[pnid]["person_details"]['gender'],
                   :birthdate => records[pnid]["person_details"]['dob'],
                   :birthdate_estimated => records[pnid]["person_details"]['dob_estimated'],
-                  :outcome => records[pnid]["person_details"]['outcome'],
+                  :outcome => outcome,
                   :outcome_date =>  records[pnid]["person_details"]['outcome_date'],
                   :village => records[pnid]["person_details"]['village'],
                   :gvh => records[pnid]["person_details"]['gvh'],
@@ -251,6 +251,7 @@ def sync_transactions(mode)
 
             nat_id = NationalIdentifier.find_by_identifier(pnid)
             if nat_id.person_id.blank?
+              outcome = (records[pnid]["person_details"]['outcome'].upcase == "NULL" ? nil : records[pnid]["person_details"]['outcome']) rescue nil
               person = Person.create(
                   :national_id => nat_id.id,
                   :given_name => records[pnid]["person_details"]['fname'],
@@ -259,7 +260,7 @@ def sync_transactions(mode)
                   :gender => records[pnid]["person_details"]['gender'],
                   :birthdate => records[pnid]["person_details"]['dob'],
                   :birthdate_estimated => records[pnid]["person_details"]['dob_estimated'],
-                  :outcome => records[pnid]["person_details"]['outcome'],
+                  :outcome => outcome,
                   :outcome_date =>  records[pnid]["person_details"]['outcome_date'],
                   :village => records[pnid]["person_details"]['village'],
                   :gvh => records[pnid]["person_details"]['gvh'],
@@ -274,7 +275,7 @@ def sync_transactions(mode)
                   :gender => records[pnid]["person_details"]['gender'],
                   :birthdate => records[pnid]["person_details"]['dob'],
                   :birthdate_estimated => records[pnid]["person_details"]['dob_estimated'],
-                  :outcome => records[pnid]["person_details"]['outcome'],
+                  :outcome => outcome,
                   :outcome_date =>  records[pnid]["person_details"]['outcome_date'],
                   :village => records[pnid]["person_details"]['village'],
                   :gvh => records[pnid]["person_details"]['gvh'],
@@ -313,7 +314,7 @@ mode = YAML.load_file("#{Rails.root}/config/application.yml")["dde_mode"] rescue
 
 settings = YAML.load_file("#{Rails.root}/config/application.yml") rescue {}
     
-connected = false
+connected = true
 
 if !settings.empty?
   

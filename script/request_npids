@@ -7,9 +7,9 @@ mode = YAML.load_file("#{Rails.root}/config/application.yml")["dde_mode"] rescue
 threshold = NationalIdentifier.threshold rescue 0
 ids = NationalIdentifier.available_ids rescue 0
 
- puts threshold
+ #puts threshold
 
- puts ids
+ #puts ids
 
 if ids <= threshold # and ids > 0
 

@@ -156,7 +156,7 @@
           __$("container").innerHTML = "";
 
           <% if @mode == "ta" %>
-            var fields = ["Cohort Report","Monthly Outcomes Report","Monthly Birth Report", "Daily Summary", "Villages Summary" ];
+            var fields = ["Cohort Report","Monthly Outcomes Report","Monthly Birth Report", "Daily Summary", "Villages Summary","TA Register"  ];
 
             var images = [
                 "<%= (File.exists?("#{Rails.root}/public/images/cohort.png") ?
@@ -168,11 +168,14 @@
                 "<%= (File.exists?("#{Rails.root}/public/images/daysummary.png") ?
                       "daysummary.png" : "report.png") %>",
                 "<%= (File.exists?("#{Rails.root}/public/images/villagessummary.png") ?
-                      "villagessummary.png" : "report.png") %>"
+                      "villagessummary.png" : "report.png") %>",
+                "<%= (File.exists?("#{Rails.root}/public/images/taregister.png") ?
+                      "taregister.png" : "report.png") %>"
             ]
 
             var paths = [ "demographics/quarterly_select","demographics/report_index?type=ta_outcomes_by_gvh",
-                "demographics/report_index?type=village_births_by_month","demographics/report_index?type=daily_summary", "demographics/ta_statistics"];
+                          "demographics/report_index?type=village_births_by_month","demographics/report_index?type=daily_summary",
+                          "demographics/ta_statistics","demographics/ta_register" ];
                 
           <% elsif @mode == "gvh" %>
           
@@ -475,9 +478,8 @@
       <img id="network" src="images/ndown.png" height="65" style="margin-right: 20px;
            margin-top: 15px; float: right;" />
 
-      <div id="threshold" style="margin-right: -25px; margin-top: 15px; float: right; color: red;
-           border: 2px solid red; border-radius: 50px; width: 40px; font-size: 18px; padding-bottom: 0px;
-           height: 30px; text-align: center; vertical-align: middle; padding-top: 10px; background-color: rgba(255,255,255,0.6);">
+      <div id="threshold" style="margin-right: -25px; margin-top: 15px; float: right; color: red;border: 2px solid red; border-radius: 50px; width: 40px; font-size: 18px; padding-bottom: 0px;height: 30px; text-align: center; vertical-align: middle; padding-top: 10px; background-color: rgba(255,255,255,0.6);">
+
       </div>
       
       <div id="date" style="float: right; width: 100px; color: #666; 
@@ -489,6 +491,6 @@
            margin-top: 45px; font-size: 2em; text-align: right;">
           08:00
       </div>
- 
+      </div>
   </body>
 </html>

@@ -92,6 +92,7 @@ class NationalIdentifiersController < ApplicationController
       ActiveRecord::Base.transaction do
 
         nat_id = NationalIdentifier.find_by_identifier(pnid)
+        outcome = (records[pnid]["person_details"]['outcome'].upcase == "NULL" ? nil : records[pnid]["person_details"]['outcome']) rescue nil
         if nat_id.person_id.blank?
           person = Person.create(
               :national_id => nat_id.id,
@@ -101,7 +102,7 @@ class NationalIdentifiersController < ApplicationController
               :gender => records[pnid]["person_details"]['gender'],
               :birthdate => records[pnid]["person_details"]['dob'],
               :birthdate_estimated => records[pnid]["person_details"]['dob_estimated'],
-              :outcome => records[pnid]["person_details"]['outcome'],
+              :outcome => outcome,
               :outcome_date =>  records[pnid]["person_details"]['outcome_date'],
               :village => records[pnid]["person_details"]['village'],
               :gvh => records[pnid]["person_details"]['gvh'],
@@ -116,7 +117,7 @@ class NationalIdentifiersController < ApplicationController
               :gender => records[pnid]["person_details"]['gender'],
               :birthdate => records[pnid]["person_details"]['dob'],
               :birthdate_estimated => records[pnid]["person_details"]['dob_estimated'],
-              :outcome => records[pnid]["person_details"]['outcome'],
+              :outcome => outcome,
               :outcome_date =>  records[pnid]["person_details"]['outcome_date'],
               :village => records[pnid]["person_details"]['village'],
               :gvh => records[pnid]["person_details"]['gvh'],
@@ -311,9 +312,9 @@ class NationalIdentifiersController < ApplicationController
     unless params[:ids].nil? or params[:site].nil? or params[:gvh].nil?
     
         existing_people = NationalIdentifier.find(:all, :limit => 10, :conditions => 
-            ['person_id IS NOT NULL AND voided = 0 AND NOT identifier IN (?) AND ' + 
+            ['person_id IS NOT NULL AND COALESCE(voided,0) = 0 AND identifier NOT IN (?) AND ' +
             'assigned_gvh = ? AND site_id = ?', 
-            (JSON.parse(params[:ids]) rescue ""), params[:gvh], params[:site]])
+            (params[:ids]), params[:gvh], params[:site]])
 
         (existing_people || []).each do |identifier|
 
@@ -393,7 +394,7 @@ class NationalIdentifiersController < ApplicationController
   def update_gvh_demographics
   
       result = []
-      
+
       post = params[:details]
   
       (JSON.parse(post) || []).each do |id|

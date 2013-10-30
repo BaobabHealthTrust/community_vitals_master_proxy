@@ -95,11 +95,11 @@ def post_transactions(mode)
     end
 
     url = "http://#{username}:#{password}@#{target}/national_identifiers/update_gvh_demographics"
-
+    puts url
     to_post = []
 
     new_people = NationalIdentifier.find(:all, 
-        :conditions => ['person_id IS NOT NULL AND posted_by_gvh = 0 AND post_gvh_notified = 1 AND voided = 0'])
+        :conditions => ['person_id IS NOT NULL AND posted_by_gvh = 0 AND voided = 0'])
 
     (new_people || []).each do |identifier|
 

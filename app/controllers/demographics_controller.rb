@@ -141,7 +141,7 @@ class DemographicsController < ApplicationController
         @month_summary['outcomes_id']['Alive'] << r.id
         @month_summary['outcomes']['Alive'] += 1
       else
-        if r.outcome_date.to_date > date.beginning_of_month
+        if r.outcome_date.to_date > date.end_of_month
           @month_summary['outcomes_id']['Alive'] << r.id
           @month_summary['outcomes']['Alive'] += 1
         end
@@ -159,17 +159,17 @@ class DemographicsController < ApplicationController
     @village = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["village"] rescue nil
     @gvh = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["gvh"] rescue nil
     @ta = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["ta"] rescue nil
-    people = NationalIdentifier.find(:all, :conditions => ["DATE(assigned_at) <= ? ", date.end_of_month])
-    new_borns = Person.find(:all, :conditions => ["MONTH(birthdate) = ? AND YEAR(birthdate) = ?", date.month, date.year])
+    people = Person.find(:all, :conditions => ["DATE(birthdate) <= ? AND COALESCE(voided,0) = 0", date.end_of_month])
+    new_borns = Person.find(:all, :conditions => ["MONTH(birthdate) = ? AND YEAR(birthdate) = ? AND COALESCE(voided,0) = 0", date.month, date.year])
     @month_summary ={}
     @cumulative_summary = {}
-    @cumulative_summary['count'] = get_eligible(people.map{|x| x.person}, date.end_of_month)
+    @cumulative_summary['count'] = get_eligible(people, date.end_of_month)
     @month_summary['count'] = new_borns.length
     @month_summary['gender_count'],@month_summary['gender_count_id']  = gender_sorter(new_borns.map{|x| x}, date )
     @month_summary['outcomes_id'],@month_summary['outcomes'] = outcome_sorter(new_borns.map{|x| x.outcome_by_date(date.end_of_month)})
     @month_summary['outcomes']['Alive'] = @month_summary['count'] - (@month_summary['outcomes']['Transferred'] + @month_summary['outcomes']['Dead'])
-    @cumulative_summary['outcomes_id'],@cumulative_summary['outcomes'] = outcome_sorter(people.map{|x| x.person.outcome_by_date(date.end_of_month)})
-    @cumulative_summary['gender_count'],@cumulative_summary['gender_count_id']  = gender_counter(people.map{|x| x.person},date.end_of_month)
+    @cumulative_summary['outcomes_id'],@cumulative_summary['outcomes'] = outcome_sorter(people.map{|x| x.outcome_by_date(date.end_of_month)})
+    @cumulative_summary['gender_count'],@cumulative_summary['gender_count_id']  = gender_counter(people,date.end_of_month)
     render :layout => 'report'
   end
 
@@ -191,7 +191,11 @@ class DemographicsController < ApplicationController
     @mode = YAML.load_file("#{Rails.root}/config/application.yml")['dde_mode'] rescue 'vh'
     @gvh = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["gvh"] rescue nil
     @ta = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["ta"] rescue nil
-    @outcomes,@ids = specific_outcome_sorter(NationalIdentifier.find(:all,:conditions => ['person_id IS NOT NULL']),date.end_of_month,'assigned_gvh')
+    people = NationalIdentifier.find(:all,
+                                     :joins => "INNER JOIN people on national_identifiers.person_id = people.id",
+                                     :conditions => [' DATE(people.birthdate) <= ?',date.end_of_month])
+
+    @outcomes,@ids = specific_outcome_sorter(people,date.end_of_month,'assigned_gvh')
     render :layout => 'report'
   end
 
@@ -598,6 +602,55 @@ class DemographicsController < ApplicationController
     end
     
     render :text => ""
+  end
+
+  def ta_register
+
+    count = Person.all(:conditions => ["COALESCE(voided,0) = 0"]).length
+
+    page_size = 10
+
+    current_page = (params[:page].nil? ? 1 : params[:page].to_i)
+
+    @next_page = ((current_page * page_size) < count ? current_page + 1 : current_page)
+
+    @previous_page = (current_page > 1 ? current_page - 1 : current_page)
+
+    @last_page = (count / page_size) + 1
+
+    @people = []
+    @details = {}
+
+    Person.paginate(:page => current_page, :per_page => page_size, :joins => [:identifier], :order => "posted_by_ta",
+                    :conditions => "COALESCE(people.voided,0) = 0").each do |person|
+
+      @people << ["#{person.given_name} #{person.family_name} (#{person.identifier.identifier} - " +
+                      "#{Vocabulary.search(person.gender)} - " +
+                      "#{Vocabulary.search("Age")}: #{person.age})".strip, "#{person.id}"]
+
+      year = person.birthdate.to_date.year
+      month = person.birthdate.to_date.month
+      day = person.birthdate.to_date.day
+
+      @details[person.id] = {
+          Vocabulary.search("Name") => "#{person.given_name} #{person.family_name}",
+          Vocabulary.search("First name") => "#{person.given_name}",
+          Vocabulary.search("Middle name") => "#{person.middle_name}",
+          Vocabulary.search("Last name") => "#{person.family_name}",
+          Vocabulary.search("Birthdate") => "#{year}-#{(month == 7 && person.birthdate_estimated == 1 ? "?-?" :
+              (day == 15 && person.birthdate_estimated == 1 ? "#{"%02d" % month}-?" : "#{"%02d" % month}-#{"%02d" % day}"))}",
+          Vocabulary.search("Gender") => person.gender,
+          Vocabulary.search("National ID") => person.identifier.identifier,
+          Vocabulary.search("Relations") => "#{}",
+          Vocabulary.search("Outcome") => (!person.outcome.blank? ? person.outcome : Vocabulary.search("Alive")),
+          "synced" => (person.identifier.posted_by_ta rescue 0).to_i,
+          "Village" => person.village,
+          "Notified" => person.identifier.post_gvh_notified,
+          "Posted" => person.identifier.posted_by_ta
+      }
+
+    end
+
   end
 
   def getBirths(start_date,end_date)
