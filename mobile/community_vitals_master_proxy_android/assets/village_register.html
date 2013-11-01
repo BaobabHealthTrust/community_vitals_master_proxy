@@ -32,11 +32,11 @@
                 __$("reg").innerHTML = reg;
 					      
                 var page = (window.location.href.match(/\?/) ? window.location.href.match(/page=(\d+)/i) : [0,1])[1];
-					      
+
                 var result = Android.listVillagePeopleNames(page);
-					      
+
                 result = JSON.parse(result);
-					      
+
                 var fields = ["First Name", "Last Name", "National ID", "Gender", 
                     "Birthdate", "Outcome", "synced"];
                 

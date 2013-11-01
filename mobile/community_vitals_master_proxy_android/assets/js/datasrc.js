@@ -882,15 +882,15 @@ function selectDate(){
 
 
     var months = {
-        "January":"1",
-        "February":"2",
-        "March":"3",
-        "April":"4",
-        "May":"5",
-        "June":"6",
-        "July":"7",
-        "August":"8",
-        "September":"9",
+        "January":"01",
+        "February":"02",
+        "March":"03",
+        "April":"04",
+        "May":"05",
+        "June":"06",
+        "July":"07",
+        "August":"08",
+        "September":"09",
         "October":"10",
         "November":"11",
         "December":"12"
@@ -1185,8 +1185,8 @@ function cohort_report(){
     if (type == "Quarter")
     {
         var param_quarter =  __$("1.2").value.trim();
-        year = param_quarter.substr(2,4);
-        quarter = year = param_quarter.substr(0,2);
+        year = param_quarter.substr(3,5);
+        quarter =  param_quarter.substr(0,2);
         title = "Cohort Report For " + param_quarter;
 
         if (quarter == "Q1")
@@ -1228,8 +1228,8 @@ function cohort_report(){
         location = "TA: " + Android.getPref("ta") + " GVH: " + Android.getPref("gvh")+ " VH: " + Android.getPref("vh");
     }
 
-    Android.setPref("cohort_start", start_date);
-    Android.setPref("cohort_end", end_date);
+    Android.setPref("cohort_start", start_date.trim());
+    Android.setPref("cohort_end", end_date.trim());
     Android.setPref("cohort_title", title);
     Android.setPref("cohort_location", location);
     window.location = "cohort_report.html"

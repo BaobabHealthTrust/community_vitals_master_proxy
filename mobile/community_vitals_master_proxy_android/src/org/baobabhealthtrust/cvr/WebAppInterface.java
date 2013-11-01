@@ -930,55 +930,40 @@ public class WebAppInterface {
 	}
 
 	@JavascriptInterface
-	public void getDailySummary(String date) {
+	public String getDailySummary(String date) {
 		
+		JSONObject json = new JSONObject();
 		
+		try
+		{
 		
-		int today_count = mDB.getPeopleCountOnDate(date);
-		int count = mDB.getPeopleCount();
-		
-		int male = mDB.getGenderCount(date,date, "Male");
-		int female = mDB.getGenderCount(date, date, "Female");
-		int dead = mDB.getOutcomeCount(date,date,"dead");
-		int transfer = mDB.getOutcomeCount(date,date,"transfer out");
-		int alive =  mDB.getAlive("1900-01-01", date);
-		int children = mDB.getCountInAgeGroup(0, 12, date, date);
-		int youth = mDB.getCountInAgeGroup(13, 21, date, date);
-		int adult = mDB.getCountInAgeGroup(22, 59, date, date);
-		int granny = mDB.getCountInAgeGroup(60, 200, date, date);
-		int cul_dead = mDB.getOutcomeCount("1900-01-01",date,"dead");
-		int cul_transfer = mDB.getOutcomeCount("1900-01-01",date,"transfer out");
-		int cul_alive =  mDB.getAlive("1900-01-01", date);
-		int cul_male = mDB.getGenderCount("1900-01-01",date, "Male");
-		int cul_female = mDB.getGenderCount("1900-01-01", date, "Female");
-		int cul_children = mDB.getCountInAgeGroup(0, 12, "1900-01-01", date);
-		int cul_youth = mDB.getCountInAgeGroup(13, 21, "1900-01-01", date);
-		int cul_adult = mDB.getCountInAgeGroup(22, 59, "1900-01-01", date);
-		int cul_granny = mDB.getCountInAgeGroup(60, 200, "1900-01-01", date);
+			json.put("popln", mDB.getPeopleCountOnDate(date));
+			json.put("females", mDB.getGenderCount(date, date, "Female"));
+			json.put("males",mDB.getGenderCount(date,date, "Male"));
+			json.put("under 1", mDB.getCountInAgeGroup(0, 0, date, date));
+			json.put("1-4", mDB.getCountInAgeGroup(1, 4, date, date));
+			json.put("5-14", mDB.getCountInAgeGroup(5, 14, date, date));
+			json.put("15-24", mDB.getCountInAgeGroup(15, 24, date, date));
+			json.put("25-34", mDB.getCountInAgeGroup(25, 34, date, date));
+			json.put("35-44", mDB.getCountInAgeGroup(35, 44, date, date));
+			json.put("45-54", mDB.getCountInAgeGroup(45, 54, date, date));
+			json.put("55-64", mDB.getCountInAgeGroup(55, 64, date, date));
+			json.put("65-74", mDB.getCountInAgeGroup(65, 74, date, date));
+			json.put("75 and above", mDB.getCountInAgeGroup(75, 200, date, date));
+			json.put("dead", mDB.getOutcomesOnDate(date,"dead"));
+			json.put("transfer", mDB.getOutcomesOnDate(date,"transfer out"));
 
-		
-		setPref("new_popln", String.valueOf(today_count));
-		setPref("popln", String.valueOf(count));
-		setPref("male", String.valueOf(male));
-		setPref("female", String.valueOf(female));
-		setPref("alive", String.valueOf(alive));
-		setPref("dead", String.valueOf(dead));
-		setPref("children", String.valueOf(children));
-		setPref("youth", String.valueOf(youth));
-		setPref("adult", String.valueOf(adult));
-		setPref("granny", String.valueOf(granny));
-		setPref("transfer", String.valueOf(transfer));
-		setPref("cul_male", String.valueOf(cul_male));
-		setPref("cul_female", String.valueOf(cul_female));
-		setPref("cul_alive", String.valueOf(cul_alive));
-		setPref("cul_dead", String.valueOf(cul_dead));
-		setPref("cul_transfer", String.valueOf(cul_transfer));
-		setPref("cul_children", String.valueOf(cul_children));
-		setPref("cul_youth", String.valueOf(cul_youth));
-		setPref("cul_adult", String.valueOf(cul_adult));
-		setPref("cul_granny", String.valueOf(cul_granny));
+		}
+		catch(JSONException e)
+		{
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	        return e.toString();
+
+		}
 		
 		
+		return json.toString();
 	}
 
 	@JavascriptInterface
@@ -998,7 +983,7 @@ public class WebAppInterface {
 		int previous_page = (current_page > 1 ? current_page - 1 : current_page);
 
 		int last_page = (int) Math.floor((double) (count / mDB.PAGE_SIZE)) + 1;
-
+		//need to investigate
 		List<People> people = mDB.getAllPeople(current_page);
 
 		for (int i = 0; i < people.size(); i++) {
@@ -1437,13 +1422,13 @@ public class WebAppInterface {
 	
 	@JavascriptInterface
 	public int getCulAlive(String date){
-		return mDB.getCulAlive(date);
+		return mDB.getAlive("1900-01-01",date);
 	}
 	
 	@JavascriptInterface
-	public int getCulOutcome(String outcome){
+	public int getCulOutcome(String date, String outcome){
 		
-		return mDB.getCulOutcome(outcome);
+		return mDB.getOutcomeCount(date,date,outcome);
 		
 	}
 	
@@ -1528,7 +1513,7 @@ public class WebAppInterface {
 		
 		try{
 		
-			cohort_category.put("number alive males", mDB.getGenderCount(start_date, end_date, "Female"));
+			cohort_category.put("number alive males", mDB.getGenderCount(start_date, end_date, "Male"));
 			cohort_category.put("number alive females", mDB.getGenderCount(start_date, end_date, "Female"));
 			cohort_category.put("new births males",  mDB.getBirthsInRange(start_date, end_date, "Male"));
 			cohort_category.put("new births females", mDB.getBirthsInRange(start_date, end_date, "Female"));

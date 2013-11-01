@@ -19,7 +19,7 @@ def start
      ack_url = "http://#{username}:#{password}@#{target}/people/acknowledge_traditional_authority_push"
 
      params = {
-        :district => district, :traditional_authority => ta, :site_code => 'MPC'
+        :district => district, :traditional_authority => ta, :site_code => site_code
      }
 
      demographics = RestClient.post(url,params)

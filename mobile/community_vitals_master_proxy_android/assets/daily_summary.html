@@ -21,7 +21,7 @@
             });
             var mode = Android.getPref("dde_mode");
             var day =  Android.getPref("query_date");
-            Android.getDailySummary(day);
+
             document.getElementById('duration').innerHTML += ( " " +  Android.getPref("report_date"));
             if (mode == 'gvh')
             {
@@ -44,33 +44,16 @@
                 document.getElementById('vh').innerHTML = Android.getPref("vh");
             }
 
+            var fields = [  "popln","females","males","under 1", "1-4","5-14","15-24","25-34","35-44",
+                             "45-54","55-64","65-74","75 and above", "dead","transfer"
+                         ];
+            var data = Android.getDailySummary(day);
+            data = JSON.parse(data);
 
-            __$("parent").innerHTML = "<table style='width: 100%'>" +
-                    "<tr class='heading' ><td style='text-align: center;width:60%'>Indicator</td>"+
-                    "<td style='text-align: center;width:20%'>Registered Today</td><td style='text-align:center;'>Cumulative</td>"+
-                    "</tr><tr class='headings'><td colspan='3' >General Population Statistics</td></tr><tr>" +
-                    "<td>Total Population</td><td class='count'>"+ Android.getPref("new_popln")+"</td>"+
-                    "<td class='count'>" +Android.getPeople(day) + "</td></tr>"+
-                    "<tr class='headings'><td colspan='3' >Total Population by Gender</td></tr>"+
-                    "<tr><td>Females</td><td class='count'>"+ Android.getPref('female') +
-                    "</td><td class='count'>"+ Android.getPref('cul_female') +"</td></tr>"+
-                    "<tr><td>Males</td><td class='count'>"+ Android.getPref('male') +
-                    "</td><td class='count'>"+ Android.getPref('cul_male') +"</td></tr><tr>"+
-                    "<tr class='headings'><td colspan='3' >Total Population By Age</td></tr>"+
-                    "<tr><td>Children( < 12 Years)</td><td class='count'>"+ Android.getPref('children') +
-                    "</td><td class='count'>"+ Android.getPref('cul_children') +"</td></tr><tr>"+
-                    "<tr><td>Youths (12-21 Years)</td><td class='count'>"+ Android.getPref('youth') +
-                    "</td><td class='count'>"+ Android.getPref('cul_youth') +"</td></tr><tr>"+
-                    "<tr><td>Working Population (22-59 Years)</td><td class='count'>"+ Android.getPref('adult') +
-                    "</td><td class='count'>"+ Android.getPref('cul_adult') +"</td></tr><tr>"+
-                    "<tr><td>Older Population (>= 60 years)</td><td class='count'>"+ Android.getPref('granny') +
-                    "</td><td class='count'>"+ Android.getPref('cul_granny') +"</td></tr><tr>"+
-                    "<tr class='headings'><td colspan='3' >Total Population By Outcome</td></tr>"+
-                    "<tr><td>Transferred</td><td class='count'>"+ Android.getOutcomesByDate(day, 'transfer out') +
-                    "</td><td class='count'>"+ Android.getOutcomesByDate(day,'transfer out') +"</td></tr><tr>"+
-                    "<tr><td>Dead</td><td class='count'>"+ Android.getOutcomesOnDate(day,'dead') +
-                    "</td><td class='count'>"+ Android.getOutcomesByDate(day,'dead') +"</td></tr><tr>"+
-                    "</table>";
+            for (var i = 0; i < fields.length; i++)
+            {
+                document.getElementById(fields[i]).innerHTML = data[fields[i]];
+            }
 
         }
         //-->
@@ -138,12 +121,92 @@
             <div id="parent" style="background-color: #f1f1f1; min-height: 400px;max-height: 80%;
               width: 100%; margin: 0px; margin-top: -5px; padding: 0px;overflow: auto;">
 
+                <table style='width: 100%'>
+                <tr class='heading' >
+                    <td style='text-align: center;width:60%'>Indicator</td>
+                    <td style='text-align:center;'>Summary</td>
+                </tr>
+                <tr class='headings'>
+                    <td colspan='3' >General Population Statistics</td>
+                </tr>
+                <tr>
+                    <td>Total Population Alive</td>
+                    <td class='count' id= "popln">0</td>
+                </tr>
+                <tr class='headings'>
+                    <td colspan='3' >Total Population by Gender</td>
+                </tr>
+                <tr>
+                    <td>Females</td>
+                    <td class='count' id="females">0</td>
+                </tr>
+                <tr>
+                    <td>Males</td>
+                    <td class='count' id="males">0</td>
+                </tr>
+                <tr class='headings'>
+                    <td colspan='3' >Total Population By Age</td>
+                </tr>
+                <tr>
+                     <td>0 to < 1 </td>
+                     <td class='count' id="under 1">0</td>
+                </tr>
+                <tr>
+                     <td>1 - 4</td>
+                     <td class='count' id="1-4">0</td>
+                </tr>
+                <tr>
+                     <td>5 - 14</td>
+                     <td class='count' id="5-14">0</td>
+                </tr>
+                <tr>
+                    <td>15 - 24</td>
+                    <td class='count' id="15-24">0</td>
+                </tr>
+                <tr>
+                    <td>25 - 34</td>
+                    <td class='count' id="25-34" >0</td>
+                </tr>
+                <tr>
+                    <td>35 - 44</td>
+                    <td class='count' id="35-44">0</td>
+                </tr>
+                <tr>
+                    <td>45 - 54</td>
+                    <td class='count' id="45-54">0</td>
+                </tr>
+                 <tr>
+                    <td>55 - 64</td>
+                    <td class='count' id="55-64">0</td>
+                </tr>
+                <tr>
+                    <td>65 - 74</td>
+                    <td class='count' id="65-74">0</td>
+                </tr>
+                <tr>
+                    <td>75 and above</td>
+                    <td class='count' id="75 and above">0</td>
+                </tr>
+                <tr class='headings'>
+                    <td colspan='3' >Outcomes in Population Today</td>
+                </tr>
+                <tr>
+                    <td>Transferred</td>
+                    <td class='count' id="transfer">0</td>
+                </tr>
+                <tr>
+                    <td>Dead</td>
+                    <td class='count' id="dead">0</td>
+
+                </tr>
+
+             </table>
 
 
             </div>
 
             <div class="nav" style="position: absolute; bottom: 0px; border: 1px #fff solid; height: 64px;
-              width: 100%; background-color: #666; margin: 0px; margin-bottom: -65px;
+              width: 100%; background-color: #666; margin: 0px; margin-bottom: -71px;
               margin-left: -5px; ">
 
                 <a id="home" style="float: left;">

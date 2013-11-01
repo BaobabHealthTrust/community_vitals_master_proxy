@@ -3,4 +3,5 @@ log/
 tmp/
 *.yml
 .idea/
-mobile/community_vitals_master_proxy_android/bin/*
+mobile/community_vitals_master_proxy_android/bin/
+*~

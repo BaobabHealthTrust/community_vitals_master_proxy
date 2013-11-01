@@ -475,63 +475,70 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 					JSONObject identifier_details = records.getJSONObject(key)
 							.getJSONObject("identifier_details");
 
-					identifier.setCreatedAt(identifier_details
-							.get("created_at").toString());
-
-					identifier.setVoided(Integer.parseInt(identifier_details
-							.get("voided").toString()));
-
-					identifier.setPostedByGvh(Integer
-							.parseInt(identifier_details.get("posted_by_gvh")
-									.toString()));
-
-					identifier.setRequestGvhNotified(Integer
-							.parseInt(identifier_details.get(
-									"request_gvh_notified").toString()));
-
-					identifier.setPostedByGvh(Integer
-							.parseInt(identifier_details.get("posted_by_vh")
-									.toString()));
-
-					identifier.setRequestVhNotified(Integer
-							.parseInt(identifier_details.get(
-									"request_vh_notified").toString()));
-
-					identifier.setPostGvhNotified(Integer
-							.parseInt(identifier_details.get(
-									"post_gvh_notified").toString()));
-
-					identifier.setVoidReason(identifier_details.get(
-							"void_reason").toString());
-
-					identifier.setRequestedByVh(Integer
-							.parseInt(identifier_details.get("requested_by_vh")
-									.toString()));
-
-					identifier.setAssignedGvh(identifier_details.get(
-							"assigned_gvh").toString());
-
-					identifier.setSiteId(identifier_details.get("site_id")
-							.toString());
-
-					identifier.setUpdatedAt(identifier_details
-							.get("updated_at").toString());
-
-					identifier.setRequestedByGvh(Integer
-							.parseInt(identifier_details
-									.get("requested_by_gvh").toString()));
-
-					identifier.setAssignedVh(identifier_details.get(
-							"assigned_vh").toString());
-
-					identifier.setIdentifier(identifier_details.get(
+					Boolean id_exists = mDB.checkNationalIdentifier(identifier_details.get(
 							"identifier").toString());
 
-					identifier.setDateVoided(identifier_details.get(
-							"date_voided").toString());
+					if (!id_exists)
+					{
+						identifier.setCreatedAt(identifier_details
+								.get("created_at").toString());
 
-					mDB.addNationalIdentifiers(identifier);
+						identifier.setVoided(Integer.parseInt(identifier_details
+								.get("voided").toString()));
 
+						identifier.setPostedByGvh(Integer
+								.parseInt(identifier_details.get("posted_by_gvh")
+										.toString()));
+
+						identifier.setRequestGvhNotified(Integer
+								.parseInt(identifier_details.get(
+										"request_gvh_notified").toString()));
+
+						identifier.setPostedByGvh(Integer
+								.parseInt(identifier_details.get("posted_by_vh")
+										.toString()));
+
+						identifier.setRequestVhNotified(Integer
+								.parseInt(identifier_details.get(
+										"request_vh_notified").toString()));
+
+						identifier.setPostGvhNotified(Integer
+								.parseInt(identifier_details.get(
+										"post_gvh_notified").toString()));
+
+						identifier.setVoidReason(identifier_details.get(
+								"void_reason").toString());
+
+						identifier.setRequestedByVh(Integer
+								.parseInt(identifier_details.get("requested_by_vh")
+										.toString()));
+
+						identifier.setAssignedGvh(identifier_details.get(
+								"assigned_gvh").toString());
+
+						identifier.setSiteId(identifier_details.get("site_id")
+								.toString());
+
+						identifier.setUpdatedAt(identifier_details
+								.get("updated_at").toString());
+
+						identifier.setRequestedByGvh(Integer
+								.parseInt(identifier_details
+										.get("requested_by_gvh").toString()));
+
+						identifier.setAssignedVh(identifier_details.get(
+								"assigned_vh").toString());
+
+						identifier.setIdentifier(identifier_details.get(
+								"identifier").toString());
+
+						identifier.setDateVoided(identifier_details.get(
+								"date_voided").toString());
+
+						mDB.addNationalIdentifiers(identifier);
+
+					}
+					
 					NationalIdentifiers nat_id = mDB
 							.getNationalIdentifierByIDentifier(key);
 
@@ -542,9 +549,12 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 
 					person.setGivenName(person_details.get("fname").toString());
 
-					person.setMiddleName(person_details.get("middle_name")
-							.toString());
-
+					if (person_details.get("middle_name").toString() != "null")
+					{
+						person.setMiddleName(person_details.get("middle_name")
+								.toString());	
+					}
+					
 					person.setFamilyName(person_details.get("lname").toString());
 
 					person.setGender(person_details.get("gender").toString());
@@ -555,10 +565,15 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 							.parseInt(person_details.get("dob_estimated")
 									.toString()));
 
-					person.setOutcome(person_details.get("outcome").toString());
-
-					person.setOutcomeDate(person_details.get("outcome_date")
-							.toString());
+					if (person_details.get("outcome").toString() != "null")
+					{
+						person.setOutcome(person_details.get("outcome").toString());	
+					}
+					if (person_details.get("outcome_date").toString() != "null")
+					{
+						person.setOutcomeDate(person_details.get("outcome_date")
+								.toString());	
+					}
 
 					person.setVillage(person_details.get("village").toString());
 
@@ -567,18 +582,29 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
 					person.setTa(person_details.get("ta").toString());
 
 					person.setNationalId(nat_id.getId() + "");
+					
+					People person_id;
 
-					mDB.addPeople(person);
+					if (nat_id.getPersonId() == 0)
+					{
+						mDB.addPeople(person);
 
-					People person_id = mDB.getPersonByNpid(nat_id.getId());
+						person_id = mDB.getPersonByNpid(nat_id.getId());
 
-					NationalIdentifiers n_id = mDB
-							.getNationalIdentifierByIDentifier(key);
+						NationalIdentifiers n_id = mDB
+								.getNationalIdentifierByIDentifier(key);
 
-					n_id.setPersonId(person_id.getId());
+						n_id.setPersonId(person_id.getId());
 
-					mDB.updateNationalIdentifiers(n_id);
-
+						mDB.updateNationalIdentifiers(n_id);
+	
+					}
+					else 
+					{
+						person_id = mDB.getPersonByNpid(nat_id.getId());
+						mDB.updatePeople(person);
+					}
+					
 					JSONArray relationships = records.getJSONObject(key)
 							.getJSONArray("relationships");
 
