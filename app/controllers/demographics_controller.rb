@@ -70,7 +70,7 @@ class DemographicsController < ApplicationController
     nat_ids = NationalIdentifier.find(:all, :conditions => ["DATE(assigned_at) >= ? AND DATE(assigned_at) <= ?", @start_date,@end_date])
     cumulative = cumulative_summarizer(@end_date)
     cohort_gender_count,cohort_gender_count_ids = gender_counter(nat_ids.map{|x| x.person}, @end_date)
-    cohort_ages,cohort_ages_ids = age_categorizer(nat_ids.map{|x| x.person})
+    cohort_ages,cohort_ages_ids = age_categorizer(nat_ids.map{|x| x.person},@end_date)
     cohort_outcomes_id, cohort_outcomes = outcome_sorter(nat_ids.map{|x| x.person.outcome_by_date(@end_date)})
     @keys = ['Registration Details','Registered People By Age','Registered People By Outcome']
     @report = {}
@@ -95,15 +95,15 @@ class DemographicsController < ApplicationController
 
     if params[:report_type] == "Quarterly"
       @start_date,@end_date = cohort_date_range(params[:quarter])
-      @title = "Cohort Report For #{params[:quarter]}  (#{@start_date.strftime('%d %B %Y')} TO #{@end_date.strftime('%d %B %Y')})"
+      @title = "#{Vocabulary.search('Cohort Report for')} #{params[:quarter]}  (#{@start_date.strftime('%d %B %Y')} #{Vocabulary.search('To')} #{@end_date.strftime('%d %B %Y')})"
     elsif params[:report_type] == "Annual"
       @start_date,@end_date = ["01/01/#{params[:year]}".to_date,"12/31/#{params[:year]}".to_date ]
-      @title = "Cohort Report For #{params[:year]}"
+      @title = "#{Vocabulary.search('Cohort Report for')} #{params[:year]}"
     end
 
 
     @keys = ['Registered People Alive','Age Distribution', 'New Births', 'Deaths', 'Transfer Out']
-    @age_key = ['0 to < 1' , '1-4','5-14', '15-24', '25-34','35-44', '45-54', '55-64', '65-74','75 and above']
+    @age_key = ['0 to < 1' , '1-4','5-14', '15-24', '25-34','35-44', '45-54', '55-64', '65-74','75+']
     @report = Hash.new([])
     people = people = Person.find(:all,
                                   :conditions => ["COALESCE(voided,0) = ? AND (outcome IS NULL OR outcome_date > ? ) ",0,@end_date])
@@ -357,9 +357,9 @@ class DemographicsController < ApplicationController
 
   def age_categorizer(people, date)
     age_groups = {'0 to < 1' => 0, '1-4' => 0,'5-14' => 0, '15-24' => 0, '25-34'=> 0,
-                  '35-44'=> 0, '45-54' => 0, '55-64' => 0, '65-74'=> 0,'75 and above'=> 0 }
+                  '35-44'=> 0, '45-54' => 0, '55-64' => 0, '65-74'=> 0,'75+'=> 0 }
     age_groups_ids = {'0 to < 1' => [], '1-4' => [],'5-14' => [], '15-24' => [], '25-34'=> [],
-                      '35-44'=> [], '45-54' => [], '55-64' => [], '65-74'=> [],'75 and above'=> []}
+                      '35-44'=> [], '45-54' => [], '55-64' => [], '65-74'=> [],'75+'=> []}
     (people || []).each do |person|
       next if person.outcome_date.to_date <= date rescue false
       age = Date.today.year.to_i - person.birthdate.year.to_i
@@ -391,8 +391,8 @@ class DemographicsController < ApplicationController
         age_groups['65-74'] +=1
         age_groups['65-74'] << person.id
       elsif (age >= 75)
-        age_groups['75 and above'] +=1
-        age_groups_ids['75 and above'] << person.id
+        age_groups['75+'] +=1
+        age_groups_ids['75+'] << person.id
       end
 
     end
@@ -402,7 +402,7 @@ class DemographicsController < ApplicationController
   def age_sorter(people, date)
 
     age_groups = {'0 to < 1' => [0,0], '1-4' => [0,0],'5-14' => [0,0], '15-24' => [0,0], '25-34'=> [0,0],
-                  '35-44'=> [0,0], '45-54' => [0,0], '55-64' => [0,0], '65-74'=> [0,0],'75 and above'=> [0,0] }
+                  '35-44'=> [0,0], '45-54' => [0,0], '55-64' => [0,0], '65-74'=> [0,0],'75+'=> [0,0] }
     gender = {'Male' => 0, 'Female' => 1}
     age_groups_ids = []
 
@@ -427,7 +427,7 @@ class DemographicsController < ApplicationController
       elsif (age >= 65 && age <= 74 )
         age_groups['65-74'][gender[person.gender].to_i] +=1
       elsif (age >= 75)
-        age_groups['75 and above'][gender[person.gender].to_i] +=1
+        age_groups['75+'][gender[person.gender].to_i] +=1
       end
     end
     age_groups

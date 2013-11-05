@@ -19,7 +19,7 @@
 <form method='post' action=<%= params[:type] %> >
 
   <%= text_field_tag "start_date", nil, {
-          :helpText => @text,
+          :helpText => Vocabulary.search(@text),
           :field_type => 'date',
           :id => 'start_date'}  %>
 

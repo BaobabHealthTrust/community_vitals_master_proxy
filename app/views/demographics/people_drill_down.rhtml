@@ -42,7 +42,7 @@
 
       <tr >
         <% @keys.each do |key| %>
-            <td class="heading"><%= key %></td>
+            <td class="heading"><%= Vocabulary.search(key) %></td>
         <% end %>
       </tr>
       <% (@data || []).each do |row| %>

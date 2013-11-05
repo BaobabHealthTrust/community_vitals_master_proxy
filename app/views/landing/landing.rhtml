@@ -156,7 +156,7 @@
           __$("container").innerHTML = "";
 
           <% if @mode == "ta" %>
-            var fields = ["Cohort Report","Monthly Outcomes Report","Monthly Birth Report", "Daily Summary", "Villages Summary","TA Register"  ];
+            var fields = ["Cohort Report","Monthly Outcomes Report","Monthly Births Report", "Daily Summary", "Villages Summary","TA Register"  ];
 
             var images = [
                 "<%= (File.exists?("#{Rails.root}/public/images/cohort.png") ?
@@ -179,7 +179,7 @@
                 
           <% elsif @mode == "gvh" %>
           
-            var fields = ["Cohort Report","Monthly Outcomes Report","Monthly Birth Report", 
+            var fields = ["Cohort Report","Monthly Outcomes Report","Monthly Births Report",
                 "Daily Summary", "Villages Summary", "GVH Register" ];
 
             var images = [
@@ -205,8 +205,10 @@
                 
           <%else %>
           
-            var fields = ["Cohort Report ", "Monthly Outcomes Report","Monthly Birth Report",
-                  "Daily Summary", "Village Summary", "Village Register" ];
+            var fields = ["<%= Vocabulary.search('cohort report') %>", "<%= Vocabulary.search('Monthly Outcomes Report')%>",
+                          "<%= Vocabulary.search('Monthly Births Report') %>", "<%= Vocabulary.search('Daily Summary') %>",
+                          "<%= Vocabulary.search('Village Summary') %>", "<%= Vocabulary.search('Village Register') %>" ];
+
 
             var images = [
                 "<%= (File.exists?("#{Rails.root}/public/images/cohort.png") ?

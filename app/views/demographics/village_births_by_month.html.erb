@@ -48,19 +48,19 @@
       <td style="width: 130px;text-align: center" rowspan="4">
         <img src="/images/baobab.png" style="height: 100px;width:100px;">
       </td>
-      <td colspan="3" style="vertical-align: top; font-size: 25px; font-weight: bold;">Monthly Birth Report For <%= @duration %></td>
+      <td colspan="3" style="vertical-align: top; font-size: 25px; font-weight: bold;"><%= Vocabulary.search('Monthly Birth Report')%> <%= @duration %></td>
 
     </tr>
     <tr>
-      <td style="font-size: 18px; font-weight: bold;width: 250px;">Traditional Authority</td><td style="width:5px;">:</td><td><%= @ta %></td>
+      <td style="font-size: 18px; font-weight: bold;width: 250px;"><%= Vocabulary.search('Traditional Authority')%></td><td style="width:5px;">:</td><td><%= @ta %></td>
     </tr>
     <% if @mode == "gvh" || @mode == "vh" %>
         <tr>
-          <td style="font-size: 18px; font-weight: bold;">Group Village Headman</td><td>:</td><td><%= @gvh%></td>
+          <td style="font-size: 18px; font-weight: bold;"><%= Vocabulary.search('Group Village Headman')%></td><td>:</td><td><%= @gvh%></td>
         </tr>
         <% if @mode == "vh" %>
             <tr>
-              <td style="font-size: 18px; font-weight: bold;">Village Headman</td><td>:</td><td><%= @village%></td>
+              <td style="font-size: 18px; font-weight: bold;"><%= Vocabulary.search('Village Headman')%></td><td>:</td><td><%= @village%></td>
             </tr>
         <% end %>
     <% end %>
@@ -71,16 +71,13 @@
   <table style="width: 100%">
 
     <tr style="font-size: 23px;font-weight:bold;">
-      <td style="width: 50%;">&nbsp</td><td style="text-align: center">New Births</td><td style="text-align: center">Total Population Alive</td>
+      <td style="width: 50%;">&nbsp</td><td style="text-align: center">
+      <%= Vocabulary.search('New Births') %></td>
+      <td style="text-align: center"><%= Vocabulary.search('Total Population') %></td>
     </tr>
-    <tr class="heading"><td colspan="3"> Population Birth Statistics</td></tr>
-    <tr class="indicator">
-      <td>Total Population</td>
-      <td style="text-align: center"><%= @month_summary['count'] %></td>
-      <td style="text-align: center"><%= @cumulative_summary['count'] %></td>
-    </tr>
+    <tr class="heading"><td colspan="3"><%= Vocabulary.search('Population Birth Statistics') %></td></tr>
     <tr class="indicators">
-      <td>Males</td>
+      <td><%= Vocabulary.search('Males') %></td>
       <td class="count" onclick="send_to(<%= @month_summary['gender_count_id']['males'].to_json %>,'Registered Males', 'gender' )">
         <%= @month_summary['gender_count']['males'] %>
       </td>
@@ -89,7 +86,7 @@
       </td>
     </tr>
     <tr class="indicator">
-      <td>Females</td>
+      <td><%= Vocabulary.search('Females') %></td>
       <td class="count" onclick="send_to(<%= @month_summary['gender_count_id']['females'].to_json %>,'Registered Females', 'gender' )">
         <%= @month_summary['gender_count']['females'] %>
       </td>
@@ -97,34 +94,39 @@
         <%= @cumulative_summary['gender_count']['females'] %>
       </td>
     </tr>
+    <tr class="indicators">
+      <td><%= Vocabulary.search('Total') %> </td>
+      <td style="text-align: center"><%= @month_summary['count'] %></td>
+      <td style="text-align: center"><%= @cumulative_summary['count'] %></td>
+    </tr>
     <tr class="heading">
       <td colspan="3"> &nbsp;</td></tr>
     <tr class="heading">
-      <td colspan="3"> Population Survival Statistics</td></tr>
+      <td colspan="3"> <%= Vocabulary.search('Population Survival Statistics') %></td></tr>
     <tr class="indicators">
-      <td>Alive</td>
-      <td class="count" onclick=" send_to(<%= @month_summary['outcomes_id']['Alive'].to_json %>,'People Who Registered This Month And Are Alive', 'outcomes' )">
+      <td><%= Vocabulary.search('People Alive') %></td>
+      <td class="count" onclick=" send_to(<%= @month_summary['outcomes_id']['Alive'].to_json %>,'<%= Vocabulary.search('People Who Registered This Month And Are Alive') %>', 'outcomes' )">
         <%= @month_summary['outcomes']['Alive'] %>
       </td>
-      <td class="count" onclick=" send_to(<%= @cumulative_summary['outcomes_id']['Alive'].to_json %>,'People Who Registered And Are Alive', 'outcomes' )">
+      <td class="count" onclick=" send_to(<%= @cumulative_summary['outcomes_id']['Alive'].to_json %>,'<%= Vocabulary.search('Registered People Alive')%>', 'outcomes' )">
         <%= @cumulative_summary['outcomes']['Alive'] %>
       </td>
     </tr>
     <tr class="indicator">
-      <td>Dead</td>
-      <td class="count" onclick="send_to(<%= @month_summary['outcomes_id']['Dead'].to_json %>,'Registered People Who Died Within A Month', 'outcomes' )">
+      <td><%= Vocabulary.search('People Who Died') %></td>
+      <td class="count" onclick="send_to(<%= @month_summary['outcomes_id']['Dead'].to_json %>,'<%= Vocabulary.search('People Registered In Month And Died') %>', 'outcomes' )">
         <%= @month_summary['outcomes']['Dead'] %>
       </td>
-      <td class="count" onclick=" send_to(<%= @cumulative_summary['outcomes_id']['Dead'].to_json %>,'People Who Registered And Died', 'outcomes' )">
+      <td class="count" onclick=" send_to(<%= @cumulative_summary['outcomes_id']['Dead'].to_json %>,'<%= Vocabulary.search('People Who Died') %>', 'outcomes' )">
         <%= @cumulative_summary['outcomes']['Dead']%>
       </td>
     </tr>
     <tr class="indicators">
-      <td>Transferred Out</td>
-      <td class="count" onclick=" send_to(<%= @month_summary['outcomes_id']['Transferred'].to_json %>,'People Who Registered This Month And Transferred', 'outcomes' )">
+      <td><%= Vocabulary.search('Transferred Out') %></td>
+      <td class="count" onclick=" send_to(<%= @month_summary['outcomes_id']['Transferred'].to_json %>,'<%= Vocabulary.search('People Who Registered In Month And Transferred') %>', 'outcomes' )">
         <%= @month_summary['outcomes']['Transferred'] %>
       </td>
-      <td class="count" onclick=" send_to(<%= @cumulative_summary['outcomes_id']['Transferred'].to_json %>,'People Who Registered And Transferred', 'outcomes' )">
+      <td class="count" onclick=" send_to(<%= @cumulative_summary['outcomes_id']['Transferred'].to_json %>,'<%= Vocabulary.search('People Who Transferred Out') %>', 'outcomes' )">
         <%= @cumulative_summary['outcomes']['Transferred'] %>
       </td>
     </tr>

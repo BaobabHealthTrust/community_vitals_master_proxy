@@ -41,19 +41,19 @@
      }
 
   %>
-  <%= select_tag 'report_type', options_for_select([["Quarterly Report", "Quarterly"],["Annual Report", "Annual"]]),
-                 {:helpText => "Select Quarter",
+  <%= select_tag 'report_type', options_for_select([[Vocabulary.search("Quarterly Report"), "Quarterly"],[Vocabulary.search("Annual Report"), "Annual"]]),
+                 {:helpText => Vocabulary.search("Select Report Type"),
                   :tt_onLoad => "__$('keyboard').style.display = 'none'",
                  } %>
 
   <%= select_tag 'quarter', options_for_select( qtrs ),
-                 {:helpText => "Select Quarter",
+                 {:helpText => Vocabulary.search("Select Quarter"),
                   :tt_onLoad => "__$('keyboard').style.display = 'none'",
                   :condition => "$('report_type').value == 'Quarterly'"
                  } %>
 
   <%= select_tag 'year', options_for_select( years ),
-                 {:helpText => "Select Year",
+                 {:helpText => Vocabulary.search("Select Year"),
                   :tt_onLoad => "__$('keyboard').style.display = 'none'",
                   :condition => "$('report_type').value == 'Annual'"
                  } %>

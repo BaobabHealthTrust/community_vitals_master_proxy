@@ -49,19 +49,24 @@
       <td style="width: 130px;text-align: center" rowspan="4">
         <img src="/images/baobab.png" style="height: 100px;width:100px;">
       </td>
-      <td style="vertical-align: top; font-size: 25px; font-weight: bold;">Daily Summary</td>
+      <td style="vertical-align: top; font-size: 25px; font-weight: bold;" colspan="3">
+        <%= Vocabulary.search('Daily Summary') %>
+      </td>
       <td>&nbsp;</td><td>&nbsp;</td>
     </tr>
     <tr>
-      <td style="font-size: 18px; font-weight: bold;width: 250px;">Traditional Authority</td><td style="width:5px;">:</td><td><%= @ta %></td>
+      <td style="font-size: 18px; font-weight: bold;width: 250px;"><%= Vocabulary.search('Traditional Authority')%></td>
+      <td style="width:5px;">:</td><td><%= @ta %></td>
     </tr>
     <% if @mode == "gvh" || @mode == "vh" %>
         <tr>
-          <td style="font-size: 18px; font-weight: bold;">Group Village Headman</td><td>:</td><td><%= @gvh%></td>
+          <td style="font-size: 18px; font-weight: bold;"><%= Vocabulary.search('Group Village Headman') %></td>
+          <td>:</td><td><%= @gvh%></td>
         </tr>
         <% if @mode == "vh" %>
             <tr>
-              <td style="font-size: 18px; font-weight: bold;">Village Headman</td><td>:</td><td><%= @village%></td>
+              <td style="font-size: 18px; font-weight: bold;"><%= Vocabulary.search('Village Headman') %></td>
+              <td>:</td><td><%= @village%></td>
             </tr>
         <% end %>
     <% end %>
@@ -72,156 +77,160 @@
 
   <table style="width: 100%">
     <tr class="heading" >
-      <td style="text-align: center;width:60%">Indicator</td>
-      <td style="text-align: center;width:20%">Today</td><td style="text-align:center; ">Cumulative</td>
+      <td style="text-align: center;width:60%"><%= Vocabulary.search('Indicator') %></td>
+      <td style="text-align: center;width:20%"><%= Vocabulary.search('Today') %></td>
+      <td style="text-align:center; "><%= Vocabulary.search('Cumulative') %></td>
     </tr>
     <tr class="headings">
-      <td colspan="3" >General Population Statistics</td>
+      <td colspan="3" ><%= Vocabulary.search('Population Statistics') %></td>
     </tr>
     <tr>
-      <td>Total Population</td><td class="count"><%= @today_count %></td> <td class="count"><%= @cumulative['count'] %></td>
+      <td><%= Vocabulary.search('Total Population') %></td>
+      <td class="count"><%= @today_count %></td>
+      <td class="count"><%= @cumulative['count'] %></td>
     </tr>
 
     <tr class="headings">
-      <td colspan="3" >Total Population by Gender</td>
+      <td colspan="3" ><%= Vocabulary.search('Population by Gender') %></td>
     </tr>
     <tr>
-      <td style="width:60%" >Females</td>
-      <td style="width:20%" class="count" onclick=" send_to(<%=@today_gender_count_id['females'].to_json %>,'Females Registered Today', 'gender' )">
+      <td style="width:60%" ><%= Vocabulary.search('Females') %></td>
+      <td style="width:20%" class="count" onclick=" send_to(<%=@today_gender_count_id['females'].to_json %>,'<%= Vocabulary.search('Females Registered Today') %>', 'gender' )">
         <%= @today_gender_count['females'] rescue 0 %>
       </td>
-      <td class="count" onclick=" send_to(<%=@cumulative['gender_count_id']['females'].to_json %>,'Total Registered Females', 'gender' )">
+      <td class="count" onclick=" send_to(<%=@cumulative['gender_count_id']['females'].to_json %>,'<%= Vocabulary.search('Registered Females')%>', 'gender' )">
         <%= @cumulative['gender_count']['females'] %>
       </td>
     </tr>
     <tr>
-      <td>Males</td>
-      <td class="count" onclick="send_to(<%=@today_gender_count_id['males'].to_json %>,'Males Registered Today', 'gender' )">
+      <td><%= Vocabulary.search('Males') %></td>
+      <td class="count" onclick="send_to(<%=@today_gender_count_id['males'].to_json %>,'<%= Vocabulary.search('Males Registered Today')%>', 'gender' )">
         <%= @today_gender_count['males'] rescue 0 %>
       </td>
-      <td class="count" onclick=" send_to(<%=@cumulative['gender_count_id']['males'].to_json %>,'Total Registered Males', 'gender' )">
+      <td class="count" onclick=" send_to(<%=@cumulative['gender_count_id']['males'].to_json %>,'<%= Vocabulary.search('Registered Males')%>', 'gender' )">
         <%= @cumulative['gender_count']['males']%>
       </td>
     </tr>
     <tr class="headings" >
-      <td colspan="3">Age Group Distribution</td>
+      <td colspan="3"><%= Vocabulary.search('Age Distribution' ) %></td>
     </tr>
     <tr>
-      <td> 0 to < 1
+      <td> 0 - < 1
       </td>
-      <td class="count" onclick="send_to(<%=@today_ages_ids['0 to < 1'].to_json %>,'People Less Than A Year old Registered Today', 'age' )">
+      <td class="count" onclick="send_to(<%=@today_ages_ids['0 to < 1'].to_json %>,'<%= Vocabulary.search('People Less Than A Year old Registered Today')%>', 'age' )">
         <%= @today_ages['0 to < 1'] %>
       </td>
-      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['0 to < 1'].to_json %>,'Registered People Less Than A Year old', 'age' )">
+      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['0 to < 1'].to_json %>,'<%= Vocabulary.search('People Less Than 1 Year Old') %>', 'age' )">
             <%= @cumulative['ages']['0 to < 1'] %>
       </td>
     </tr>
     <tr>
-      <td> 1 to 4
+      <td> 1 - 4
       </td>
-      <td class="count" onclick="send_to(<%=@today_ages_ids['1-4'].to_json %>,'People Between 1 and 4 Years old Registered Today', 'age' )">
+      <td class="count" onclick="send_to(<%=@today_ages_ids['1-4'].to_json %>,'<%= Vocabulary.search('People Between 1 and 4 Years old Registered Today')%>', 'age' )">
         <%= @today_ages['1-4'] %>
       </td>
-      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['1-4'].to_json %>,'Registered People Between 1 And 4 Years Old', 'age' )">
+      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['1-4'].to_json %>,'<%= Vocabulary.search('Registered People Between 1 and 4 Years Old')%>', 'age' )">
         <%= @cumulative['ages']['1-4'] %>
       </td>
     </tr>
     <tr>
-      <td> 5 to 14
+      <td> 5 - 14
       </td>
-      <td class="count" onclick="send_to(<%=@today_ages_ids['5-14'].to_json %>,'People Between 5 and 14  Years old Registered Today', 'age' )">
+      <td class="count" onclick="send_to(<%=@today_ages_ids['5-14'].to_json %>,'<%= Vocabulary.search('People Between 5 and 14 Years old Registered Today') %>', 'age' )">
         <%= @today_ages['5-14'] %>
       </td>
-      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['5-14'].to_json %>,'Registered People Between 5 and 14 old', 'age' )">
+      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['5-14'].to_json %>,'<%= Vocabulary.search('Registered People Between 5 and 14 Years Old')%>', 'age' )">
         <%= @cumulative['ages']['5-14'] %>
       </td>
     </tr>
     <tr>
-      <td> 15 to 24
+      <td> 15 - 24
       </td>
-      <td class="count" onclick="send_to(<%=@today_ages_ids['15-24'].to_json %>,'People Between 15 and 24  Years old Registered Today', 'age' )">
+      <td class="count" onclick="send_to(<%=@today_ages_ids['15-24'].to_json %>,'<%= Vocabulary.search('People Between 15 and 24  Years old Registered Today') %>', 'age' )">
         <%= @today_ages['15-24'] %>
       </td>
-      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['15-24'].to_json %>,'Registered People Between 15 and 24 old', 'age' )">
+      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['15-24'].to_json %>,'<%= Vocabulary.search('Registered People Between 15 and 24 Years Old')%>', 'age' )">
         <%= @cumulative['ages']['15-24'] %>
       </td>
     </tr>
     <tr>
-      <td> 25 to 34
+      <td> 25 - 34
       </td>
-      <td class="count" onclick="send_to(<%=@today_ages_ids['25-34'].to_json %>,'People Between 25 and 34  Years old Registered Today', 'age' )">
+      <td class="count" onclick="send_to(<%=@today_ages_ids['25-34'].to_json %>,'<%= Vocabulary.search('People Between 25 and 34 Years old Registered Today') %>', 'age' )">
         <%= @today_ages['25-34'] %>
       </td>
-      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['25-34'].to_json %>,'Registered People Between 25 and 34 old', 'age' )">
+      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['25-34'].to_json %>,'<%= Vocabulary.search('Registered People Between 25 and 34 Years Old')%>', 'age' )">
         <%= @cumulative['ages']['25-34'] %>
       </td>
     </tr>
     <tr>
-      <td> 35 to 44
+      <td> 35 - 44
       </td>
-      <td class="count" onclick="send_to(<%=@today_ages_ids['35-44'].to_json %>,'People Between 35 and 44  Years old Registered Today', 'age' )">
+      <td class="count" onclick="send_to(<%=@today_ages_ids['35-44'].to_json %>,'<%= Vocabulary.search('People Between 35 and 44 Years old Registered Today')%>', 'age' )">
         <%= @today_ages['35-44'] %>
       </td>
-      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['35-44'].to_json %>,'Registered People Between 35 and 44 old', 'age' )">
+      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['35-44'].to_json %>,'<%= Vocabulary.search('Registered People Between 35 and 44 Years Old')%>', 'age' )">
         <%= @cumulative['ages']['35-44'] %>
       </td>
     </tr>
     <tr>
-      <td> 45 to 54
+      <td> 45 - 54
       </td>
-      <td class="count" onclick="send_to(<%=@today_ages_ids['45-54'].to_json %>,'People Between 45 and 54  Years old Registered Today', 'age' )">
+      <td class="count" onclick="send_to(<%=@today_ages_ids['45-54'].to_json %>,'<%= Vocabulary.search('People Between 45 and 54  Years old Registered Today')%>', 'age' )">
         <%= @today_ages['45-54'] %>
       </td>
-      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['45-54'].to_json %>,'Registered People Between 45 and 54 old', 'age' )">
+      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['45-54'].to_json %>,'<%= Vocabulary.search('Registered People Between 45 and 54 Years Old')%>', 'age' )">
         <%= @cumulative['ages']['45-54'] %>
       </td>
     </tr>
     <tr>
-      <td> 55 to 64
+      <td> 55 - 64
       </td>
-      <td class="count" onclick="send_to(<%=@today_ages_ids['55-64'].to_json %>,'People Between 55 and 64  Years old Registered Today', 'age' )">
+      <td class="count" onclick="send_to(<%=@today_ages_ids['55-64'].to_json %>,'<%= Vocabulary.search('People Between 55 and 64  Years old Registered Today')%>', 'age' )">
         <%= @today_ages['55-64'] %>
       </td>
-      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['55-64'].to_json %>,'Registered People Between 55 and 64 old', 'age' )">
+      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['55-64'].to_json %>,'<%= Vocabulary.search('Registered People Between 55 and 64 Years Old')%>', 'age' )">
         <%= @cumulative['ages']['55-64'] %>
       </td>
     </tr>
     <tr>
-      <td> 65 to 74
+      <td> 65 - 74
       </td>
-      <td class="count" onclick="send_to(<%=@today_ages_ids['65-74'].to_json %>,'People Between 65 and 74  Years old Registered Today', 'age' )">
+      <td class="count" onclick="send_to(<%=@today_ages_ids['65-74'].to_json %>,'<%= Vocabulary.search('People Between 65 and 74  Years old Registered Today')%>', 'age' )">
         <%= @today_ages['65-74'] %>
       </td>
-      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['65-74'].to_json %>,'Registered People Between 65 and 74 old', 'age' )">
+      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['65-74'].to_json %>,'<%= Vocabulary.search('Registered People Between 65 and 74 Years Old')%>', 'age' )">
         <%= @cumulative['ages']['65-74'] %>
       </td>
     </tr>
     <tr>
-      <td> 45 to 54
+      <td> 75 +
       </td>
-      <td class="count" onclick="send_to(<%=@today_ages_ids['75 and above'].to_json %>,'People Above 74 Years old Registered Today', 'age' )">
-        <%= @today_ages['75 and above'] %>
+      <td class="count" onclick="send_to(<%=@today_ages_ids['75+'].to_json %>,'<%= Vocabulary.search('People Above 74 Years old Registered Today')%>', 'age' )">
+        <%= @today_ages['75+'] %>
       </td>
-      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['75 and above'].to_json %>,'Registered People Above 74 Years old', 'age' )">
-        <%= @cumulative['ages']['75 and above'] %>
+      <td class="count"  onclick=" send_to(<%=@cumulative['ages_id']['75+'].to_json %>,'<%= Vocabulary.search('Registered People With Age Over 74 Years') %>', 'age' )">
+        <%= @cumulative['ages']['75+'] %>
       </td>
     </tr>
     <tr class="headings">
-      <td colspan="3">Total Population By Outcome</td>
+      <td colspan="3"><%= Vocabulary.search('Population By Outcome') %></td>
     </tr>
     <tr>
-      <td>Transferred Out</td>
-      <td class="count" onclick="send_to(<%= @today_outcomes_id['Transferred'].to_json%>,'People Who Were Transferred Today','Outcomes')">
+      <td><%= Vocabulary.search('Transferred Out') %></td>
+      <td class="count" onclick="send_to(<%= @today_outcomes_id['Transferred'].to_json%>,'<%= Vocabulary.search('People Who Were Transferred Today') %>','Outcomes')">
         <%= @today_outcomes['Transferred'] %>
       </td>
-      <td class="count" onclick="send_to(<%= @cumulative['outcomes_id']['Transferred'].to_json %>,'People Who Were Transferred','Outcomes')">
+      <td class="count" onclick="send_to(<%= @cumulative['outcomes_id']['Transferred'].to_json %>,
+              '<%= Vocabulary.search('People Who Were Transferred') %>','Outcomes')">
               <%= @cumulative['outcomes']['Transferred'] %>
               </td>
     </tr>
     <tr>
-      <td>Dead</td>
-      <td onclick="send_to( <%= @today_outcomes_id['Dead'].to_json %>,'People Who Died Today','Outcomes')" class="count"><%= @today_outcomes['Dead'] %></td>
-      <td onclick="send_to(<%= @cumulative['outcomes_id']['Dead'].to_json%>,'People Who Died','Outcomes')" class="count"><%= @cumulative['outcomes']['Dead'] %></td>
+      <td><%= Vocabulary.search('People who died') %></td>
+      <td onclick="send_to( <%= @today_outcomes_id['Dead'].to_json %>,'<%= Vocabulary.search('People Who Died Today') %>','Outcomes')" class="count"><%= @today_outcomes['Dead'] %></td>
+      <td onclick="send_to(<%= @cumulative['outcomes_id']['Dead'].to_json%>,'<%= Vocabulary.search('People Who Died') %>','Outcomes')" class="count"><%= @cumulative['outcomes']['Dead'] %></td>
     </tr>
   </table>
 
