@@ -498,6 +498,26 @@ function loadGender(value){
     loadSingleSelect(arr);
 }
 
+function loadLanguages(value){
+    var list = {
+        "en":"English",
+        "ny":"Chichewa"
+    };
+
+    var arr = [];
+
+    for(var el in list){
+        if(list[el].trim().toLowerCase().match(value.toLowerCase().trim())){
+            arr.push([search(list[el]), el]);
+        } else if (value.toLowerCase().trim().length == 0){
+            arr.push([search(list[el]), el]);
+        }
+    }
+
+    loadSingleSelect(arr);
+}
+
+
 function loadCohortType(value){
 
     var list = {
@@ -1234,4 +1254,13 @@ function cohort_report(){
     Android.setPref("cohort_location", location);
     window.location = "cohort_report.html"
 
+}
+
+function setLanguage()
+{
+    var lang = __$("1.1").value;
+
+    Android.setPref("locale", lang);
+    showMessage( search("Language Changed"));
+    window.location = "index.html";
 }

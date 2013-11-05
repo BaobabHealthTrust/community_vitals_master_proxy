@@ -1634,7 +1634,7 @@ function checkConnection(){
 if (!html5_storage_support) {
     showMessage("This Might Be a Good Time to Upgrade Your Browser or Turn On Javascript");
 } else {
-    Android.setPref("locale", "en");
+    //Android.setPref("locale", "en");
         
     checkLogin();
 }

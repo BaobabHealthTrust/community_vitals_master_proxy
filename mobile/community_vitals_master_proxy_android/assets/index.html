@@ -209,14 +209,15 @@
             function loadActivitiesMenu(){
                 __$("container").innerHTML = "";
               
-                var fields = [search("Keyboard"), search("Define Controls")];
+                var fields = [search("Keyboard"), search("Define Controls"),search("Change Language")];
               
                 var images = [
-                    "default.png",              
+                    "default.png",
+                    "default.png",
                     "default.png"
                 ];
               
-                var paths = ["", ""];
+                var paths = ["", "","change_language.html"];
               
                 for(var i = 0; i < fields.length; i++){
                 
