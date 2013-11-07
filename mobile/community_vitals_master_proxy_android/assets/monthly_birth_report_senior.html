@@ -20,7 +20,7 @@
             new FastButton(document.getElementById('home'), function() {
                 window.location = "index.html";
             });
-            document.getElementById('title').innerHTML += ( " " + Android.getPref("display_month"));
+
             var mode = Android.getPref("dde_mode");
 
             if (mode == 'gvh')
@@ -36,6 +36,8 @@
                 document.getElementById('gvh_row').style.display = 'none';
                 document.getElementById('logo').setAttribute('rowspan', 2)
             }
+            localise()
+            document.getElementById('title').innerHTML += ( " " + Android.getPref("display_month"));
             var data= Android.getSeniorMonthlyBirthReport(Android.getPref("report_month"));
             data = JSON.parse(data);
             add_rows(data);
@@ -64,6 +66,18 @@
                 transfer_cell.innerHTML = data[i]["transfer"];
                 var total_cell = row.insertCell(6);
                 total_cell.innerHTML = data[i]["total"];
+            }
+
+        }
+
+        function localise()
+        {
+            var fields = ["ta_header","gvh_header","title","births","trans", "dead",
+                          "alive", "female","male", "village", "survival", "gender"];
+
+            for (var i =0; i < fields.length; i++)
+            {
+                document.getElementById(fields[i]).innerHTML = search(document.getElementById(fields[i]).innerHTML.trim());
             }
 
         }
@@ -112,16 +126,16 @@
                             <img src="images/baobab.png" style="height: 70px;width:90px;">
                         </td>
                         <td id="title" style="vertical-align: top; font-size: 15px; font-weight: bold;" colspan="3">
-                            Monthly Birth Report For</td>
+                            Monthly Birth Report</td>
                         <td>&nbsp;</td><td>&nbsp;</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold;width:160px;font-size: 13px">Traditional Authority</td>
+                        <td style="font-weight: bold;width:160px;font-size: 13px" id='ta_header'>Traditional Authority</td>
                         <td style="width:5px;font-size: 13px">:</td>
                         <td id='ta' style="font-size: 13px"></td>
                     </tr>
                     <tr id= 'gvh_row'>
-                        <td style="font-weight: bold;font-size: 13px">Group Village Headman</td>
+                        <td style="font-weight: bold;font-size: 13px" id='gvh_header'>Group Village Headman</td>
                         <td style="font-size: 13px">:</td>
                         <td id='gvh' style="font-size: 13px"></td>
                     </tr>
@@ -133,25 +147,26 @@
 
                 <table class="data" id="details" style='width: 100%'>
                    <tr class='heading'>
+                       <td style="width:20%">&nbsp;</td>
+                       <td style="width:30%" colspan='2' id="gender">Gender</td>
+                       <td style="width:35%"colspan='3' id="survival">Population Survival Statistics</td>
                        <td>&nbsp;</td>
-                       <td colspan='2'> Gender</td>
-                       <td colspan='3'>Survival Statistics</td><td>&nbsp;</td>
                    </tr>
                     <tr class='heading'>
-                        <td>Village</td>
-                        <td>Male</td>
-                        <td>Female</td>
-                        <td>Alive</td>
-                        <td>Dead</td>
-                        <td>Transferred</td>
-                        <td>Total New Births</td>
+                        <td id="village">Village</td>
+                        <td id="male">Male</td>
+                        <td id="female">Female</td>
+                        <td id="alive">Alive</td>
+                        <td id="dead">Dead</td>
+                        <td id="trans">Transferred</td>
+                        <td id="births">New Births</td>
                     </tr>
                 </table>
 
             </div>
 
             <div class="nav" style="position: absolute; bottom: 0px; border: 1px #fff solid; height: 64px;
-              width: 100%; background-color: #666; margin: 0px; margin-bottom: -65px;
+              width: 100%; background-color: #666; margin: 0px; margin-bottom: -70px;
               margin-left: -5px; ">
 
                 <a id="home" style="float: left;">

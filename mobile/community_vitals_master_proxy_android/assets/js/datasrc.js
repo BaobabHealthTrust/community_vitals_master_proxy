@@ -521,8 +521,8 @@ function loadLanguages(value){
 function loadCohortType(value){
 
     var list = {
-        "Annual":"Annual",
-        "Quarter":"Quarterly"
+        "Annual":"Annual Report",
+        "Quarter":"Quarterly Report"
     };
 
     var arr = [];
@@ -861,7 +861,7 @@ function selectOutcomeMonth(){
     var month = __$("1.2").value;
 
     var rep_month = year.trim()+"-"+selectMonth(month);
-    var dis_month =month.trim() +" "+ year.trim();
+    var dis_month = search(month.trim().toString()) +" "+ year.trim();
 
     Android.setReportMonth(rep_month, dis_month);
     if (Android.getPref("dde_mode") == 'vh')
@@ -880,7 +880,7 @@ function selectBirthMonth(){
     var month = __$("1.2").value;
 
     var rep_month = year.trim()+"-"+selectMonth(month);
-    var dis_month =month.trim() +" "+ year.trim();
+    var dis_month = search(month.trim().toString()) +" "+ year.trim();
 
     Android.setReportMonth(rep_month, dis_month);
     if (Android.getPref("dde_mode") == 'vh')
@@ -915,7 +915,7 @@ function selectDate(){
         "November":"11",
         "December":"12"
     };
-    var display_date = day.trim() + ' ' + __$("1.2").value.trim() +' ' + year.trim();
+    var display_date = day.trim() + ' ' + search(__$("1.2").value.trim()) +' ' + year.trim();
 
     if (parseInt(day) < 10)
     {
@@ -1207,7 +1207,7 @@ function cohort_report(){
         var param_quarter =  __$("1.2").value.trim();
         year = param_quarter.substr(3,5);
         quarter =  param_quarter.substr(0,2);
-        title = "Cohort Report For " + param_quarter;
+        title = search("Cohort Report")+ " " + param_quarter;
 
         if (quarter == "Q1")
         {
@@ -1236,7 +1236,7 @@ function cohort_report(){
         var year =  __$("1.3").value.trim();
         start_date = year.toString() + "-01-01";
         end_date =  year.toString() + "-12-31";
-        title = "Cohort Report For Year " + year;
+        title = search("Cohort Report")+ " " + year;
     }
 
     if  (Android.getPref("dde_mode") == "gvh")

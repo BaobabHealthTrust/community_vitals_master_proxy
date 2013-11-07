@@ -30,12 +30,12 @@
 
           __$("parent").innerHTML =
             "<table style='width: 100%'><tr class='heading'><td colspan='2'>"+
-            "General Population Statistics</td></tr><tr><td>Total Population</td><td style='text-align: center'>"
+            search("Population Statistics")+"</td></tr><tr><td>"+ search("Total Population")+"</td><td style='text-align: center'>"
             + Android.getPeople(date) +"</td></tr><tr><td>&nbsp;</td></tr>"+
-            "<tr class='heading'><td colspan='2' >Total Population by Gender</td></tr>"+
-            "<tr><td>Females</td><td style='text-align: center'>"+Android.getGenderCount('1900-01-01',date,'Female')+"</td></tr><tr>"+
+            "<tr class='heading'><td colspan='2' >"+ search('Population by Gender')+"</td></tr>"+
+            "<tr><td>"+search('Females')+"</td><td style='text-align: center'>"+Android.getGenderCount('1900-01-01',date,'Female')+"</td></tr><tr>"+
             "<tr><td>Males</td><td style='text-align: center'>"+ Android.getGenderCount('1900-01-01',date,'Male') +"</td></tr><tr>"+
-            "<tr class='heading'><td colspan='2' >Total Population By Age</td>"+
+            "<tr class='heading'><td colspan='2' >"+ search('Age Distribution')+"</td>"+
             "<tr><td>0 to < 1</td><td style='text-align: center'>" +
             Android.getAgegroupCount( 0, 0, '1900-01-01' ,date) +"</td></tr>"+
             "<tr><td>1 - 4</td><td style='text-align: center'>" +
@@ -54,12 +54,12 @@
             Android.getAgegroupCount( 55, 64, '1900-01-01' ,date) +"</td></tr><tr>"+
             "<tr><td>65 - 74</td><td style='text-align: center'>" +
             Android.getAgegroupCount( 65, 74, '1900-01-01' ,date) +"</td></tr><tr>"+
-            "<tr><td>75 and above</td><td style='text-align: center'>" +
+            "<tr><td>75+</td><td style='text-align: center'>" +
             Android.getAgegroupCount(75, 200, '1900-01-01' ,date) +"</td></tr>"+
-            "<tr class='heading'><td colspan='2' >Total Population By Outcome</td></tr>"+
-            "<tr><td>Alive</td><td style='text-align: center'>"+Android.getCulAlive(date)+"</td></tr><tr>"+
-            "<tr><td>Dead</td><td style='text-align: center'>"+Android.getCulOutcome(date,'Dead')+"</td></tr><tr>"+
-            "<tr><td>Transfer Out</td><td style='text-align: center'>"+Android.getCulOutcome(date,'Transfer Out')+"</td></tr><tr>"+
+            "<tr class='heading'><td colspan='2' >" + search('Population By Outcome')+"</td></tr>"+
+            "<tr><td>"+search('People Alive')+"</td><td style='text-align: center'>"+Android.getCulAlive(date)+"</td></tr><tr>"+
+            "<tr><td>"+search('People Who Died')+"</td><td style='text-align: center'>"+Android.getCulOutcome(date,'Dead')+"</td></tr><tr>"+
+            "<tr><td>"+search('People Who Transferred Out')+"</td><td style='text-align: center'>"+Android.getCulOutcome(date,'Transfer Out')+"</td></tr><tr>"+
             "</table>";
 
 
@@ -89,7 +89,20 @@
               document.getElementById('vh').innerHTML = Android.getPref("vh");
           }
 
+          localise();
       }
+
+      function localise()
+      {
+          var fields = ["ta_header","gvh_header", "vh_header","main_title"];
+
+          for (var i =0; i < fields.length; i++)
+          {
+              document.getElementById(fields[i]).innerHTML = search(document.getElementById(fields[i]).innerHTML);
+          }
+
+      }
+
       //-->
   </script>
 
@@ -125,21 +138,21 @@
                       <td id='logo' style="width: 100px;text-align: center" rowspan="4">
                           <img src="images/baobab.png" style="height: 70px;width:90px;">
                       </td>
-                      <td style="vertical-align: top; font-size: 15px; font-weight: bold;">Village Summary</td>
+                      <td style="vertical-align: top; font-size: 15px; font-weight: bold;" id="main_title">Village Summary</td>
                       <td>&nbsp;</td><td>&nbsp;</td>
                   </tr>
                   <tr>
-                      <td style="font-weight: bold;width:160px;font-size: 13px">Traditional Authority</td>
+                      <td style="font-weight: bold;width:160px;font-size: 13px" id="ta_header">Traditional Authority</td>
                       <td style="width:5px;font-size: 13px">:</td>
                       <td id='ta' style="font-size: 13px"></td>
                   </tr>
                   <tr id= 'gvh_row'>
-                      <td style="font-weight: bold;font-size: 13px">Group Village Headman</td>
+                      <td style="font-weight: bold;font-size: 13px" id="gvh_header">Group Village Headman</td>
                       <td style="font-size: 13px">:</td>
                       <td id='gvh' style="font-size: 13px"></td>
                   </tr>
                   <tr id= 'vh_row'>
-                      <td style="font-weight: bold;font-size: 13px">Village Headman</td>
+                      <td style="font-weight: bold;font-size: 13px" id="vh_header" >Village Headman</td>
                       <td style="font-size: 13px">:</td>
                       <td id='vh' style="font-size: 13px"></td>
                   </tr>

@@ -117,8 +117,8 @@
                 __$("container").innerHTML = "";
 
                 var fields = [
-                    search("Cohort Report"), 
-                    search("Month Outcomes Report"), 
+                    search("Cohort report"),
+                    search("Monthly Outcomes Report"),
                     search("Monthly Birth Report"),
                     search("Daily Summary"), 
                     search("Village Summary"),
@@ -148,7 +148,7 @@
                 if(cat == "gvh"){
                     fields = [
                         search("Cohort Report"), 
-                        search("Month Outcomes Report"), 
+                        search("Monthly Outcomes Report"),
                         search("Monthly Birth Report"),
                         search("Daily Summary"), 
                         search("Villages Summary"),
@@ -209,15 +209,13 @@
             function loadActivitiesMenu(){
                 __$("container").innerHTML = "";
               
-                var fields = [search("Keyboard"), search("Define Controls"),search("Change Language")];
+                var fields = [search("Change Language")];
               
                 var images = [
-                    "default.png",
-                    "default.png",
                     "default.png"
                 ];
               
-                var paths = ["", "","change_language.html"];
+                var paths = ["change_language.html"];
               
                 for(var i = 0; i < fields.length; i++){
                 

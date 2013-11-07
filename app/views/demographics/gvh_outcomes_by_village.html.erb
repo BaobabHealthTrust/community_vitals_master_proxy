@@ -36,14 +36,21 @@
       <td style="width: 130px;text-align: center" rowspan="4">
         <img src="/images/baobab.png" style="height: 100px;width:100px;">
       </td>
-      <td colspan="3" style="vertical-align: top; font-size: 25px; font-weight: bold;">Monthly Outcome Report For <%= @duration %></td>
+      <td colspan="3" style="vertical-align: top; font-size: 25px; font-weight: bold;">
+        <%= Vocabulary.search('Monthly Outcome Report') %> <%= @duration %></td>
 
     </tr>
     <tr>
-      <td style="font-size: 18px; font-weight: bold;width: 250px;">Traditional Authority</td><td style="width:5px;">:</td><td><%= @ta %></td>
+      <td style="font-size: 18px; font-weight: bold;width: 250px;">
+        <%= Vocabulary.search('Traditional Authority') %>
+      </td>
+      <td style="width:5px;">:</td><td><%= @ta %></td>
     </tr>
     <tr>
-      <td style="font-size: 18px; font-weight: bold;">Group Village Headman</td><td>:</td><td><%= @gvh%></td>
+      <td style="font-size: 18px; font-weight: bold;">
+        <%= Vocabulary.search('Group Village Headman') %>
+      </td>
+      <td>:</td><td><%= @gvh%></td>
     </tr>
 
   </table>
@@ -51,18 +58,23 @@
 
 <div style="height: 530px;overflow: auto;">
   <table style="width: 100%">
-    <tr class="heading"><td colspan="3"> Population Outcome Statistics</td></tr>
+    <tr class="heading">
+      <td colspan="3"> <%= Vocabulary.search('Population Outcome Statistics') %></td>
+    </tr>
     <tr style="font-size: 23px;font-weight:bold; background-color: silver;">
-      <td style="width: 50%;">Village</td><td style="text-align: center">Alive</td><td style="text-align: center">Dead</td>
-      <td style="text-align: center">Transferred</td><td style="text-align: center">Total Population</td>
+      <td style="width: 30%;"><%= Vocabulary.search('Village') %></td>
+      <td style="text-align: center"><%= Vocabulary.search('Alive') %></td>
+      <td style="text-align: center"><%= Vocabulary.search('Dead') %></td>
+      <td style="text-align: center"><%= Vocabulary.search('Transferred') %></td>
+      <td style="text-align: center"><%= Vocabulary.search('Total Population') %></td>
     </tr>
     <% @outcomes.each do |key, values|  %>
     <tr class="<%= cycle('indicator', 'indicators') %>" >
       <td><%= key %></td>
-      <td onclick="send_to(<%=@ids[key]['Alive'].to_json %>, 'Registered People Who Are Alive')" class="count"><%= values['Alive']%></td>
-      <td onclick="send_to(<%=@ids[key]['Dead'].to_json %>, 'Registered People Who Died')"class="count"><%= values['Dead']%></td>
-      <td onclick="send_to(<%=@ids[key]['Transferred'].to_json %>, 'Registered People Who Transferred')" class="count"><%= values['Transferred']%></td>
-      <td onclick="send_to(<%=@ids[key]['Total'].to_json %>, 'All Registered People')" class="count"><%= values['Total']%></td>
+      <td onclick="send_to(<%=@ids[key]['Alive'].to_json %>, '<%= Vocabulary.search('Registered People Who Are Alive') %>')" class="count"><%= values['Alive']%></td>
+      <td onclick="send_to(<%=@ids[key]['Dead'].to_json %>, '<%= Vocabulary.search('Registered People Who Died') %>')"class="count"><%= values['Dead']%></td>
+      <td onclick="send_to(<%=@ids[key]['Transferred'].to_json %>, '<%= Vocabulary.search('Registered People Who Transferred') %>')" class="count"><%= values['Transferred']%></td>
+      <td onclick="send_to(<%=@ids[key]['Total'].to_json %>, '<%= Vocabulary.search('All Registered People') %>')" class="count"><%= values['Total']%></td>
     </tr>
     <% end %>
   </table>

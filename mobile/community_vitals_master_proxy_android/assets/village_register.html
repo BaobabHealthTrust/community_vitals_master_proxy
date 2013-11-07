@@ -142,9 +142,20 @@
                     
                     j++;
                 }
-					      
+
+                localise();
             }
-            
+
+            function localise()
+            {
+                var fields = [ "fname", "lname", "dob", "outcome" ];
+
+                for (var i =0; i < fields.length; i++)
+                {
+                    document.getElementById(fields[i]).innerHTML = search(document.getElementById(fields[i]).innerHTML.trim());
+                }
+
+            }
             //-->
         </script>
 
@@ -167,27 +178,27 @@
                          background-color: #999; color: #eee; border-bottom: 1px solid #41608f;">
                         <div style="width: 100%; display: table; font-size: 1.3em;">
                             <div style="display: table-row;">
-                                <div id="fname" style="display: table-cell; width: 200px; 
+                                <div id="fname" style="display: table-cell; width: 200px;
                                      text-align: left; vertical-align: top; padding: 5px; 
                                      border-right: 1px #41608f solid; padding-bottom: 0px;">
                                     First Name
                                 </div>
-                                <div id="lname" style="display: table-cell; width: 200px; text-align: left;  
+                                <div id="lname" style="display: table-cell; width: 200px; text-align: left;
                                      vertical-align: top; padding: 5px; border-right: 1px #41608f solid; 
                                      padding-bottom: 0px;">
                                     Last Name
                                 </div>
-                                <div id="npid" style="display: table-cell; width: 90px; text-align: center; 
+                                <div id="npid" style="display: table-cell; width: 140px; text-align: center;
                                      vertical-align: top; padding: 3px; border-right: 1px #41608f solid; 
                                      padding-bottom: 0px;">
                                     <img src="images/barcode.jpg" height="30" style="margin-top: 0px" />
                                 </div>
-                                <div id="gender" style="display: table-cell; width: 80px; text-align: center; 
+                                <div id="gender" style="display: table-cell; width: 80px; text-align: center;
                                      vertical-align: top; padding: 5px; border-right: 1px #41608f solid; 
                                      padding-bottom: 0px;">
                                     <img src="images/male.gif" height="30" style="margin-top: 0px" />/<img src="images/female.gif" height="30" style="margin-top: 0px" />
                                 </div>
-                                <div id="dob" style="display: table-cell; width: 100px; text-align: center; 
+                                <div id="dob" style="display: table-cell; width: 100px; text-align: center;
                                      vertical-align: top; padding: 5px; border-right: 1px #41608f solid; 
                                      padding-bottom: 0px;">
                                     Birthdate
@@ -210,22 +221,22 @@
                         <div style="width: 100%; display: table; font-size: 1.1em;">
 
                             <div style="display: table-row;">
-                                <div id="fname0" style="display: table-cell; width: 200px; 
+                                <div id="fname0" style="display: table-cell; width: 200px;
                                      text-align: left; vertical-align: top; padding: 5px;  border-bottom: 1px #ccc solid;
                                      border-right: 1px #ccc solid; padding-bottom: 0px; overflow: hidden;">
 
                                 </div>
-                                <div id="lname0" style="display: table-cell; width: 200px; text-align: left;  
+                                <div id="lname0" style="display: table-cell; width: 200px; text-align: left;
                                      vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
                                      padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
 
                                 </div>
-                                <div id="npid0" style="display: table-cell; width: 90px; text-align: center; 
+                                <div id="npid0" style="display: table-cell; width: 140px; text-align: center;
                                      vertical-align: top; padding: 3px; border-right: 1px #ccc solid; 
                                      padding-bottom: 0px; overflow: hidden; border-bottom: 1px #ccc solid;">
                                     &nbsp;
                                 </div>
-                                <div id="gender0" style="display: table-cell; width: 80px; text-align: center; 
+                                <div id="gender0" style="display: table-cell; width: 80px; text-align: center;
                                      vertical-align: top; padding: 5px; border-right: 1px #ccc solid; 
                                      padding-bottom: 0px; border-bottom: 1px #ccc solid;">
 
@@ -621,7 +632,7 @@
 
                     </div>
                     <div id="keyboard_container" style="position: absolute; bottom: 10px;
-                         width: 97%; left: 5x; margin: 10px;">
+                         width: 97%; left: 5px; margin: 10px;">
                     </div>
                     <div class="nav" style="position: absolute; bottom: 0px; border: 1px #fff solid; height: 64px;
                          width: 100%; background-color: #666; margin: 0px; margin-bottom: -52px; 

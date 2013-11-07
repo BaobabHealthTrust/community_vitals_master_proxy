@@ -25,8 +25,6 @@
                 window.location = "index.html";
             });
 
-            document.getElementById('title').innerHTML += ( " " + Android.getPref("display_month"));
-
             var mode = Android.getPref("dde_mode");
 
             if (mode == 'gvh')
@@ -51,6 +49,8 @@
                 document.getElementById('vh').innerHTML = Android.getPref("vh");
             }
 
+            localise()
+            document.getElementById('title').innerHTML += ( " " + Android.getPref("display_month"));
             var data= Android.getSeniorMonthlyOutcomesReport(Android.getPref("report_month"));
             data = JSON.parse(data);
             add_rows(data);
@@ -79,6 +79,18 @@
                 cul_trans_cell.innerHTML = data[i]["cul_trans"];
                 var total_cell = row.insertCell(7);
                 total_cell.innerHTML = data[i]["total"];
+            }
+
+        }
+
+        function localise()
+        {
+            var fields = ["ta_header","total","gvh_header", "vh_header","title","cumulative", "month",
+                          "village", "alive", "dead", "trans", "calive", "cdied", "ctrans"];
+
+            for (var i =0; i < fields.length; i++)
+            {
+                document.getElementById(fields[i]).innerHTML = search(document.getElementById(fields[i]).innerHTML);
             }
 
         }
@@ -126,20 +138,20 @@
                         <td id='logo' style="width: 100px;text-align: center" rowspan="4">
                             <img src="images/baobab.png" style="height: 70px;width:90px;">
                         </td>
-                        <td id='title' style="vertical-align: top; font-size: 15px; font-weight: bold;"colspan="3">Monthly Outcomes Report For</td>
+                        <td id='title' style="vertical-align: top; font-size: 15px; font-weight: bold;"colspan="3">Monthly Outcomes Report</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold;width: 20%;font-size: 13px">Traditional Authority</td>
+                        <td style="font-weight: bold;width: 20%;font-size: 13px" id='ta_header'>Traditional Authority</td>
                         <td style="width:5px;font-size: 13px">:</td>
                         <td id='ta' style="font-size: 13px">&nbsp;</td>
                     </tr>
                     <tr id= 'gvh_row'>
-                        <td style="font-weight: bold;font-size: 13px">Group Village Headman</td>
+                        <td style="font-weight: bold;font-size: 13px" id="gvh_header">Group Village Headman</td>
                         <td style="font-size: 13px">:</td>
                         <td id='gvh' style="font-size: 13px"></td>
                     </tr>
                     <tr id= 'vh_row'>
-                        <td style="font-weight: bold;font-size: 13px">Village Headman</td>
+                        <td style="font-weight: bold;font-size: 13px" id='vh_header'>Village Headman</td>
                         <td style="font-size: 13px">:</td>
                         <td id='vh' style="font-size: 13px"></td>
                     </tr>
@@ -149,25 +161,28 @@
               width: 100%; margin: 0px; margin-top: -5px; padding: 0px;overflow: auto;">
 
                 <table class="data" id="details" style='width: 100%'>
-                    <tr class='heading'><td style="width: 20%;">&nbsp;</td><td style="width: 30%;" colspan='3'> Month</td>
-                        <td colspan='3' style="width: 30%;">Cumulative</td><td style="width: 20%;">&nbsp;</td>
+                    <tr class='heading'>
+                        <td style="width: 20%;">&nbsp;</td>
+                        <td style="width: 30%;" colspan='3' id='month'>Month</td>
+                        <td colspan='3' style="width: 30%;" id='cumulative'>Cumulative</td>
+                        <td style="width: 20%;">&nbsp;</td>
                     </tr>
                     <tr class='heading'>
-                        <td>Village</td>
-                        <td>Alive</td>
-                        <td>Dead</td>
-                        <td>Transferred</td>
-                        <td>Alive</td>
-                        <td>Dead</td>
-                        <td>Transferred</td>
-                        <td>Total  Popln.</td>
+                        <td id='village'>Village</td>
+                        <td id='alive'>Alive</td>
+                        <td id='dead'>Died</td>
+                        <td id='trans'>Transferred</td>
+                        <td id='calive'>Alive</td>
+                        <td id='cdied'>Died</td>
+                        <td id='ctrans'>Transferred</td>
+                        <td id='total'>Total</td>
                 </tr>
                 </table>
 
             </div>
 
             <div class="nav" style="position: absolute; bottom: 0px; border: 1px #fff solid; height: 64px;
-              width: 100%; background-color: #666; margin: 0px; margin-bottom: -65px;
+              width: 100%; background-color: #666; margin: 0px; margin-bottom: -70px;
               margin-left: -5px; ">
 
                 <a id="home" style="float: left;">

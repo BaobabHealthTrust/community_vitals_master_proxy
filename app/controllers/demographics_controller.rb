@@ -12,6 +12,7 @@ class DemographicsController < ApplicationController
     @village = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["village"] rescue nil
     @gvh = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["gvh"] rescue nil
     @ta = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["ta"] rescue nil
+    @duration = day.day.to_s + ", " + Vocabulary.search(day.strftime('%B').to_s) + " " + day.year.to_s
     render :layout => 'report'
   end
 
@@ -27,9 +28,9 @@ class DemographicsController < ApplicationController
 
   def gvh_outcomes_by_village
     date = params[:start_date].to_date
-    @duration = date.strftime('%B, %Y')
+    @duration = Vocabulary.search(date.strftime('%B').to_s) +" "+date.strftime('%Y').to_s
     @mode = YAML.load_file("#{Rails.root}/config/application.yml")['dde_mode'] rescue 'vh'
-    @gvh = YAML.load_0file("#{Rails.root}/config/application.yml")[Rails.env]["gvh"] rescue nil
+    @gvh = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["gvh"] rescue nil
     @ta = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["ta"] rescue nil
     @outcomes, @ids = specific_outcome_sorter(NationalIdentifier.find(:all,:conditions => ['person_id IS NOT NULL']),date.end_of_month,'assigned_vh')
     render :layout => 'report'
@@ -95,7 +96,9 @@ class DemographicsController < ApplicationController
 
     if params[:report_type] == "Quarterly"
       @start_date,@end_date = cohort_date_range(params[:quarter])
-      @title = "#{Vocabulary.search('Cohort Report for')} #{params[:quarter]}  (#{@start_date.strftime('%d %B %Y')} #{Vocabulary.search('To')} #{@end_date.strftime('%d %B %Y')})"
+      s_date = @start_date.strftime('%d').to_s + " " + Vocabulary.search(@start_date.strftime('%B').to_s) + " "+ @start_date.strftime('%Y').to_s
+      e_date = @end_date.strftime('%d').to_s + " " + Vocabulary.search(@end_date.strftime('%B').to_s) + " "+ @end_date.strftime('%Y').to_s
+      @title = "#{Vocabulary.search('Cohort Report for')} #{params[:quarter]}  (#{s_date} #{Vocabulary.search('To')} #{e_date})"
     elsif params[:report_type] == "Annual"
       @start_date,@end_date = ["01/01/#{params[:year]}".to_date,"12/31/#{params[:year]}".to_date ]
       @title = "#{Vocabulary.search('Cohort Report for')} #{params[:year]}"
@@ -154,7 +157,7 @@ class DemographicsController < ApplicationController
 
   def village_births_by_month
     date = params[:start_date].to_date
-    @duration = date.strftime('%B, %Y')
+    @duration = Vocabulary.search(date.strftime('%B').to_s) +" "+ date.strftime('%Y')
     @mode = YAML.load_file("#{Rails.root}/config/application.yml")['dde_mode'] rescue 'vh'
     @village = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["village"] rescue nil
     @gvh = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["gvh"] rescue nil

@@ -5,7 +5,7 @@
 <form id='ids' action="post_ids_acknowledgement" method="post">
 
   <%= select_tag 'ids', options_for_select( @options),
-                 {:helpText => "Select IDs To Acknowledge",
+                 {:helpText => Vocabulary.search("Select IDs To Acknowledge"),
                   :optional => false,
                   :multiple => true,
                   :tt_pageStyleClass => "NoKeyboard NoInput small"} %>

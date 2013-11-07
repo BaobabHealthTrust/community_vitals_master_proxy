@@ -21,7 +21,7 @@
             new FastButton(document.getElementById('home'), function() {
                 window.location = "index.html";
             });
-            document.getElementById('title').innerHTML += ( " " + Android.getPref("display_month"));
+
             var mode = Android.getPref("dde_mode");
 
             if (mode == 'gvh')
@@ -48,26 +48,42 @@
             var result = Android.getPref("report_month");
 
             __$("parent").innerHTML ="<table style='width: 100%'>" +
-                    "<tr class='heading'><td colspan='3'> Population Birth Statistics</td></tr>"+
+                    "<tr class='heading'><td colspan='3'>"+ search('Population Birth Statistics')+"</td></tr>"+
                     "<tr class='heading' ><td style='text-align: center;width:60%'>&nbsp;</td>"+
-                    "<td style='text-align: center;width:20%'>Month Total</td><td style='text-align:center;'>Cumulative</td></tr>"+
-                    "<tr class='headings'><td>Total Births </td><td class='count'>"+Android.getMonthBirths(result)+
-                    "</td><td class='count'>"+ Android.getPeople(result) +"</td></tr>"+
-                    "<tr><td>Females</td><td class='count'>"+Android.getMonthBirthsGender(result,'Female')+
+                    "<td style='text-align: center;width:20%'>"+ search('Month Total')+
+                    "</td><td style='text-align:center;'>" + search('Cumulative')+"</td></tr>"+
+                    "<tr><td>"+ search('Females')+"</td><td class='count'>"+Android.getMonthBirthsGender(result,'Female')+
                     "</td><td class='count'>"+Android.getGenderCount('1900-01-01',result,'Female') +"</td></tr>"+
-                    "<tr class='headings'><td>Males</td><td class='count'>"+Android.getMonthBirthsGender(result,'Male')+
-                    "</td><td class='count'>"+Android.getGenderCount('1900-01-01',result,'Male') +"</td></tr><tr><tr><td >&nbsp;</td></tr>"+
-                    "<tr class='heading'><td colspan='3'> Population Survival Statistics</td></tr>"+
+                    "<tr class='headings'><td>"+search('Males')+"</td><td class='count'>"+Android.getMonthBirthsGender(result,'Male')+
+                    "</td><td class='count'>"+Android.getGenderCount('1900-01-01',result,'Male') +"</td></tr>"+
+                    "<tr class='headings'><td>"+search('Total')+"</td><td class='count'>"+Android.getMonthBirths(result)+
+                    "</td><td class='count'>"+ Android.getPeople(result) +"</td></tr>"+
+                    "<tr><tr><td >&nbsp;</td></tr>"+
+                    "<tr class='heading'><td colspan='3'>"+search('Population Survival Statistics')+"</td></tr>"+
                     "<tr class='heading' ><td style='text-align: center;width:60%'>&nbsp;</td>"+
-                    "<td style='text-align: center;width:20%'>Month Total</td><td style='text-align:center;'>Cumulative</td></tr>"+
-                    "<tr class='headings'><td>Alive</td><td class='count'>"+Android.getMonthBirthsAlive(result)+
+                    "<td style='text-align: center;width:20%'>Month Total</td><td style='text-align:center;'>"+search('Cumulative')+"</td></tr>"+
+                    "<tr class='headings'><td>"+search('People Alive')+"</td><td class='count'>"+Android.getMonthBirthsAlive(result)+
                     "</td><td class='count'>"+Android.getAlive(result)+"</td></tr>"+
-                    "<tr><td>Dead</td><td class='count'>"+Android.getMonthBirthsOutcome(result,'dead')+
+                    "<tr><td>"+search('People Who Died')+"</td><td class='count'>"+Android.getMonthBirthsOutcome(result,'dead')+
                     "</td><td class='count'>"+Android.getOutcomesByMonth(result,'dead')+"</td></tr>"+
-                    "<tr class='headings'><td>Transferred Out</td><td class='count'>"+Android.getMonthBirthsOutcome(result,'transfer out')+
+                    "<tr class='headings'><td>"+search('Transferred Out')+"</td><td class='count'>"+Android.getMonthBirthsOutcome(result,'transfer out')+
                     "</td><td class='count'>"+
                     Android.getOutcomesByMonth(result,'transfer out')+"</td></tr><tr>"+
                     "</table>";
+
+
+            localise();
+            document.getElementById('title').innerHTML += ( " " + Android.getPref("display_month"));
+        }
+
+        function localise()
+        {
+            var fields = ["ta_header","gvh_header", "vh_header","title"];
+
+            for (var i =0; i < fields.length; i++)
+            {
+                document.getElementById(fields[i]).innerHTML = search(document.getElementById(fields[i]).innerHTML.trim());
+            }
 
         }
         //-->
@@ -111,21 +127,21 @@
                             <img src="images/baobab.png" style="height: 70px;width:90px;">
                         </td>
                         <td id='title' style="vertical-align: top; font-size: 15px; font-weight: bold;" colspan="3">
-                            Monthly Birth Report For</td>
+                            Monthly Birth Report </td>
 
                     </tr>
                     <tr>
-                        <td style="font-weight: bold;width:20%;font-size: 13px">Traditional Authority</td>
+                        <td style="font-weight: bold;width:20%;font-size: 13px" id='ta_header'>Traditional Authority</td>
                         <td style="width:5px;font-size: 13px">:</td>
                         <td id='ta' style="font-size: 13px"></td>
                     </tr>
                     <tr id= 'gvh_row'>
-                        <td style="font-weight: bold;font-size: 13px">Group Village Headman</td>
+                        <td style="font-weight: bold;font-size: 13px" id='gvh_header'>Group Village Headman</td>
                         <td style="font-size: 13px">:</td>
                         <td id='gvh' style="font-size: 13px"></td>
                     </tr>
                     <tr id= 'vh_row'>
-                        <td style="font-weight: bold;font-size: 13px">Village Headman</td>
+                        <td style="font-weight: bold;font-size: 13px" id='vh_header'>Village Headman</td>
                         <td style="font-size: 13px">:</td>
                         <td id='vh' style="font-size: 13px"></td>
                     </tr>

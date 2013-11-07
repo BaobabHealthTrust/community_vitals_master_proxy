@@ -24,7 +24,7 @@
             new FastButton(document.getElementById('home'), function() {
                 window.location = "index.html";
             });
-            document.getElementById('title').innerHTML += ( " " + Android.getPref('display_month'));
+
             var mode = Android.getPref("dde_mode");
 
             if (mode == 'gvh')
@@ -51,15 +51,30 @@
             var date = currentTime.getFullYear() +"-"+ (currentTime.getMonth() + 1) +"-31";
 
             __$("parent").innerHTML = "<table style='width: 100%'>" +
-                 "<tr class='heading'><td colspan='3'> Population Outcome Statistics</td></tr>"+
+                 "<tr class='heading'><td colspan='3'>"+ search('Population Outcome Statistics')+"</td></tr>"+
                  "<tr class='heading' ><td style='text-align: center;width:60%'>&nbsp;</td>"+
-                 "<td style='text-align: center;width:20%'>Month Total</td><td style='text-align:center;'>Cumulative</td></tr>"+
-                 "<tr class='headings'><td>Total Population </td><td>&nbsp;</td><td class='count'>"+Android.getPeople(Android.getPref('report_month'))+"</td></tr>"+
-                 "<tr class='headings'><td>Dead</td><td class='count'>"+Android.getOutcomesInMonth(Android.getPref('report_month'),'dead')+
+                 "<td style='text-align: center;width:20%'>"+search('Month Total')+"</td><td style='text-align:center;'>"+search('Cumulative')+"</td></tr>"+
+                 "<tr class='headings'><td>"+search('Total Population')+"</td><td>"+Android.getPeople(Android.getPref('report_month'))+
+                 "</td><td class='count'>"+Android.getPeople(Android.getPref('report_month'))+"</td></tr>"+
+                 "<tr class='headings'><td>"+search('People Who Died')+"</td><td class='count'>"+Android.getOutcomesInMonth(Android.getPref('report_month'),'dead')+
                  "</td><td class='count'>"+Android.getOutcomesByMonth(Android.getPref('report_month'),'dead')+"</td></tr>"+
-                 "<tr><td>Transferred Out</td><td class='count'>" + Android.getOutcomesInMonth(Android.getPref('report_month'),'transfer out')+
+                 "<tr><td>"+search('Transferred Out')+"</td><td class='count'>" + Android.getOutcomesInMonth(Android.getPref('report_month'),'transfer out')+
                  "</td><td class='count'>"+Android.getOutcomesByMonth(Android.getPref('report_month'),'transfer out')+"</td></tr>"+
                 "</table>"
+
+            localise();
+            document.getElementById('title').innerHTML += ( " " + Android.getPref('display_month'));
+        }
+
+        function localise()
+        {
+            var fields = ["ta_header","gvh_header", "vh_header","title"];
+
+            for (var i =0; i < fields.length; i++)
+            {
+                document.getElementById(fields[i]).innerHTML = search(document.getElementById(fields[i]).innerHTML);
+            }
+
         }
         //-->
     </script>
@@ -102,20 +117,20 @@
                         <td id='logo' style="width: 100px;text-align: center" rowspan="4">
                             <img src="images/baobab.png" style="height: 70px;width:90px;">
                         </td>
-                        <td id='title' style="vertical-align: top; font-size: 15px; font-weight: bold;" colspan="3">Monthly Outcomes Report For</td>
+                        <td id='title' style="vertical-align: top; font-size: 15px; font-weight: bold;" colspan="3">Monthly Outcomes Report</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold;font-size: 13px;width: 20%;">Traditional Authority</td>
+                        <td style="font-weight: bold;font-size: 13px;width: 20%;" id="ta_header">Traditional Authority</td>
                         <td style="width:5px;font-size: 13px">:</td>
                         <td id='ta' style="font-size: 13px">&nbsp;</td>
                     </tr>
                     <tr id= 'gvh_row'>
-                        <td style="font-weight: bold;font-size: 13px">Group Village Headman</td>
+                        <td style="font-weight: bold;font-size: 13px" id="gvh_header">Group Village Headman</td>
                         <td style="font-size: 13px">:</td>
                         <td id='gvh' style="font-size: 13px"></td>
                     </tr>
                     <tr id= 'vh_row'>
-                        <td style="font-weight: bold;font-size: 13px">Village Headman</td>
+                        <td style="font-weight: bold;font-size: 13px" id="vh_header">Village Headman</td>
                         <td style="font-size: 13px">:</td>
                         <td id='vh' style="font-size: 13px"></td>
                     </tr>

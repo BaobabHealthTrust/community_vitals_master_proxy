@@ -19,7 +19,7 @@ class NationalIdentifier < ActiveRecord::Base
     
     mode = settings["dde_mode"] rescue nil
     
-    result = NationalIdentifier.all(:conditions => ["COALESCE(person_id, 0) = 0"]).length if mode.to_s.downcase == "vh"
+    result = NationalIdentifier.all(:conditions => ["COALESCE(person_id, 0) = 0"]).length #if mode.to_s.downcase == "vh"
     
     result
     

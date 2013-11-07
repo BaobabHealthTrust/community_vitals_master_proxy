@@ -22,7 +22,7 @@
             var mode = Android.getPref("dde_mode");
             var day =  Android.getPref("query_date");
 
-            document.getElementById('duration').innerHTML += ( " " +  Android.getPref("report_date"));
+
             if (mode == 'gvh')
             {
                 document.getElementById('ta').innerHTML = Android.getPref("ta");
@@ -53,6 +53,21 @@
             for (var i = 0; i < fields.length; i++)
             {
                 document.getElementById(fields[i]).innerHTML = data[fields[i]];
+            }
+
+            localise();
+            document.getElementById('duration').innerHTML += ( " " +  Android.getPref("report_date"));
+        }
+
+        function localise()
+        {
+            var fields = [ "ta_header", "gvh_header", "vh_header", "indicator", "summary", "dead_header",
+                "transfer_header", "outcomes_today", "ages","males_header", "females_header", "polpn_gender",
+                "popln_alive", "polpn_header", "summary", "duration" ];
+
+            for (var i =0; i < fields.length; i++)
+            {
+                document.getElementById(fields[i]).innerHTML = search(document.getElementById(fields[i]).innerHTML);
             }
 
         }
@@ -98,21 +113,21 @@
                         <td id='logo' style="width: 100px;text-align: center" rowspan="4">
                             <img src="images/baobab.png" style="height: 70px;width:90px;">
                         </td>
-                        <td id="duration" style="vertical-align: top; font-size: 15px; font-weight: bold;">Daily Summary For</td>
-                        <td>&nbsp;</td><td>&nbsp;</td>
+                        <td id="duration" style="vertical-align: top; font-size: 15px; font-weight: bold;" colspan="3">Daily Summary</td>
+
                     </tr>
                     <tr>
-                        <td style="font-weight: bold;width:30%;font-size: 13px">Traditional Authority</td>
+                        <td style="font-weight: bold;width:30%;font-size: 13px" id='ta_header'>Traditional Authority</td>
                         <td style="width:5px;font-size: 13px">:</td>
                         <td id='ta' style="font-size: 13px"></td>
                     </tr>
                     <tr id= 'gvh_row'>
-                        <td style="font-weight: bold;font-size: 13px">Group Village Headman</td>
+                        <td style="font-weight: bold;font-size: 13px" id='gvh_header'>Group Village Headman</td>
                         <td style="font-size: 13px">:</td>
                         <td id='gvh' style="font-size: 13px"></td>
                     </tr>
                     <tr id= 'vh_row'>
-                        <td style="font-weight: bold;font-size: 13px">Village Headman</td>
+                        <td style="font-weight: bold;font-size: 13px" id='vh_header'>Village Headman</td>
                         <td style="font-size: 13px">:</td>
                         <td id='vh' style="font-size: 13px"></td>
                     </tr>
@@ -123,29 +138,29 @@
 
                 <table style='width: 100%'>
                 <tr class='heading' >
-                    <td style='text-align: center;width:60%'>Indicator</td>
-                    <td style='text-align:center;'>Summary</td>
+                    <td style='text-align: center;width:60%' id='indicator' >Indicator</td>
+                    <td style='text-align:center;' id='summary'>Summary</td>
                 </tr>
                 <tr class='headings'>
-                    <td colspan='3' >General Population Statistics</td>
+                    <td colspan='3' id='polpn_header'>Population Statistics</td>
                 </tr>
                 <tr>
-                    <td>Total Population Alive</td>
+                    <td id='popln_alive'>Total Population</td>
                     <td class='count' id= "popln">0</td>
                 </tr>
                 <tr class='headings'>
-                    <td colspan='3' >Total Population by Gender</td>
+                    <td colspan='3' id='polpn_gender'>Population by Gender</td>
                 </tr>
                 <tr>
-                    <td>Females</td>
+                    <td id='females_header'>Females</td>
                     <td class='count' id="females">0</td>
                 </tr>
                 <tr>
-                    <td>Males</td>
+                    <td id='males_header'>Males</td>
                     <td class='count' id="males">0</td>
                 </tr>
                 <tr class='headings'>
-                    <td colspan='3' >Total Population By Age</td>
+                    <td colspan='3' id='ages'>Age Distribution</td>
                 </tr>
                 <tr>
                      <td>0 to < 1 </td>
@@ -184,18 +199,18 @@
                     <td class='count' id="65-74">0</td>
                 </tr>
                 <tr>
-                    <td>75 and above</td>
+                    <td>75+</td>
                     <td class='count' id="75 and above">0</td>
                 </tr>
                 <tr class='headings'>
-                    <td colspan='3' >Outcomes in Population Today</td>
+                    <td colspan='3' id='outcomes_today'>Outcomes in Population Today</td>
                 </tr>
                 <tr>
-                    <td>Transferred</td>
+                    <td id='transfer_header'>Transferred Out</td>
                     <td class='count' id="transfer">0</td>
                 </tr>
                 <tr>
-                    <td>Dead</td>
+                    <td id='dead_header'>Dead</td>
                     <td class='count' id="dead">0</td>
 
                 </tr>

@@ -26,7 +26,11 @@ the DDE Master server.
 
 ===== Getting Started For Android Device ==========
 
+1. From the cloned copy of CVR on your machine, copy the Home.apk file in the root of the folder to your android device.
 
+2. On your android device navigate to the file you copied and double-click it to install.
+
+3. After the initial login setup the application connection details by going under the setup tab and selecting the setup action.
 
 
 ===== Getting Started For Rails Application =======
@@ -54,6 +58,6 @@ Clone Jobs For Desktop
       2. request_npids
       3. sync_demographics
 
-    - For the application operating at the Tradtional authority level, alsoe setup a clone job to run the get_demographics.rb scripts at
+    - For the application operating at the Tradtional authority level, also setup a clone job to run the get_demographics.rb scripts at
       distant intervals.
 

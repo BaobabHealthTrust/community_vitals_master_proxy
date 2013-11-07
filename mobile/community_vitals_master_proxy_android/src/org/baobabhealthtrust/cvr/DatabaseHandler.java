@@ -1462,7 +1462,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String selectQuery = "SELECT w." + KEY_VALUE + " FROM "
 				+ TABLE_VOCABULARIES + " v LEFT OUTER JOIN " + TABLE_WORDS
 				+ " w ON w." + KEY_VOCABULARY_ID + " = v." + KEY_ID
-				+ " WHERE v." + KEY_VALUE + " = '" + word + "' AND w."
+				+ " WHERE UPPER(v." + KEY_VALUE + ") = UPPER('" + word + "') AND w."
 				+ KEY_LOCALE + " = '" + locale + "'";
 
 		Cursor cursor = db.rawQuery(selectQuery, null);

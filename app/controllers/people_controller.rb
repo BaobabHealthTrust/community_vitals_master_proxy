@@ -394,7 +394,7 @@ class PeopleController < ApplicationController
 
       result = Net::HTTP.new("#{server}").head("/").kind_of? Net::HTTPOK rescue false
     end
-    
+
     render :text => result
   end
 
