@@ -20,6 +20,7 @@ function html5_storage_support() {
 }
 
 function doLogout(){
+    var lang = Android.getPref("locale");
     if(navigator.userAgent.toLowerCase().match(/android/)){
         var token = Android.getToken();
 
@@ -27,7 +28,7 @@ function doLogout(){
     } else {
         sessionStorage.clear();
     }
-
+    Android.setPref("locale", lang);
     window.location = "login.html";
 }
 

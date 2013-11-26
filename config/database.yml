@@ -18,10 +18,10 @@ development:
   adapter: mysql
   encoding: utf8
   reconnect: false
-  database: community_vitals_master_proxy_development
+  database: cvr_new
   pool: 5
   username: root
-  password: admin
+  password: t1m0
   socket: /var/run/mysqld/mysqld.sock
 
 # Warning: The database defined as "test" will be erased and
@@ -41,8 +41,8 @@ production:
   adapter: mysql
   encoding: utf8
   reconnect: false
-  database: community_vitals_master_proxy_production
+  database: cvr_new
   pool: 5
   username: root
-  password: admin
+  password: t1m0
   socket: /var/run/mysqld/mysqld.sock

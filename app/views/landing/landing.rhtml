@@ -268,13 +268,10 @@
         function loadActivitiesMenu(){
           __$("container").innerHTML = "";
           
-          var fields = ["<%= Vocabulary.search('Keyboard') %>",
-                        "<%= Vocabulary.search('Manage Ids') %>",
+          var fields = ["<%= Vocabulary.search('Manage Ids') %>",
                         "<%= Vocabulary.search('Change Language') %>"];
           
           var images = [
-              "<%= (File.exists?("#{Rails.root}/public/images/keyboard.png") ? 
-                  "keyboard.png" : "default.png") %>",
               "<%= (File.exists?("#{Rails.root}/public/images/manageids.png") ?
                   "definecontrols.png" : "default.png") %>",
               "<%= (File.exists?("#{Rails.root}/public/images/language.png") ?
@@ -282,7 +279,7 @@
 
           ];
           
-          var paths = ["", "administration/national_id_management","administration/change_language"];
+          var paths = ["administration/national_id_management","administration/change_language"];
 
         <% if @mode == "vh" %>
               fields.push("<%= Vocabulary.search('Acknowledge Received IDs') %>");
