@@ -4,5 +4,5 @@
 
 <form id='language' action="save_language" method='post'>
   <%= select_tag 'language', options_for_select( [[Vocabulary.search('English'),'en'],[Vocabulary.search('Chichewa'),'ny']] ),
-                 {:helpText => "Select Language", :tt_onLoad => "__$('keyboard').style.display = 'none'"} %>
+                 {:helpText => Vocabulary.search('Select Language'), :tt_onLoad => "__$('keyboard').style.display = 'none'"} %>
 </form>
