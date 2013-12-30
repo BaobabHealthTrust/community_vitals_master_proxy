@@ -2,7 +2,7 @@
 def start
 
   people = Person.find_by_sql("SELECT given_name, middle_name, family_name, gender, birthdate, count(id) as dup_count
-FROM openmrs_chalasa_new.people group by given_name, middle_name,
+FROM people group by given_name, middle_name,
 family_name, gender, birthdate having dup_count > 1")
 
   (people || {}).each do |person|
