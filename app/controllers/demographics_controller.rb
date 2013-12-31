@@ -109,7 +109,7 @@ class DemographicsController < ApplicationController
     @age_key = ['0 to < 1' , '1-4','5-14', '15-24', '25-34','35-44', '45-54', '55-64', '65-74','75+']
     @report = Hash.new([])
     people = people = Person.find(:all,
-                                  :conditions => ["COALESCE(voided,0) = ? AND (outcome IS NULL OR outcome_date > ? ) ",0,@end_date])
+                                  :conditions => ["COALESCE(voided,0) = ? AND birthdate <= ? AND (outcome IS NULL OR outcome_date > ? ) ",0,@end_date,@end_date])
     @report['Age Distribution'] = age_sorter(people, @end_date)
 
     @report['Registered People Alive'] = getPeopleAlive(@start_date,@end_date, people)

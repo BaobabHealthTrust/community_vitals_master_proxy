@@ -257,6 +257,84 @@ class PeopleController < ApplicationController
 
   end
 
+  def save_transfer_in
+
+    village = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["village"] rescue nil
+
+    gvh = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["gvh"] rescue nil
+
+    ta = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["ta"] rescue nil
+
+    site_code = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["site_code"] rescue nil
+
+    national_identifier = NationalIdentifier.find_by_identifier(params[:nat_id]) rescue nil
+
+
+    if national_identifier.blank?
+
+      national_identifier = NationalIdentifier.create({
+                                    :identifier => params[:nat_id].upcase,
+                                    :site_id => site_code,
+                                    :assigned_gvh => gvh,
+                                    :assigned_vh => village,
+                                    :requested_by_gvh => 1,
+                                    :requested_by_vh => 1
+                                })
+
+    else
+        redirect_to "failed_transfer"
+    end
+
+
+
+    if !params[:age].blank? && params[:year_of_birth].to_s.strip.downcase == Vocabulary.search("unknown").downcase
+      dob = "#{Date.today.year - params[:age].to_i}-07-15"
+      estimated = 1
+    else
+      month = 7
+      day = 15
+      estimated = 1
+
+      if params[:month_of_birth].to_s.strip.downcase != "unknown"
+        month = params[:month_of_birth].to_i
+
+        if params[:month_of_birth].to_s.strip.downcase != "unknown"
+          day = params[:day_of_birth].to_i
+
+          estimated = 0
+        end
+
+      end
+
+      dob = "#{params[:year_of_birth]}-#{"%02d" % month}-#{"%02d" % day}"
+
+    end
+
+    person = Person.find(:first, :conditions => [" given_name = ? AND middle_name = ? AND family_name =? AND gender = ?
+                                                AND birthdate = ? AND village =? AND gvh = ? AND ta = ? AND voided = 0",
+                                                 params[:first_name],params[:middle_name],params[:last_name],params[:gender],
+                                                 dob,village,gvh,ta])
+
+    if person.blank?
+      person = Person.create({
+                                 :given_name => params[:first_name],
+                                 :middle_name => params[:middle_name],
+                                 :family_name => params[:last_name],
+                                 :gender => params[:gender],
+                                 :birthdate => dob,
+                                 :birthdate_estimated => estimated,
+                                 :national_id => national_identifier.id,
+                                 :village => village,
+                                 :gvh => gvh,
+                                 :ta => ta
+                             })
+
+      national_identifier.update_attributes({:person_id => person.id, :assigned_at => Time.now})
+      print_and_redirect("/people/national_id_label?person_id=#{person.id}", "/")
+    end
+
+  end
+
   def update_outcome
     @outcomes = OutcomeType.all.collect{|r|
       ["#{Vocabulary.search(r.name).titleize}", r.id]

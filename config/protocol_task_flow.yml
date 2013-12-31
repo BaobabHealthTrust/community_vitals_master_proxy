@@ -1,2 +1,2 @@
 associations:
-  people: update_outcome|2,add_person|0,update_person_relationships|1,search person|3
+  people: update_outcome|3,add_person|0,update_person_relationships|2,search person|4,add_transfer_in|1
