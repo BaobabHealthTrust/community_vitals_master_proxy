@@ -133,8 +133,9 @@
     function initialize()
     {
         document.getElementById('today').innerHTML = '<span><%= Vocabulary.search('Today') %></span>';
+        document.getElementById('Unknown').innerHTML = '<span><%= Vocabulary.search('Unknown') %></span>';
     }
-    setTimeout("initialize()", 200);
+    //setTimeout("initialize()", 200);
     //-->
 
 </script> 
@@ -174,7 +175,8 @@
 
   <%= text_field_tag "outcome_date", nil, {
       :helpText => Vocabulary.search("Outcome Date"),
-      :field_type => :date
+      :field_type => :date,
+      :tt_onLoad => "initialize();"
   } %>
 
 <% end %>
