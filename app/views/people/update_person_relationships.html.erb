@@ -67,7 +67,7 @@
       __$("inputFrame" + tstCurrentPage).removeChild(__$("displayPanel"));
     }
     
-    __$("helpText" + tstCurrentPage).innerHTML = "<%= Vocabulary.search("Details for ") %>" + 
+    __$("helpText" + tstCurrentPage).innerHTML = "<%= Vocabulary.search("Details for ") %> " +
         details[__$(id).value.trim()]["<%= Vocabulary.search("Name") %>"] + 
         " (" + details[__$(id).value.trim()]["<%= Vocabulary.search("National ID") %>"] + ")";
     
