@@ -282,7 +282,7 @@ class PeopleController < ApplicationController
                                 })
 
     else
-        redirect_to "failed_transfer"
+        redirect_to "failed_transfer" and return
     end
 
 
@@ -330,7 +330,7 @@ class PeopleController < ApplicationController
                              })
 
       national_identifier.update_attributes({:person_id => person.id, :assigned_at => Time.now})
-      print_and_redirect("/people/national_id_label?person_id=#{person.id}", "/")
+      print_and_redirect("/people/national_id_label?person_id=#{person.id}", "/") and return
     end
 
   end
