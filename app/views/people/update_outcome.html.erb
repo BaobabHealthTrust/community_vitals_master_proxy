@@ -128,6 +128,15 @@
   }
     
   // -->
+
+    <!--
+    function initialize()
+    {
+        document.getElementById('today').innerHTML = '<span><%= Vocabulary.search('Today') %></span>';
+    }
+    setTimeout("initialize()", 200);
+    //-->
+
 </script> 
 
 <% form_tag (:action => :save_outcome) do %>
