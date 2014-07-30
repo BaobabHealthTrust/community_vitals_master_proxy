@@ -4,7 +4,7 @@ source "https://rubygems.org"
 # gem "rails"
 
 gem 'rails', '2.3.5'
-gem 'bundler', '1.2.0'
+gem 'bundler'
 gem 'daemon_controller', '1.1.4'
 gem 'fastercsv', '1.5.4'
 gem 'json', '1.5.0'
@@ -14,7 +14,6 @@ gem 'mysql', '2.9.1'
 gem 'nokogiri', '1.5.0'
 gem 'passenger', '4.0.8'
 gem 'rack', '1.0.1'
-gem 'rails', '2.3.5'
 gem 'rake', '0.9.2.2'
 gem 'rest-client', '1.6.7'
 gem 'rubygems-bundler', '1.1.0'

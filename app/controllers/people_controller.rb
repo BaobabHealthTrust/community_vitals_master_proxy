@@ -188,18 +188,34 @@ class PeopleController < ApplicationController
 
     ta = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["ta"] rescue nil
 
-    if !params[:age].blank? && params[:year_of_birth].to_s.strip.downcase == Vocabulary.search("unknown").downcase
-      dob = "#{Date.today.year - params[:age].to_i}-07-15"
+    month = 7
+    day = 15
+
+    if params[:year_of_birth].to_s.strip.downcase == Vocabulary.search("unknown").downcase
+
+      if params[:estimated_month_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
+        month = params[:estimated_month_of_birth].to_i
+
+        if params[:estimated_day_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
+          day = params[:estimated_day_of_birth].to_i
+
+        end
+
+        dob = "#{params[:estimated_year_of_birth]}-#{"%02d" % month}-#{"%02d" % day}"
+
+      else
+        dob = "#{params[:estimated_year_of_birth]}-07-15"
+      end
+
       estimated = 1
     else
-      month = 7
-      day = 15
+
       estimated = 1
 
-      if params[:month_of_birth].to_s.strip.downcase != "unknown"
+      if params[:month_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
         month = params[:month_of_birth].to_i
 
-        if params[:month_of_birth].to_s.strip.downcase != "unknown"
+        if params[:day_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
           day = params[:day_of_birth].to_i
 
           estimated = 0

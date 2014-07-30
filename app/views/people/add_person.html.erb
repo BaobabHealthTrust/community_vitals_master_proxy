@@ -46,8 +46,19 @@
       :condition => "__$('month_of_birth').value.trim() != 'Unknown' && " + 
           "__$('year_of_birth').value.trim() != '#{Vocabulary.search("Unknown")}'"} %>
 
-  <%= text_field_tag "age", nil, {:helpText => Vocabulary.search("Age"),
-      :condition => "__$('year_of_birth').value.trim() == '#{Vocabulary.search("Unknown")}'", 
-      :field_type => "number", :tt_pageStyleClass => "NumbersOnlyWithUnknown"} %>
-  
+
+  <%= select_tag "estimated_year_of_birth",options_for_select(((Date.today.year - 120)..(Date.today.year)).collect{|y| y}.reverse ),
+                 :helpText => Vocabulary.search("Estimated Year of birth"),
+                 :condition => "__$('year_of_birth').value.trim() == '#{Vocabulary.search("Unknown")}'",
+                 :field_type => "number", :tt_pageStyleClass => "NumbersOnly" %>
+
+  <%= select_tag "estimated_month_of_birth", options_for_select(months), :helpText => Vocabulary.search("Estimated Month of birth"),
+                 :condition => "__$('year_of_birth').value.trim() == '#{Vocabulary.search("Unknown")}'",
+                 :tt_pageStyleClass => "NoKeyboard" %>
+
+  <%= text_field_tag "estimated_day_of_birth", nil, {:helpText => Vocabulary.search("Estimated Day of birth"),
+                 :tt_onLoad => "getDayOfMonthPicker(__$('estimated_year_of_birth').value.trim(), __$('estimated_month_of_birth').value.trim())",
+                 :condition => "__$('estimated_month_of_birth').value.trim() != 'Unknown' && " +
+                               "__$('year_of_birth').value.trim() == '#{Vocabulary.search("Unknown")}'"} %>
+
 <% end %>
