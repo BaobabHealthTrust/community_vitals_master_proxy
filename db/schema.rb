@@ -11,6 +11,20 @@
 
 ActiveRecord::Schema.define(:version => 201307181255011) do
 
+  create_table "attribute_type", :primary_key => "attribute_type_id", :force => true do |t|
+    t.string   "attribute"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "voided",      :default => false
+    t.string   "void_reason"
+  end
+
+  create_table "district", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "location", :primary_key => "location_id", :force => true do |t|
     t.string   "name",                            :default => "",    :null => false
     t.string   "description"
@@ -148,6 +162,19 @@ ActiveRecord::Schema.define(:version => 201307181255011) do
   add_index "person", ["uuid"], :name => "person_uuid_index", :unique => true
   add_index "person", ["voided_by"], :name => "user_who_voided_patient"
 
+  create_table "person_attribute", :primary_key => "person_attribute_id", :force => true do |t|
+    t.integer  "person_id"
+    t.string   "value"
+    t.integer  "attribute_type_id"
+    t.integer  "creator"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "updated_by"
+    t.boolean  "voided",            :default => false
+    t.integer  "voided_by"
+    t.datetime "date_voided"
+  end
+
   create_table "person_name", :primary_key => "person_name_id", :force => true do |t|
     t.integer  "preferred",          :limit => 2,  :default => 0, :null => false
     t.integer  "person_id"
@@ -185,6 +212,11 @@ ActiveRecord::Schema.define(:version => 201307181255011) do
   end
 
   add_index "privilege", ["uuid"], :name => "privilege_uuid_index", :unique => true
+
+  create_table "region", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "relationship_types", :force => true do |t|
     t.string   "relation"
@@ -239,6 +271,11 @@ ActiveRecord::Schema.define(:version => 201307181255011) do
     t.datetime "updated_at"
   end
 
+  create_table "traditional_authority", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "user_property", :id => false, :force => true do |t|
     t.integer "user_id",                       :default => 0,  :null => false
     t.string  "property",       :limit => 100, :default => "", :null => false
@@ -276,6 +313,11 @@ ActiveRecord::Schema.define(:version => 201307181255011) do
   add_index "users", ["person_id"], :name => "person_id_for_user"
   add_index "users", ["retired_by"], :name => "user_who_retired_this_user"
   add_index "users", ["username"], :name => "username_UNIQUE", :unique => true
+
+  create_table "village", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "vocabularies", :force => true do |t|
     t.string   "value"

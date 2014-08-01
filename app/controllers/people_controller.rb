@@ -242,6 +242,9 @@ class PeopleController < ApplicationController
                                  :gender => params[:gender],
                                  :birthdate => dob,
                                  :birthdate_estimated => estimated,
+                                 :state_province => params[:district],
+                                 :neighbourhood_cell => params[:village],
+                                 :address2 => params[:ta],
                                  :village => village,
                                  :gvh => gvh,
                                  :ta => ta
@@ -256,10 +259,20 @@ class PeopleController < ApplicationController
                                    :gender => params[:gender],
                                    :birthdate => dob,
                                    :birthdate_estimated => estimated,
+                                   :state_province => params[:district],
+                                   :neighbourhood_cell => params[:village],
+                                   :address2 => params[:ta],
                                    :village => village,
                                    :gvh => gvh,
                                    :ta => ta
                                })
+
+    end
+
+    (params["person_attributes"] || []).each do |attribute_type, value|
+      attribute_type_id = AttributeType.find_by_attribute(attribute_type)
+      PersonAttribute.create({:person_id => person.id,:attribute_type_id => attribute_type_id.id,
+                              :value => value, :creator => params[:creator]})
 
     end
 
