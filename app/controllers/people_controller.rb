@@ -276,6 +276,12 @@ class PeopleController < ApplicationController
 
     end
 
+    unless params["remarks"].blank?
+      attribute_type_id = AttributeType.find_by_attribute("other")
+      PersonAttribute.create({:person_id => person.id,:attribute_type_id => attribute_type_id.id,
+                              :value => params["remarks"], :creator => params[:creator]})
+    end
+
     identifier.update_attributes({:person_id => person.id, :assigned_at => Time.now})
 
     person.update_attributes({:national_id => identifier.id})
@@ -314,20 +320,31 @@ class PeopleController < ApplicationController
         redirect_to "failed_transfer" and return
     end
 
+    if params[:year_of_birth].to_s.strip.downcase == Vocabulary.search("unknown").downcase
 
+      if params[:estimated_month_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
+        month = params[:estimated_month_of_birth].to_i
 
-    if !params[:age].blank? && params[:year_of_birth].to_s.strip.downcase == Vocabulary.search("unknown").downcase
-      dob = "#{Date.today.year - params[:age].to_i}-07-15"
+        if params[:estimated_day_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
+          day = params[:estimated_day_of_birth].to_i
+
+        end
+
+        dob = "#{params[:estimated_year_of_birth]}-#{"%02d" % month}-#{"%02d" % day}"
+
+      else
+        dob = "#{params[:estimated_year_of_birth]}-07-15"
+      end
+
       estimated = 1
     else
-      month = 7
-      day = 15
+
       estimated = 1
 
-      if params[:month_of_birth].to_s.strip.downcase != "unknown"
+      if params[:month_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
         month = params[:month_of_birth].to_i
 
-        if params[:month_of_birth].to_s.strip.downcase != "unknown"
+        if params[:day_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
           day = params[:day_of_birth].to_i
 
           estimated = 0
@@ -352,11 +369,27 @@ class PeopleController < ApplicationController
                                  :gender => params[:gender],
                                  :birthdate => dob,
                                  :birthdate_estimated => estimated,
+                                 :state_province => params[:district],
+                                 :neighbourhood_cell => params[:village],
+                                 :address2 => params[:ta],
                                  :national_id => national_identifier.id,
                                  :village => village,
                                  :gvh => gvh,
                                  :ta => ta
                              })
+
+      (params["person_attributes"] || []).each do |attribute_type, value|
+        attribute_type_id = AttributeType.find_by_attribute(attribute_type)
+        PersonAttribute.create({:person_id => person.id,:attribute_type_id => attribute_type_id.id,
+                                :value => value, :creator => params[:creator]})
+
+      end
+
+      unless params["remarks"].blank?
+        attribute_type_id = AttributeType.find_by_attribute("other")
+        PersonAttribute.create({:person_id => person.id,:attribute_type_id => attribute_type_id.id,
+                                :value => params["remarks"], :creator => params[:creator]})
+      end
 
       national_identifier.update_attributes({:person_id => person.id, :assigned_at => Time.now})
       print_and_redirect("/people/national_id_label?person_id=#{person.id}", "/") and return

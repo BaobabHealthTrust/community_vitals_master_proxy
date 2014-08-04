@@ -6,6 +6,11 @@
           tt_cancel_destination = '/';
           tt_cancel_show = '/';
 
+          function set_ajaxURL_for_suggestions(url, filter_value) {
+              $('touchscreenInput'+tstCurrentPage).setAttribute('ajaxURL', url + filter_value + "&search_string=");
+              listSuggestions(tstCurrentPage);
+          }
+
       </script>
 
       <script type="text/javascript">
@@ -76,9 +81,62 @@
                                                      :condition => "__$('month_of_birth').value.trim() != 'Unknown' && " +
                                                              "__$('year_of_birth').value.trim() != '#{Vocabulary.search("Unknown")}'"} %>
 
-            <%= text_field_tag "age", nil, {:helpText => Vocabulary.search("Age"),
-                                            :condition => "__$('year_of_birth').value.trim() == '#{Vocabulary.search("Unknown")}'",
-                                            :field_type => "number", :tt_pageStyleClass => "NumbersOnlyWithUnknown"} %>
+        <%= select_tag "estimated_year_of_birth",options_for_select(((Date.today.year - 120)..(Date.today.year)).collect{|y| y}.reverse ),
+                       :helpText => Vocabulary.search("Estimated Year of birth"),
+                       :condition => "__$('year_of_birth').value.trim() == '#{Vocabulary.search("Unknown")}'",
+                       :field_type => "number", :tt_pageStyleClass => "NumbersOnly" %>
+
+        <%= select_tag "estimated_month_of_birth", options_for_select(months), :helpText => Vocabulary.search("Estimated Month of birth"),
+                       :condition => "__$('year_of_birth').value.trim() == '#{Vocabulary.search("Unknown")}'",
+                       :tt_pageStyleClass => "NoKeyboard" %>
+
+        <%= text_field_tag "estimated_day_of_birth", nil, {:helpText => Vocabulary.search("Estimated Day of birth"),
+                                                           :tt_onLoad => "getDayOfMonthPicker(__$('estimated_year_of_birth').value.trim(), __$('estimated_month_of_birth').value.trim())",
+                                                           :condition => "__$('estimated_month_of_birth').value.trim() != 'Unknown' && " +
+                                                                   "__$('year_of_birth').value.trim() == '#{Vocabulary.search("Unknown")}'"} %>
+
+
+        <%= select_tag "person_attributes[place of birth]", options_for_select([["#{Vocabulary.search("Hospital")}", "Hospital"],
+                                                                                ["#{Vocabulary.search("Home")}", "Home"]]), {:helpText => Vocabulary.search("Place of Birth"), :tt_onLoad => "$('nextButton').style.display = 'block';"} %>
+
+        <p><label >Current Region</label><br/></p>
+        <%= text_field "region" , nil, {:helpText => Vocabulary.search('Current Region'),:id => "region",
+                                        :tt_requireNextClick => false, :ajaxURL => '/location/region/Region?field=role&value=',
+                                        :tt_onLoad => "$('nextButton').style.display = 'none';"}%></p>
+
+
+        <%= text_field_tag "district", nil, {
+                :id => 'district',
+                :field_type => 'alpha',
+                :helpText => Vocabulary.search('Current District'),
+                :tt_requireNextClick => false, :ajaxURL => '',
+                :allowFreeText => false,
+                :tt_onLoad => "set_ajaxURL_for_suggestions('/location/district/District?filter_value=' ,document.getElementById('region').value);" } %>
+
+        <%= text_field_tag "ta", nil, {
+                :id => 'ta',
+                :field_type => 'alpha',
+                :helpText => Vocabulary.search('Current Traditional Authority'),
+                :tt_requireNextClick => false, :ajaxURL => '',
+                :allowFreeText => false,
+                :tt_onLoad => "set_ajaxURL_for_suggestions('/location/traditional_authority/ta?filter_value=' ,document.getElementById('district').value);" } %>
+
+        <%= text_field_tag "village", nil, {
+                :id => 'village',
+                :field_type => 'alpha',
+                :helpText => Vocabulary.search('Current Village'),
+                :tt_requireNextClick => true, :ajaxURL => '',
+                :allowFreeText => false,
+                :tt_onLoad => "$('nextButton').style.display = 'block';set_ajaxURL_for_suggestions('/location/village/Village?filter_value=' ,document.getElementById('ta').value);" } %>
+
+        <%= text_area_tag "remarks", nil,
+                          {:id => 'remarks',
+                           :field_type => 'alpha',
+                           :optional => true,
+                           :helpText => Vocabulary.search('Enter remarks')} %>
+
+
+        <%= hidden_field_tag :creator, session[:user_id] %>
 
     <% end %>
 

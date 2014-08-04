@@ -5,7 +5,7 @@ class LocationController < ApplicationController
     regions = Region.find(:all,:conditions => region_conditions, :order => 'region_id')
     regions = regions.map do |r|
       if r.name != "Foreign"
-        "<li value='#{r.name}'>#{r.name}</li>"
+        "<li value='#{r.name}'>#{Vocabulary.search(r.name)}</li>"
       end
     end
     render :text => regions.join('')  and return
