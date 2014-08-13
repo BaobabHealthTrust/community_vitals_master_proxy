@@ -214,13 +214,14 @@ public class WebAppInterface {
 
 		editor.commit();
 
-		setPref("user_id", mUDB.mCurrentUserId + "");
+		setPref("user_id", String.valueOf(mUDB.get_current_user()));
 
 		return token;
 	}
 
 	@JavascriptInterface
 	public void doLogout(String token) {
+		
 		mUDB.logout(token);
 
 		Editor editor = mPrefs.edit();
@@ -345,7 +346,8 @@ public class WebAppInterface {
 	public void savePerson(String fname, String mname, String lname,
 			String gender, String age, String occupation, String yob,
 			String mob, String dob, String success, String failed,
-			String relationship, String person_b_id, String relation) {
+			String relationship, String person_b_id, String pvillage, 
+			String pdistrict, String pta, String relation, String[] attributes) {
 
 		People person = new People();
 
@@ -405,10 +407,13 @@ public class WebAppInterface {
 
 			person.setBirthdateEstimated(birthdate_estimated);
 
+			person.setAddress2(pta);
+			person.setNeighbourhoodCell(pvillage);
+			person.setStateProvince(pdistrict);
 			person.setVillage(vh);
 			person.setGvh(gvh);
 			person.setTa(ta);
-
+		
 			String date = Calendar.getInstance().get(Calendar.YEAR)
 					+ "-"
 					+ String.format("%02d",
@@ -431,10 +436,12 @@ public class WebAppInterface {
 			person.setCreatedAt(date);
 
 			person.setUpdatedAt(date);
+			
+			person.setCreatorId(Integer.parseInt(getPref("user_id")));
 
 			String result[] = mDB.addPeople(person);
 
-			setPref("person id", result[0]);
+			setPref("person id", String.valueOf(mDB.getPersonWithNpid(result[3])));
 
 			setPref("first name", result[1]);
 
@@ -448,6 +455,12 @@ public class WebAppInterface {
 
 			setPref("dobest", result[6]);
 
+			for (int i= 0; i < attributes.length; i+=2)
+			{
+				this.SavePersonAttribute(Integer.parseInt(getPref("person id")), attributes[i+1], attributes[i], date);
+			}
+			
+			
 			if (relationship.equalsIgnoreCase("yes")) {
 				Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ create relationship");
 
@@ -1551,6 +1564,112 @@ public class WebAppInterface {
 			
 		}
 		
+	}
+
+	@JavascriptInterface
+	public String getRegions(String filter) {
+		List<String> regions = mDB.getRegions(filter); 
+		JSONArray details = new JSONArray();
+		try{
+			
+			
+			for (int i = 0; i < regions.size(); i++) {			
+			
+				String region = regions.get(i);
+				JSONObject json = new JSONObject();
+				json.put("region", region);
+				
+				details.put(json);
+			}
+			return details.toString();
+		}
+		catch (JSONException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	        return e.toString();
+	    }	
+	}
+	
+	@JavascriptInterface
+	public String getDistricts(String filter,String region) {
+		
+		List<String> districts = mDB.getDistricts(filter,region); 
+		JSONArray details = new JSONArray();
+		try{
+			
+			
+			for (int i = 0; i < districts.size(); i++) {			
+			
+				String district = districts.get(i);
+				JSONObject json = new JSONObject();
+				json.put("district", district);
+				
+				details.put(json);
+			}
+			return details.toString();
+		}
+		catch (JSONException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	        return e.toString();
+	    }	
+	}
+	
+	@JavascriptInterface
+	public String getTAs(String filter,String district) {
+		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$ district: " + district);
+		List<String> tas = mDB.getTraditionalAuthorities(filter,district); 
+		JSONArray details = new JSONArray();
+		try{
+			
+			
+			for (int i = 0; i < tas.size(); i++) {			
+			
+				String ta = tas.get(i);
+				JSONObject json = new JSONObject();
+				json.put("ta", ta);
+				
+				details.put(json);
+			}
+			return details.toString();
+		}
+		catch (JSONException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	        return e.toString();
+	    }	
+	}
+	
+	@JavascriptInterface
+	public String listVillages(String filter, String ta) {
+		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$ traditional authority: " + ta);
+		List<String> villages = mDB.listVillages(filter,ta); 
+		JSONArray details = new JSONArray();
+		try{
+			
+			
+			for (int i = 0; i < villages.size(); i++) {			
+			
+				String village = villages.get(i);
+				JSONObject json = new JSONObject();
+				json.put("village", village);
+				
+				details.put(json);
+			}
+			return details.toString();
+		}
+		catch (JSONException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	        return e.toString();
+	    }	
+	}
+	
+	@JavascriptInterface
+	public void SavePersonAttribute(int person, String attribute, String attribute_type, String date)
+	{
+		int attribute_type_id = mDB.getPersonAttributeType(attribute_type);
+		mDB.savePersonAttribute(person, attribute_type_id, attribute, date, Integer.parseInt(getPref("user_id")));
 	}
 	
 	public int getMonthBirthsGenderSnr(String duration, String gender, String village)

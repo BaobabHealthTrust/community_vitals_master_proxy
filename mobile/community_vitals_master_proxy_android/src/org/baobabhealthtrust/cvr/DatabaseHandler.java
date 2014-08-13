@@ -54,7 +54,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	private static final String TABLE_OUTCOMES = "outcomes";
 	private static final String TABLE_RELATIONSHIPS = "relationships";
 	private static final String TABLE_VOCABULARIES = "vocabularies";
-
+	private static final String TABLE_ATTRIBUTES = "attribute_type";
+	private static final String TABLE_PERSON_ATTRIBUTES = "person_attribute";
+	
 	private static final String KEY_CREATED_AT = "created_at";
 	private static final String KEY_UPDATED_AT = "updated_at";
 	private static final String KEY_DATE_VOIDED = "date_voided";
@@ -2267,6 +2269,133 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		else{
 			return false;	
 		}
+		
+	}
+	
+	public List getRegions(String filter){
+		List<String> regionList = new ArrayList();
+		
+		String countQuery = "SELECT name FROM region WHERE name like '%"+ filter+"%' AND COALESCE(retired,0) = 0";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+				
+		if (cursor.moveToFirst()) {
+			do {
+				regionList.add(cursor.getString(0));
+			} while (cursor.moveToNext());
+		}
+		
+		return regionList;
+	}
+	
+	public List getDistricts(String filter,String region){
+		List<String> districtList = new ArrayList();
+		
+		String countQuery = "SELECT name FROM district WHERE COALESCE(retired,0) = 0 "+" AND name like '%"+ 
+		filter+"%' AND region_id in (SELECT region_id FROM region WHERE COALESCE(retired,0) = 0 "+
+		" AND TRIM(UPPER(name)) = TRIM(UPPER('" + region + "')))";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+				
+		if (cursor.moveToFirst()) {
+			do {
+				districtList.add(cursor.getString(0));
+			} while (cursor.moveToNext());
+		}
+		
+		return districtList;
+	}
+	
+	public List getTraditionalAuthorities(String filter,String district){
+		List<String> taList = new ArrayList();
+		
+		String countQuery = "SELECT name FROM traditional_authority WHERE COALESCE(retired,0) = 0 "+
+		"AND name like '%"+ filter+"%' AND district_id in (SELECT district_id FROM district WHERE "+
+		"COALESCE(retired,0) = 0 AND TRIM(UPPER(name)) = TRIM(UPPER('" + district + "')))";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$ number of traditional authorities: " + cursor.getCount());
+		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$ number of traditional authorities: " + countQuery);
+		if (cursor.moveToFirst()) {
+			do {
+				taList.add(cursor.getString(0));
+			} while (cursor.moveToNext());
+		}
+		
+		return taList;
+	}
+	
+	public List listVillages(String filter, String ta){
+		List<String> villageList = new ArrayList();
+		
+		String countQuery = "SELECT name FROM village WHERE COALESCE(retired,0) = 0 "+
+		"AND name like '%"+ filter+"%' AND traditional_authority_id in "+
+		"(SELECT traditional_authority_id FROM traditional_authority WHERE COALESCE(retired,0) = 0 "+
+		" AND TRIM(UPPER(name)) = TRIM(UPPER('" + ta + "')))";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+				
+		if (cursor.moveToFirst()) {
+			do {
+				villageList.add(cursor.getString(0));
+			} while (cursor.moveToNext());
+		}
+		
+		return villageList;
+	}
+	
+	public void savePersonAttribute(int person_id, int attribute_type_id , String attribute_value,String date, int creator )
+	{
+
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues values = new ContentValues();
+		values.put("person_id", person_id);
+		values.put("value", attribute_value);
+		values.put("attribute_type_id", attribute_type_id);
+		values.put("created_at", date);
+		values.put("updated_at", date);
+		values.put("creator", creator);
+		// Insert Row
+		db.insert(TABLE_PERSON_ATTRIBUTES, null, values);
+		db.close();		
+	}
+	
+	public int getPersonAttributeType(String attribute_type)
+	{
+		int result = 0;
+
+		// Select All Query
+		String selectQuery = "SELECT attribute_type_id FROM " + TABLE_ATTRIBUTES
+				+ " WHERE UPPER(attribute) = UPPER('"+ attribute_type +"') AND voided = 0";
+		
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			result = Integer.parseInt(cursor.getString(0));
+		}
+
+		return result;
+		
+	}
+	
+	public int getPersonWithNpid(String npid)
+	{
+		int result = 0;
+
+		// Select All Query
+		String selectQuery = "SELECT id FROM " + TABLE_NATIONAL_IDENTIFIERS
+				+ " WHERE UPPER(identifier) = UPPER('"+ npid +"') AND voided = 0";
+		
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			result = Integer.parseInt(cursor.getString(0));
+		}
+
+		return result;
 		
 	}
 }

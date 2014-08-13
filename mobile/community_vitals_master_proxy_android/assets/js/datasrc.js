@@ -17,9 +17,10 @@ function savePerson(){
     var age = (__$("1.5").value.trim().toLowerCase() == "unknown" ?
         parseInt(__$("1.6").value) : "0");
     
-    var relate = (__$("1.9").value.trim().toLowerCase() == "yes" ? "yes" : "no");
-    var person_b = (__$("1.9").value.trim().toLowerCase() == "yes" ? __$("1.13").value.trim() : "");
-    var relation = (__$("1.9").value.trim().toLowerCase() == "yes" ? __$("1.14").value.trim() : "");
+    var relate = (__$("1.14").value.trim().toLowerCase() == "yes" ? "yes" : "no");
+    var person_b = (__$("1.14").value.trim().toLowerCase() == "yes" ? __$("1.18").value.trim() : "");
+    var relation = (__$("1.14").value.trim().toLowerCase() == "yes" ? __$("1.19").value.trim() : "");
+    var person_attributes = [];
         
     var months = {
         "January":"1",
@@ -38,12 +39,19 @@ function savePerson(){
     
     var mob = (__$("1.5").value.trim().toLowerCase() == "unknown" ? "Unknown" : months[__$("1.7").value]);
     var dob = (__$("1.5").value.trim().toLowerCase() == "unknown" ? "Unknown" : __$("1.8").value);
-    var occ = ""; // __$("1.9").value;
+    var occ = "";
+    var village = __$("1.13").value.trim().toLowerCase();
+    var district = __$("1.11").value.trim().toLowerCase();
+    var ta = __$("1.12").value.trim().toLowerCase();
     var success = "Person saved!";
     var failed = "Person save failed!";
-
+	person_attributes = ["place of birth", __$("1.9").value];
+	if (__$("1.14").value.trim().length != 0)
+	{
+		person_attributes.push( "other", __$("1.14").value);
+	}
     var result = Android.savePerson(fName, mName, lName, gender, age,
-        occ, yob, mob, dob, success, failed, relate, person_b, relation);
+        occ, yob, mob, dob, success, failed, relate, person_b,village, district, ta, relation,person_attributes);
 
     window.location = "person_summary.html";
     
@@ -1263,4 +1271,80 @@ function setLanguage()
     Android.setPref("locale", lang);
     showMessage( search("Language Changed"));
     window.location = "index.html";
+}
+
+function loadPlaceOfBirth(value){
+    var list = {
+        "Home":"Home",
+        "Hospital":"Hospital"
+    };
+    
+    var arr = [];
+
+    for(var el in list){
+        if(list[el].trim().toLowerCase().match(value.toLowerCase().trim())){
+            arr.push([search(list[el]), el]);
+        } else if (value.toLowerCase().trim().length == 0){
+            arr.push([search(list[el]), el]);
+        }
+    }
+
+    loadSingleSelect(arr);
+}
+
+function loadRegion(filter){
+   
+    var result = Android.getRegions(filter);
+	var reg_list = JSON.parse(result);    
+    var arr = [];
+
+	for(var el = 0; el < reg_list.length; el++){
+        
+      arr.push([search(reg_list[el]["region"]),reg_list[el]["region"]]);
+        
+    }
+
+    loadSingleSelect(arr);
+
+}
+function loadDistrict(filter, region){
+	var result = Android.getDistricts(filter,region);
+
+    var list = JSON.parse(result);
+    var arr = [];
+
+    for(var el in list){
+      arr.push([list[el]["district"], list[el]["district"]]);
+    }
+
+    loadSingleSelect(arr);
+
+}
+function loadTA(filter, district){
+	var result = Android.getTAs(filter,district);
+
+    var list = JSON.parse(result);
+    var arr = [];
+
+    for(var el in list){
+      arr.push([list[el]["ta"],list[el]["ta"]]);
+    }
+
+    loadSingleSelect(arr);
+
+}
+
+function loadVillage(filter, ta){
+
+	var result = Android.listVillages(filter,ta);
+
+    var list = JSON.parse(result);
+    var arr = [];
+
+    for(var el in list){
+      arr.push([list[el]["village"],list[el]["village"]]);
+    }
+
+    loadSingleSelect(arr);
+
 }

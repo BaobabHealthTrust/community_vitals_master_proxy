@@ -743,4 +743,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		db.close();
 	}
 
+	int get_current_user()
+	{
+		return mCurrentUserId;
+	}
 }
