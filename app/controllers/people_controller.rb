@@ -71,7 +71,7 @@ class PeopleController < ApplicationController
                 Vocabulary.search("Last name") => "#{person.family_name}",
                 Vocabulary.search("Birthdate") => "#{year}-#{(month == 7 && person.birthdate_estimated == 1 ? "?-?" :
                     (day == 15 && person.birthdate_estimated == 1 ? "#{"%02d" % month}-?" : "#{"%02d" % month}-#{"%02d" % day}"))}",
-                Vocabulary.search("Gender") => person.gender,
+                Vocabulary.search("Gender") => Vocabulary.search(person.gender),
                 Vocabulary.search("National ID") => person.identifier.identifier,
                 Vocabulary.search("Relations") => "#{}"
             }
@@ -107,7 +107,7 @@ class PeopleController < ApplicationController
               Vocabulary.search("Last name") => "#{person.family_name}",
               Vocabulary.search("Birthdate") => "#{year}-#{(month == 7 && person.birthdate_estimated == 1 ? "?-?" :
                   (day == 15 && person.birthdate_estimated == 1 ? "#{"%02d" % month}-?" : "#{"%02d" % month}-#{"%02d" % day}"))}",
-              Vocabulary.search("Gender") => person.gender,
+              Vocabulary.search("Gender") => Vocabulary.search(person.gender),
               Vocabulary.search("National ID") => person.identifier.identifier,
               Vocabulary.search("Relations") => "#{}"
           }
@@ -143,7 +143,7 @@ class PeopleController < ApplicationController
             Vocabulary.search("Last name") => "#{person.family_name}",
             Vocabulary.search("Birthdate") => "#{year}-#{(month == 7 && person.birthdate_estimated == 1 ? "?-?" :
                 (day == 15 && person.birthdate_estimated == 1 ? "#{"%02d" % month}-?" : "#{"%02d" % month}-#{"%02d" % day}"))}",
-            Vocabulary.search("Gender") => person.gender,
+            Vocabulary.search("Gender") => Vocabulary.search(person.gender),
             Vocabulary.search("National ID") => person.identifier.identifier,
             Vocabulary.search("Relations") => "#{}"
         }
@@ -467,7 +467,7 @@ class PeopleController < ApplicationController
           Vocabulary.search("Last name") => "#{person.family_name}",
           Vocabulary.search("Birthdate") => "#{year}-#{(month == 7 && person.birthdate_estimated == 1 ? "?-?" :
               (day == 15 && person.birthdate_estimated == 1 ? "#{"%02d" % month}-?" : "#{"%02d" % month}-#{"%02d" % day}"))}",
-          Vocabulary.search("Gender") => person.gender,
+          Vocabulary.search("Gender") => Vocabulary.search(person.gender),
           Vocabulary.search("National ID") => person.identifier.identifier,
           Vocabulary.search("Relations") => person.family.collect{|r|
             "#{r}"
