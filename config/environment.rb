@@ -43,3 +43,4 @@ end
 require "json"
 require "rest-client"
 require "will_paginate"
+require 'bantu_soundex'

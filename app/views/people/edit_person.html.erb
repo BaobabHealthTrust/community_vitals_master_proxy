@@ -1,0 +1,107 @@
+<script language="javascript">
+    <!--
+    function initialize()
+    {
+        __$("finishButton").setAttribute('onclick', "window.location ='/people/index?person=<%= params[:person] %>'")
+    }
+
+    setTimeout("initialize()", 0);
+
+    function goTo(field){
+
+        form = document.createElement('form')
+        form.setAttribute('action', "/people/edit_demographics")
+        form.setAttribute('method', 'post')
+
+        person_input = document.createElement('input')
+        person_input.setAttribute('name', 'person')
+        person_input.setAttribute('type', 'hidden')
+        person_input.setAttribute('value', <%= params[:person] %>)
+        form.appendChild(person_input)
+
+        field_input = document.createElement('input')
+        field_input.setAttribute('name', 'field')
+        field_input.setAttribute('type', 'hidden')
+        field_input.value = field
+        form.appendChild(field_input)
+        console.log(field)
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+    //-->
+
+</script>
+
+<style>
+  td{
+      border: 1px solid #000000;
+      padding: 5px;
+  }
+  td.title{
+      font-weight: bold;
+      width: 45%;
+  }
+  tr{
+      line-height: 250%;
+  }
+  div.link{
+      width: 100%;
+      height: 100%;
+      background-color: cornflowerblue;
+      text-align: center;
+      color: #ffffff;
+  }
+</style>
+
+<div style="margin-left: auto; margin-right: auto; width: 95%;padding-top: 15px;">
+    <span style="font-size: 200%;font-weight: bold;"> <%= "#{Vocabulary.search('Demographics for')} " +  @person.name%> </span>
+    <table style="width:100%;">
+      <tr>
+        <td class="title"><%= Vocabulary.search('First Name') %></td>
+        <td><%= @person.given_name %></td>
+        <td><div class="link" onmousedown="goTo('given_name')">Edit</div></td>
+      </tr>
+      <tr>
+        <td class="title"><%= Vocabulary.search('Middle Name') %></td>
+        <td><%= @person.middle_name %></td>
+        <td><div class="link" onmousedown="goTo('middle_name')">Edit</div></td>
+      </tr>
+      <tr>
+        <td class="title"><%= Vocabulary.search('Last Name') %></td>
+        <td><%= @person.family_name %></td>
+        <td><div class="link" onmousedown="goTo('last_name')">Edit</div></td>
+      </tr>
+      <tr>
+        <td class="title"><%= Vocabulary.search('Gender') %></td>
+        <td><%= Vocabulary.search(@person.gender) %></td>
+        <td><div class="link" onmousedown="goTo('gender')">Edit</div></td>
+      </tr>
+      <tr>
+        <td class="title"><%= Vocabulary.search('Date of Birth') %></td>
+        <td><%= @person.birthdate %></td>
+        <td><div class="link" onmousedown="goTo('dob')">Edit</div></td>
+      </tr>
+      <tr>
+        <td class="title"><%= Vocabulary.search('Place of Birth') %></td>
+        <td><%= Vocabulary.search(@person.place_of_birth) %></td>
+        <td><div class="link" onmousedown="goTo('place_of_birth')">Edit</div></td>
+      </tr>
+      <tr>
+        <td class="title"><%= Vocabulary.search('Current District') %></td>
+        <td><%= @person.state_province %></td>
+        <td><div class="link" onmousedown="goTo('current_district')">Edit</div></td>
+      </tr>
+      <tr>
+        <td class="title"><%= Vocabulary.search('Current Traditional Authority') %></td>
+        <td><%= @person.address2 %></td>
+        <td><div class="link" onmousedown="goTo('current_district')">Edit</div></td>
+      </tr>
+      <tr>
+        <td class="title"><%= Vocabulary.search('Current Village') %></td>
+        <td><%= @person.village %></td>
+        <td><div class="link" onmousedown="goTo('current_district')">Edit</div></td>
+      </tr>
+
+    </table>
+</div>

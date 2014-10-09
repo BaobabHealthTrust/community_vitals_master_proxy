@@ -59,8 +59,8 @@ class Person < ActiveRecord::Base
 
   def family 
     direct = Relationship.all(:conditions => ["person_national_id = ?", self.identifier.identifier]).collect{|r| 
-          "#{r.relative.name rescue nil} [#{Vocabulary.search(r.relative.gender).titleize rescue nil}" + 
-          " - #{r.relative.npid rescue nil} (#{r.relative.age})]"
+          "#{r.relative.name rescue nil} [#{Vocabulary.search(r.relative.gender).titleize rescue nil}" +
+          " - #{r.relative.npid rescue nil} (#{r.relative.age})]. #{Vocabulary.search('Relationship')} : #{r.relation}"
         }.compact
         
     relations = {
@@ -70,7 +70,7 @@ class Person < ActiveRecord::Base
     }    
         
     indirect = Relationship.all(:conditions => ["relation_national_id = ?", self.identifier.identifier]).collect{|r| 
-          "#{r.person.name rescue nil} [#{Vocabulary.search(r.relative.gender).titleize rescue nil}" + 
+          "#{r.person.name rescue nil} [#{Vocabulary.search(r.person.gender).titleize rescue nil}" +
           " - #{r.person.npid rescue nil} (#{r.person.age})]"
         }.compact
         
@@ -119,5 +119,24 @@ class Person < ActiveRecord::Base
 
   def outcome_by_date(date)
     Outcome.find(:first, :conditions => ["DATE(outcome_date) <= ? AND person_id = ?", date, self.id], :order => "outcome_date DESC")
+  end
+
+  def place_of_birth
+    attribute_type_id = AttributeType.find_by_attribute("place of birth")
+    PersonAttribute.find(:last, :conditions => ["person_id = ? and attribute_type_id = ?", self.id,attribute_type_id.id ]).value rescue 'Unknown'
+  end
+
+  def outcome_status
+    outcome = outcome_by_date(Date.today).name rescue "Alive"
+  end
+
+  def outcomes_summary
+    outcomes_summary = []
+    outcomes = Outcome.find(:all, :conditions => ["person_id = ? AND voided = 0", self.id], :order => "outcome_date asc")
+    outcomes_summary << "#{Vocabulary.search('Alive')} : #{self.birthdate.strftime('%d %b %Y')} - #{(outcomes.first.outcome_date rescue Date.today).strftime('%d %b %Y') }"
+    (outcomes || []).each do |outcome|
+      outcomes_summary << "#{Vocabulary.search(outcome.name)} : #{outcomes.first.outcome_date.strftime('%d %b %Y')}"
+    end
+    outcomes_summary
   end
 end

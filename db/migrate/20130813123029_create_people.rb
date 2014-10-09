@@ -8,6 +8,8 @@ class CreatePeople < ActiveRecord::Migration
       t.string :middle_name
       t.string :family_name
       t.string :maiden_name
+      t.string :given_name_code
+      t.string :family_name_code
       t.string :gender
       t.date :birthdate
       t.integer :birthdate_estimated

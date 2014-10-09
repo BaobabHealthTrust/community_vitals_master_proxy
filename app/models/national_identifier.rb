@@ -1,6 +1,10 @@
 class NationalIdentifier < ActiveRecord::Base
-  has_one :person, :class_name => "Person", :foreign_key => "national_id"
-  
+  has_one :person, :class_name => "Person", :foreign_key => "person_id"
+
+  def person
+    Person.find(self.person_id)
+  end
+
   def self.threshold
     
     settings = YAML.load_file("#{Rails.root}/config/application.yml") rescue {}

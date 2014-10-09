@@ -1,0 +1,149 @@
+<script language="javascript">
+    <!--
+
+    tt_cancel_destination = '/';
+    tt_cancel_show = '/';
+    details = {};
+
+    <% (@details || []).each do |person, person_detail| %>
+        temp = {}
+        <% (person_detail.keys || []).each do |key| %>
+            temp['<%= key %>'] = '<%= person_detail[key] %>'
+        <% end %>
+        details[<%= person %>] = temp
+    <% end %>
+
+
+    function addNewSearchButton(){
+        var btnNew = document.createElement("button");
+        btnNew.id = "btnNew";
+        btnNew.className = "button blue";
+        btnNew.style.cssFloat = "right";
+        btnNew.innerHTML = "<span><%= Vocabulary.search("New Search") %></span>";
+
+        btnNew.onmousedown = function(){
+            window.location = "/people/add_person";
+        }
+
+        __$("buttons").appendChild(btnNew);
+
+        var btnAdd = document.createElement("button");
+        btnAdd.id = "btnAdd";
+        btnAdd.className = "button blue";
+        btnAdd.style.cssFloat = "right";
+        btnAdd.innerHTML = "<span><%= Vocabulary.search("Create New Person") %></span>";
+
+        btnAdd.onmousedown = function(){
+            document.forms[0].action = "/people/create_person";
+            document.forms[0].submit();
+        }
+
+        __$("buttons").appendChild(btnAdd);
+
+    }
+
+    function loadPerson(id){
+
+        if(__$("displayPanel")){
+            __$("inputFrame" + tstCurrentPage).removeChild(__$("displayPanel"));
+        }
+
+        __$("helpText" + tstCurrentPage).innerHTML = "<%= Vocabulary.search("Details for ") %> " +
+                details[__$(id).value.trim()]["<%= Vocabulary.search("Name") %>"] +
+                " (" + details[__$(id).value.trim()]["<%= Vocabulary.search("National ID") %>"] + ")";
+
+        var dspPanel = document.createElement("div");
+        dspPanel.id = "displayPanel";
+        dspPanel.style.display = "table";
+        dspPanel.style.borderSpacing = "0px";
+        dspPanel.style.width = "100%";
+
+        __$("inputFrame" + tstCurrentPage).appendChild(dspPanel);
+
+        var fields = [
+            "<%= Vocabulary.search("Name") %>",
+            "<%= Vocabulary.search("First name") %>",
+            "<%= Vocabulary.search("Middle name") %>",
+            "<%= Vocabulary.search("Last name") %>",
+            "<%= Vocabulary.search("Birthdate") %>",
+            "<%= Vocabulary.search("Gender") %>",
+            "<%= Vocabulary.search("National ID") %>",
+            "<%= Vocabulary.search("Relations") %>"
+        ];
+
+        for(var i = 1; i < fields.length; i++){
+            var row = document.createElement("div");
+            row.style.display = "table-row";
+
+            if(i % 2 == 0)
+                row.style.backgroundColor = "#89B4EF";
+
+            dspPanel.appendChild(row);
+
+            var cell1 = document.createElement("div");
+            cell1.style.display = "table-cell";
+            cell1.style.fontSize = "1.7em";
+            cell1.style.padding = "8px";
+            cell1.style.verticalAlign = "top";
+            cell1.innerHTML = fields[i];
+
+            row.appendChild(cell1);
+
+            var cell2 = document.createElement("div");
+            cell2.style.display = "table-cell";
+            cell2.style.fontSize = "1.7em";
+            cell2.style.padding = "8px";
+            cell2.style.fontStyle = "italic";
+            cell2.innerHTML = details[__$(id).value.trim()][fields[i]];
+
+            row.appendChild(cell2);
+
+            if(i % 2 > 0){
+                cell1.style.border = "1px solid #89B4EF";
+                cell2.style.border = "1px solid #89B4EF";
+            } else {
+                cell1.style.border = "1px solid #eee";
+                cell2.style.border = "1px solid #eee";
+            }
+
+        }
+
+        __$("inputFrame" + tstCurrentPage).style.border = "none";
+
+    }
+
+    //-->
+</script>
+
+  <form action="/people/index">
+
+  <% if @people.blank? %>
+      <%= text_field_tag "no_match_found", nil, {
+              :helpText => Vocabulary.search("No match found") + "!",
+              :tt_pageStyleClass => "NoControls NoKeyboard",
+              :tt_onLoad => "addNewSearchButton()"
+      } %>
+
+  <% else %>
+      <%= select_tag "person", options_for_select(@people), {
+              :helpText => Vocabulary.search("Select person from this list"),
+              :tt_pageStyleClass => "longSelectList NoKeyboard",
+              :tt_onLoad => "addNewSearchButton()",
+              :tt_onUnLoad => ""
+      } %>
+
+      <%= text_field_tag "person_verification", nil, {
+              :helpText => Vocabulary.search("Person details"),
+              :tt_pageStyleClass => "NoControls NoKeyboard",
+              :tt_onLoad => "loadPerson('person')",
+              :condition => "__$('person').value.trim().length > 0",
+              :optional => true
+      } %>
+  <% end %>
+
+    <%= hidden_field_tag "first_name", params[:first_name] %>
+
+    <%= hidden_field_tag "last_name", params[:last_name] %>
+
+    <%= hidden_field_tag "gender", params[:gender] %>
+</form>

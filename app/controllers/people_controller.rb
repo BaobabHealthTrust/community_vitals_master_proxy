@@ -1,5 +1,10 @@
 class PeopleController < ApplicationController
 
+  def index
+
+    @person = Person.find(params[:person])
+    render :layout => "report"
+  end
   def add_person
     # raise session.to_yaml
   end
@@ -239,6 +244,8 @@ class PeopleController < ApplicationController
                                  :given_name => params[:first_name],
                                  :middle_name => params[:middle_name],
                                  :family_name => params[:last_name],
+                                 :given_name_code => params[:first_name].soundex,
+                                 :family_name_code => params[:last_name].soundex,
                                  :gender => params[:gender],
                                  :birthdate => dob,
                                  :birthdate_estimated => estimated,
@@ -286,7 +293,7 @@ class PeopleController < ApplicationController
 
     person.update_attributes({:national_id => identifier.id})
 
-    print_and_redirect("/people/national_id_label?person_id=#{person.id}", "/")
+    print_and_redirect("/people/national_id_label?person_id=#{person.id}", "/people/index?person=#{person.id}")
 
     # redirect_to "/"
 
@@ -392,7 +399,7 @@ class PeopleController < ApplicationController
       end
 
       national_identifier.update_attributes({:person_id => person.id, :assigned_at => Time.now})
-      print_and_redirect("/people/national_id_label?person_id=#{person.id}", "/") and return
+      print_and_redirect("/people/national_id_label?person_id=#{person.id}", "/people/index?person=#{person.id}") and return
     end
 
   end
@@ -433,24 +440,24 @@ class PeopleController < ApplicationController
                                                                                                                :person_is_to_relation => relation.id
                                                                                                            })
 
-      redirect_to "/" and return
+      redirect_to "/people/index?person=#{person.id}"
     else
-      flush[:error] = "A required field is empty"
+      flash[:error] = "A required field is empty"
 
       redirect_to "/people/update_person_relationships" and return
     end
   end
 
   def load_people
-    @count = Person.all(:conditions => ["given_name = ? AND family_name = ? AND gender = ?",
-                                        params[:first_name], params[:last_name], params[:gender]]).length
+    @count = Person.all(:conditions => ["given_name_code = ? AND family_name_code = ? AND gender = ?",
+                                        params[:first_name].soundex, params[:last_name].soundex, params[:gender]]).length
 
     @people = []
     @details = {}
 
     Person.paginate(:page => params[:page], :per_page => 20,
-                    :conditions => ["given_name = ? AND family_name = ? AND gender = ?",
-                                    params[:first_name], params[:last_name], params[:gender]]).each do |person|
+                    :conditions => ["given_name_code = ? AND family_name_code = ? AND gender = ?",
+                                    params[:first_name].soundex, params[:last_name].soundex, params[:gender]]).each do |person|
 
       @people << ["#{person.given_name} #{person.family_name} (#{person.identifier.identifier} - " +
                       "#{Vocabulary.search(person.gender)} - " +
@@ -493,9 +500,9 @@ class PeopleController < ApplicationController
       person.update_attributes({:outcome => outcome.name,
                                 :outcome_date => params[:outcome_date] + " " + Time.now.strftime("%H:%M:%S")})
 
-      redirect_to "/" and return
+      redirect_to "/people/index?person=#{person.id}"
     else
-      flush[:error] = "A required field is empty"
+      flash[:error] = "A required field is empty"
 
       redirect_to "/people/update_outcome" and return
     end
@@ -538,4 +545,122 @@ class PeopleController < ApplicationController
     render :text => result
   end
 
+  def confirm_selection
+
+    @people = []
+    @details = {}
+    results = Person.find(:all,:conditions => ["given_name_code = ? AND family_name_code = ? AND gender = ?",
+                                         params[:first_name].soundex, params[:last_name].soundex, params[:gender]]).each do |x|
+
+      @people <<  ["#{x.given_name} #{x.family_name} (#{x.identifier.identifier} - " +
+                                           "#{Vocabulary.search(x.gender)} - " +
+                                           "#{Vocabulary.search("Age")}: #{x.age})".strip, "#{x.id}"]
+
+
+      year = x.birthdate.to_date.year
+      month = x.birthdate.to_date.month
+      day = x.birthdate.to_date.day
+
+      @details[x.id] = {
+          Vocabulary.search("Name") => "#{x.given_name} #{x.family_name}",
+          Vocabulary.search("First name") => "#{x.given_name}",
+          Vocabulary.search("Middle name") => "#{x.middle_name}",
+          Vocabulary.search("Last name") => "#{x.family_name}",
+          Vocabulary.search("Birthdate") => "#{year}-#{(month == 7 && x.birthdate_estimated == 1 ? "?-?" :
+              (day == 15 && x.birthdate_estimated == 1 ? "#{"%02d" % month}-?" : "#{"%02d" % month}-#{"%02d" % day}"))}",
+          Vocabulary.search("Gender") => Vocabulary.search(x.gender),
+          Vocabulary.search("National ID") => x.identifier.identifier,
+          Vocabulary.search("Relations") => x.family.collect{|r|
+            "#{r}"
+          }.compact.join(",<br />")
+      }
+
+    end
+  end
+
+  def edit_person
+    @person = Person.find(params[:person])
+    render :layout => "report"
+  end
+
+  def edit_demographics
+
+  end
+  def update_person
+
+    person = Person.find(params[:person])
+
+    case params[:field]
+      when 'given_name'
+        person.given_name = params[:first_name]
+        person.given_name_code = params[:first_name].soundex
+      when 'middle_name'
+        person.middle_name = params[:middle_name]
+      when 'last_name'
+        person.family_name = params[:last_name]
+        person.family_name_code = params[:last_name].soundex
+      when 'gender'
+        person.gender = params[:gender]
+      when 'dob'
+        month = 7
+        day = 15
+
+        if params[:year_of_birth].to_s.strip.downcase == Vocabulary.search("unknown").downcase
+
+          if params[:estimated_month_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
+            month = params[:estimated_month_of_birth].to_i
+
+            if params[:estimated_day_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
+              day = params[:estimated_day_of_birth].to_i
+
+            end
+
+            dob = "#{params[:estimated_year_of_birth]}-#{"%02d" % month}-#{"%02d" % day}"
+
+          else
+            dob = "#{params[:estimated_year_of_birth]}-07-15"
+          end
+
+          estimated = 1
+        else
+
+          estimated = 1
+
+          if params[:month_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
+            month = params[:month_of_birth].to_i
+
+            if params[:day_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
+              day = params[:day_of_birth].to_i
+
+              estimated = 0
+            end
+
+          end
+
+          dob = "#{params[:year_of_birth]}-#{"%02d" % month}-#{"%02d" % day}"
+
+        end
+        person.birthdate = dob
+        person.birthdate_estimated = estimated
+      when 'place_of_birth'
+        attribute_type_id = AttributeType.find_by_attribute('place of birth')
+        attribute = PersonAttribute.find(:last, :conditions => ["person_id = ? and attribute_type_id = ?", person.id, attribute_type_id.id ])
+
+        if attribute.blank?
+          PersonAttribute.create({:person_id => person.id,:attribute_type_id => attribute_type_id.id,
+                                  :value => params["place of birth"], :creator => params[:creator]})
+        else
+          attribute.value = params["place of birth"]
+          attribute.save
+        end
+
+      when 'current_district'
+        person.state_province = params[:district]
+        person.neighbourhood_cell = params[:village]
+        person.address2 = params[:ta]
+    end
+
+    person.save
+    print_and_redirect("/people/national_id_label?person_id=#{person.id}", "/people/index?person=#{person.id}") and return
+  end
 end

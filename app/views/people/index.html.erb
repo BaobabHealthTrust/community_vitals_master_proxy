@@ -1,0 +1,131 @@
+<script type="text/javascript">
+ <!--
+ function initialize() {
+     var btnNew = document.createElement("button");
+     btnNew.id = "btnNew";
+     btnNew.className = "button blue";
+     btnNew.style.cssFloat = "right";
+     btnNew.innerHTML = "<span><%= Vocabulary.search("Edit Demographics") %></span>";
+
+     btnNew.onmousedown = function () {
+         window.location = "/people/edit_person?person=" + <%= @person.id %>;
+
+     }
+
+     __$("buttons").appendChild(btnNew);
+
+     if ('<%=  @person.outcome.downcase rescue "" %>' !='dead')
+     {
+         var btnNew2 = document.createElement("button");
+         btnNew2.id = "btnNew2";
+         btnNew2.className = "button blue";
+         btnNew2.style.cssFloat = "right";
+         btnNew2.innerHTML = "<span><%= Vocabulary.search("Update Outcome") %></span>";
+
+         btnNew2.onmousedown = function () {
+             window.location = "/people/update_outcome?person=" + <%= @person.id %>;
+
+         }
+
+         __$("buttons").appendChild(btnNew2);
+
+
+         var btnNew3 = document.createElement("button");
+         btnNew3.id = "btnNew3";
+         btnNew3.className = "button blue";
+         btnNew3.style.cssFloat = "right";
+         btnNew3.innerHTML = "<span><%= Vocabulary.search("Add Relationships") %></span>";
+
+         btnNew3.onmousedown = function () {
+             window.location = "/people/update_person_relationships?person=" + <%= @person.id %>;
+
+         }
+
+         __$("buttons").appendChild(btnNew3);
+
+     }
+
+ }
+
+ setTimeout("initialize()", 0);
+ //-->
+</script>
+<style>
+  div.container{
+      border-radius: 15px;
+      border: 1px solid #808080;
+      margin-left: 5px;
+      margin-right: 5px;
+      margin-top: 7px;
+      font-family: arial, helvetica, sans-serif;
+  }
+
+  td{
+      line-height: 45px;
+  }
+        span.title{
+            font-weight: bold;
+        }
+        span.heading{
+            font-weight: bold;
+            font-size: 150%;
+        }
+        div.odd_row{
+            background-color: rgb(230, 230, 255);
+            font-family: arial, helvetica, sans-serif;
+            font-size: 130%;
+        }
+        div.even_row{
+            font-family: arial, helvetica, sans-serif;
+            font-size: 130%;
+        }
+</style>
+
+<div class="container" style="width: 35%; height: 85%;padding: 10px; float: left;" onload="initialize()">
+  <img height='25' style='border-radius: 50px; border: 2px blue solid; padding: 10px;' src='/images/<%= @person.gender.downcase %>.gif'>
+  <span style="padding: 10px;font-size: 150%; font-weight: bold; margin-top: 0px;position: absolute;"> <%= @person.name %> </span>
+  <hr >
+
+  <table style="width: 95%; margin-left: auto;margin-right: auto">
+    <tr>
+      <td style="width: 49%;"> <span class="title"> <%= Vocabulary.search('National ID') %></span> </td><td>:</td><td style="width: 49%;"> <%= @person.npid %> </td>
+    </tr>
+    <tr>
+      <td><span class="title"> <%= Vocabulary.search('Date of Birth') %> </span></td><td>:</td><td> <%= @person.birthdate_formatted %> </td>
+    </tr>
+    <tr>
+      <td><span class="title"> <%= Vocabulary.search('Place of Birth') %> </span></td><td>:</td><td> <%= Vocabulary.search(@person.place_of_birth) %> </td>
+    </tr>
+    <tr>
+      <td><span class="title"> <%= Vocabulary.search('Current District')%> </span></td><td>:</td><td> <%= @person.state_province %> </td>
+    </tr>
+    <tr>
+      <td> <span class="title"> <%= Vocabulary.search('Current Traditional Authority')%> </span></td><td>:</td><td> <%= @person.address2 %> </td>
+    </tr>
+    <tr>
+      <td><span class="title"> <%= Vocabulary.search('Current Village')%></span> </td><td>:</td><td> <%= @person.neighbourhood_cell %> </td>
+    </tr>
+    <tr>
+      <td><span class="title"> <%= Vocabulary.search('Outcome') %></span>  </td><td>:</td><td><%= Vocabulary.search(@person.outcome_status) %> </td>
+    </tr>
+  </table>
+
+  <hr>
+  <span class="heading"><%= Vocabulary.search('Outcomes Summary') %></span>
+  <hr>
+  <div id = "outcomeContent" style="height: 25%;overflow: auto;border: 1px solid #808080;">
+    <% (@person.outcomes_summary || []).each do |outcome| %>
+        <div class=<%= cycle('odd_row','even_row')  %>> <%= outcome %> </div>
+    <% end %>
+  </div>
+</div>
+
+<div id="flexible_div" class="container" style="width: 60%; height: 85%;padding: 10px; float: right;" >
+    <span class="heading"><%= Vocabulary.search('Relationships') %></span>
+    <hr>
+    <div id = "familyContent" style="height: 82%;overflow: auto;">
+        <% (@person.family || []).each do |relation| %>
+            <div class=<%= cycle('odd_row','even_row')  %>> <%= relation %> </div>
+        <% end %>
+    </div>
+</div>

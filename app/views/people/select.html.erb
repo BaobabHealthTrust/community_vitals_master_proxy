@@ -47,7 +47,7 @@
       }
       
       __$("buttons").appendChild(btnNew);
-      
+/*
       var btnAdd = document.createElement("button");
       btnAdd.id = "btnAdd";
       btnAdd.className = "button blue";
@@ -72,9 +72,9 @@
         
         gotoNextPage();
       }
-      
+
       __$("buttons").appendChild(btnAdd);      
-      
+         */
     }  
     
     function loadPerson(){
@@ -93,7 +93,9 @@
       __$("helpText" + tstCurrentPage).innerHTML = "<%= Vocabulary.search("Details for ") %>" + 
           details[__$("person").value.trim()]["<%= Vocabulary.search("Name") %>"] + 
           " (" + details[__$("person").value.trim()]["<%= Vocabulary.search("National ID") %>"] + ")";
-      
+
+      document.forms[0].action = "/people/index"
+
       var dspPanel = document.createElement("div");
       dspPanel.id = "displayPanel";
       dspPanel.style.display = "table";
