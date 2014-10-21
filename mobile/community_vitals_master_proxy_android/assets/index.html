@@ -73,12 +73,11 @@
             function loadApplicationMenu(){
                 __$("container").innerHTML = "";
               
-                var fields = [search("Add Person"), search("Update Person Relationships"), 
-                    search("Update Outcome"), search("Search Person")];
+                var fields = [search("Add Person"), search("Search Person")];
               
-                var images = ["add_person.png", "update_person_relationships.png", "update_outcome.png", "find.png"];
+                var images = ["add_person.png", "find.png"];
               
-                var paths = ["add_person.html", "relationships.html", "update_outcome.html", "search.html"];
+                var paths = ["add_person.html", "search.html"];
               
                 for(var i = 0; i < fields.length; i++){
                 

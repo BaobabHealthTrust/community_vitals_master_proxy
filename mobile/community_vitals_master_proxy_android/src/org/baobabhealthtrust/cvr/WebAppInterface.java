@@ -341,7 +341,6 @@ public class WebAppInterface {
 	public void debugPrint(String in) {
 		Log.i("JAVASCRIPT DEBUG", in);
 	}
-
 	@JavascriptInterface
 	public void savePerson(String fname, String mname, String lname,
 			String gender, String age, String occupation, String yob,
@@ -455,6 +454,14 @@ public class WebAppInterface {
 
 			setPref("dobest", result[6]);
 
+			setPref("current_district", result[7]);
+			
+			setPref("current_ta", result[8]);
+			
+			setPref("current_village", result[9]);
+			
+			setPref("current_status", search("Alive"));
+			
 			for (int i= 0; i < attributes.length; i+=2)
 			{
 				this.SavePersonAttribute(Integer.parseInt(getPref("person id")), attributes[i+1], attributes[i], date);
@@ -630,7 +637,7 @@ public class WebAppInterface {
 	public boolean searchPerson(int id) {
 
 		String result[] = mDB.getPersonById(id);
-
+		
 		setPref("person id", result[0]);
 
 		setPref("first name", result[1]);
@@ -645,6 +652,13 @@ public class WebAppInterface {
 
 		setPref("dobest", result[6]);
 
+		setPref("current_district", result[7]);
+		
+		setPref("current_ta", result[8]);
+		
+		setPref("current_village", result[9]);
+		
+		setPref("current_status", search(mDB.getPersonStatus(id)));
 		return true;
 	}
 
@@ -670,9 +684,20 @@ public class WebAppInterface {
 
 	@JavascriptInterface
 	public void setSettings(String username, String password, String server,
-			String port, String code, String count, String threshold) {
-		String mode = getPref("dde_mode");
-
+			String port, String code, String count, String threshold, 
+			String dde_mode, String ta, String gvh, String vh) {
+		
+		String mode = "";
+		if (dde_mode.trim().length() > 0)
+		{
+			mode = dde_mode;
+		}
+		else
+		{
+			mode = getPref("dde_mode");
+		}
+			
+				
 		DdeSettings settings = mUDB.getDdeSettingsByMode(mode);
 
 		if (username.trim().length() > 0)
@@ -696,6 +721,18 @@ public class WebAppInterface {
 		if (threshold.trim().length() > 0)
 			settings.setDdeThresholdSize(threshold);
 
+		if (dde_mode.trim().length() > 0)
+			settings.setMode(mode);
+		
+		if (ta.trim().length() > 0)
+			settings.setTa(ta);
+		
+		if (gvh.trim().length() > 0)
+			settings.setGvh(gvh);
+		
+		if (vh.trim().length() > 0)
+			settings.setVh(vh);
+		
 		int result = mUDB.updateDdeSettings(settings);
 
 		// confirmRestart("Will restart app!");
@@ -719,7 +756,7 @@ public class WebAppInterface {
 			json.put("port", settings.getDdePort());
 			json.put("code", settings.getDdeSiteCode());
 			json.put("count", settings.getDdeBatchSize());
-
+						
 			setPref("dde_mode", mode);
 			setPref("target_username", settings.getDdeUsername());
 			setPref("target_password", settings.getDdePassword());
@@ -727,7 +764,10 @@ public class WebAppInterface {
 			setPref("target_port", settings.getDdePort() + "");
 			setPref("site_code", settings.getDdeSiteCode());
 			setPref("batch_count", settings.getDdeBatchSize());
-
+			setPref("ta", settings.getTa());
+			setPref("gvh", settings.getGvh());
+			setPref("vh", settings.getVh());
+			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1706,4 +1746,104 @@ public class WebAppInterface {
 	public int getPeople(String date, String village){
 		return mDB.getPeopleCount(date, village);
 	}
+	
+	@JavascriptInterface
+	public String outcomesSummary(int person_id){
+		JSONObject json = new JSONObject();
+		
+		String outcomes[][] = mDB.personOutcomeSummary(person_id);
+
+		for (int i = 0; i < outcomes.length; i++) {
+			try {
+				json.put(outcomes[i][0], search(outcomes[i][0]) +" - "+ outcomes[i][1]);
+			} catch (JSONException e) {
+				e.printStackTrace();
+				showMsg("Sorry, there was an error!");
+			}
+
+		}
+		
+		return json.toString();
+	}
+	
+	@JavascriptInterface
+	public String personFamily( String npid){
+		JSONObject json = new JSONObject();
+		
+		String direct[][] = mDB.getDirectRelatives(npid);
+		
+		String indirect[][] = mDB.getIndirectRelatives(npid);
+
+		for (int i = 0; i < direct.length; i++) {
+			try {
+				
+				json.put(direct[i][3], direct[i][0] + " " + direct[i][1] + ". [" + search(direct[i][2])+ ". " + direct[i][3] + ". " + search("Relationship") + " : " + search(direct[i][4]) +" ]" );
+			} catch (JSONException e) {
+				e.printStackTrace();
+				showMsg("Sorry, there was an error!");
+			}
+
+		}
+		
+		for (int i = 0; i < indirect.length; i++) {
+			try {
+				
+				json.put(indirect[i][3], indirect[i][0] + " " + indirect[i][1] + ". [" + search(indirect[i][2])+ ". " + indirect[i][3] + " ]");
+			} catch (JSONException e) {
+				e.printStackTrace();
+				showMsg("Sorry, there was an error!");
+			}
+
+		}
+		
+		return json.toString();
+	}
+	
+	@JavascriptInterface
+	public String getPersonAttribute(int person_id, String attribute_type)
+	{
+		return search(mDB.getPersonAttribute(person_id, attribute_type));
+	}
+	
+	@JavascriptInterface
+	public void updatePersonAttribute(String attribute_type, String attribute_value)
+	{
+		int attribute_type_id = mDB.getPersonAttributeType(attribute_type);
+		mDB.updatePersonAttribute(Integer.parseInt(getPref("person id")), attribute_type_id, attribute_value);		
+	}
+	
+	@JavascriptInterface
+	public void updatePerson(String fname, String lname, String gender,
+			String pvillage,String pdistrict, String pta) {
+			
+			String result[] = mDB.updatePerson(Integer.parseInt(getPref("person id")),fname, lname,gender,pdistrict, pta, pvillage );
+/*
+			setPref("person id", String.valueOf(mDB.getPersonWithNpid(result[3])));
+
+			setPref("first name", result[1]);
+
+			setPref("last name", result[2]);
+
+			setPref("npid", result[3]);
+
+			setPref("gender", result[4]);
+
+			setPref("dob", result[5]);
+
+			setPref("dobest", result[6]);
+
+			setPref("current_district", result[7]);
+			
+			setPref("current_ta", result[8]);
+			
+			setPref("current_village", result[9]);
+
+			setPref("current_status", search(mDB.getPersonStatus(id)));*/
+			
+			
+		
+	}
+
+	
+		
 }

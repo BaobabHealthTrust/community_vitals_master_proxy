@@ -58,7 +58,10 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 	private static final String KEY_DDE_SITE_CODE = "dde_site_code";
 	private static final String KEY_DDE_BATCH_SIZE = "dde_batch_size";
 	private static final String KEY_DDE_THRESHOLD_SIZE = "dde_threshold_size";
-
+	private static final String KEY_TA = "ta";
+	private static final String KEY_GVH = "group_village_headman";
+	private static final String KEY_VH = "village_headman";
+	
 	public static int mCurrentUserId = 0;
 
 	// Fetch size per page
@@ -92,7 +95,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 				+ KEY_DDE_IP + " TEXT," + KEY_DDE_PORT + " INTEGER,"
 				+ KEY_DDE_SITE_CODE + " TEXT," + KEY_DDE_BATCH_SIZE
 				+ " INTEGER, " + KEY_DDE_THRESHOLD_SIZE + " INTEGER, "
-				+ KEY_DATE_CREATED + " TEXT" + ")";
+				+ KEY_TA + " TEXT," + KEY_GVH + " TEXT," + KEY_VH + " TEXT," 
+				+KEY_DATE_CREATED + " TEXT" + ")";
 
 		db.execSQL(CREATE_DDE_SETTINGS_TABLE);
 
@@ -113,11 +117,19 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 				+ " ,"
 				+ KEY_DDE_BATCH_SIZE
 				+ ", "
+				+ KEY_TA
+				+ ", "
+				+ KEY_GVH
+				+ ", "
+				+ KEY_VH
+				+ ", "
 				+ KEY_DDE_THRESHOLD_SIZE
 				+ ") VALUES ('ta', 'unknown', 'unknown', 'unknown', 80, "
-				+ "'unknown', 0, 0 ), ('gvh', 'unknown', 'unknown', 'unknown', 80, "
-				+ "'unknown', 0, 0), ('vh', 'unknown', 'unknown', 'unknown', 80, "
-				+ "'unknown', 0, 0)";
+				+ "'unknown', 0, 'unknown','unknown','unknown', 0 ),"
+				+" ('gvh', 'unknown', 'unknown', 'unknown', 80, "
+				+ "'unknown', 0, 'unknown','unknown','unknown', 0),"
+				+" ('vh', 'unknown', 'unknown', 'unknown', 80, "
+				+ "'unknown', 0, 'unknown','unknown','unknown',0)";
 
 		db.execSQL(INITIALISE_SETTINGS);
 
@@ -491,7 +503,7 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.query(TABLE_DDE_SETTINGS, new String[] {
 				KEY_DDE_BATCH_SIZE, KEY_DDE_THRESHOLD_SIZE, KEY_DDE_SITE_CODE,
 				KEY_DDE_USERNAME, KEY_DDE_PASSWORD, KEY_MODE, KEY_DDE_PORT,
-				KEY_ID, KEY_DDE_IP }, KEY_MODE + "=?",
+				KEY_ID, KEY_DDE_IP, KEY_TA, KEY_GVH, KEY_VH }, KEY_MODE + "=?",
 				new String[] { String.valueOf(mode) }, null, null, null, null);
 
 		Log.i("",
@@ -503,9 +515,11 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 				DdeSettings dde_settings = new DdeSettings(cursor.getString(0),
 						cursor.getString(1), cursor.getString(2),
 						cursor.getString(3), cursor.getString(4),
-						cursor.getString(5), Integer.parseInt(cursor
-								.getString(6)), Integer.parseInt(cursor
-								.getString(7)), cursor.getString(8));
+						cursor.getString(5),cursor.getString(9),
+						cursor.getString(10),cursor.getString(11) ,
+						Integer.parseInt(cursor.getString(6)), 
+						Integer.parseInt(cursor.getString(7)), 
+						cursor.getString(8));
 
 				cursor.close();
 
@@ -531,7 +545,10 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_MODE, dde_settings.getMode());
 		values.put(KEY_DDE_PORT, dde_settings.getDdePort());
 		values.put(KEY_DDE_IP, dde_settings.getDdeIp());
-
+		values.put(KEY_TA, dde_settings.getTa());
+		values.put(KEY_GVH, dde_settings.getGvh());
+		values.put(KEY_VH, dde_settings.getVh());
+		
 		// Insert Row
 		db.insert(TABLE_DDE_SETTINGS, null, values);
 		db.close();
@@ -543,7 +560,7 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.query(TABLE_DDE_SETTINGS, new String[] {
 				KEY_DDE_BATCH_SIZE, KEY_DDE_THRESHOLD_SIZE, KEY_DDE_SITE_CODE,
 				KEY_DDE_USERNAME, KEY_DDE_PASSWORD, KEY_MODE, KEY_DDE_PORT,
-				KEY_ID, KEY_DDE_IP }, KEY_ID + "=?",
+				KEY_ID, KEY_DDE_IP, KEY_TA, KEY_GVH, KEY_VH }, KEY_ID + "=?",
 				new String[] { String.valueOf(id) }, null, null, null, null);
 
 		if (cursor != null)
@@ -551,7 +568,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 		DdeSettings dde_settings = new DdeSettings(cursor.getString(0),
 				cursor.getString(1), cursor.getString(2), cursor.getString(3),
-				cursor.getString(4), cursor.getString(5),
+				cursor.getString(4), cursor.getString(5),cursor.getString(9),
+				cursor.getString(10),cursor.getString(11),
 				Integer.parseInt(cursor.getString(6)), Integer.parseInt(cursor
 						.getString(7)), cursor.getString(8));
 
@@ -581,6 +599,9 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 				dde_settings.setDdePort(Integer.parseInt(cursor.getString(6)));
 				dde_settings.setId(Integer.parseInt(cursor.getString(7)));
 				dde_settings.setDdeIp(cursor.getString(8));
+				dde_settings.setTa(cursor.getString(9));
+				dde_settings.setGvh(cursor.getString(10));
+				dde_settings.setVh(cursor.getString(11));
 				// Adding dde_settings to list
 				dde_settingsList.add(dde_settings);
 			} while (cursor.moveToNext());
@@ -605,6 +626,9 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_DDE_PORT, dde_settings.getDdePort());
 		values.put(KEY_ID, dde_settings.getId());
 		values.put(KEY_DDE_IP, dde_settings.getDdeIp());
+		values.put(KEY_TA, dde_settings.getTa());
+		values.put(KEY_GVH, dde_settings.getGvh());
+		values.put(KEY_VH, dde_settings.getVh());
 
 		// updating row
 		return db.update(TABLE_DDE_SETTINGS, values, KEY_ID + " = ?",

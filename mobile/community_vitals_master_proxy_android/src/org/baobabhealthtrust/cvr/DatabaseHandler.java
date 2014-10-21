@@ -280,7 +280,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String result[] = { people.getId() + "", people.getGivenName(),
 				people.getFamilyName(), identifier.getIdentifier(),
 				people.getGender(), people.getBirthdate(),
-				people.getBirthdateEstimated() + "" };
+				people.getBirthdateEstimated() + "",people.getStateProvince(),
+				people.getAddress2(), people.getNeighbourhoodCell() };
 
 		return result;
 	}
@@ -1547,7 +1548,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String result[] = { people.getId() + "", people.getGivenName(),
 				people.getFamilyName(), identifier.getIdentifier(),
 				people.getGender(), people.getBirthdate(),
-				people.getBirthdateEstimated() + "" };
+				people.getBirthdateEstimated()+ "", people.getStateProvince(),
+				people.getAddress2(), people.getNeighbourhoodCell() };
 
 		return result;
 	}
@@ -2360,6 +2362,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		db.insert(TABLE_PERSON_ATTRIBUTES, null, values);
 		db.close();		
 	}
+
+	public void updatePersonAttribute(int person_id, int attribute_type_id , String attribute_value)
+	{
+
+		String selectQuery = "UPDATE " + TABLE_PERSON_ATTRIBUTES + " SET "
+				+ KEY_VALUE + " = '" + attribute_value + "' WHERE " + KEY_PERSON_ID
+				+ " = " + person_id + " AND  COALESCE(voided,0) = 0 AND attribute_type_id = " + attribute_type_id ;
+
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		db.execSQL(selectQuery);
+
+	}
+
 	
 	public int getPersonAttributeType(String attribute_type)
 	{
@@ -2394,6 +2410,157 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		if (cursor.moveToFirst()) {
 			result = Integer.parseInt(cursor.getString(0));
 		}
+
+		return result;
+		
+	}
+	
+	public String getPersonStatus(int person_id)
+	{
+		SQLiteDatabase db = this.getReadableDatabase();
+
+		String selectQuery = "SELECT (SELECT "+ KEY_NAME + " FROM "+ TABLE_OUTCOME_TYPES +
+				" WHERE "+ KEY_ID +" = o."+KEY_OUTCOME_TYPE+") AS state FROM "+ TABLE_OUTCOMES + 
+				" as o WHERE o."+KEY_PERSON_ID+" = "+ person_id +" AND o."+ KEY_VOIDED +
+				" = 0 ORDER BY outcome_date DESC ";
+
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		String status = "Alive";
+
+		if (cursor != null) {
+			if (cursor.moveToFirst()) {
+				status = cursor.getString(0);
+			} else {
+				// Log.i("SEARCH DEBUGGING", selectQuery);
+			}
+		}
+
+		return status;
+	}	
+
+	public String [][] personOutcomeSummary(int person_id)
+	{
+
+		SQLiteDatabase db = this.getReadableDatabase();
+
+		String selectQuery = "SELECT (SELECT "+ KEY_NAME + " FROM "+ TABLE_OUTCOME_TYPES +
+				" WHERE "+ KEY_ID +" = o."+KEY_OUTCOME_TYPE+") AS state, "+ KEY_OUTCOME_DATE+
+				" FROM "+ TABLE_OUTCOMES + " as o WHERE o."+KEY_PERSON_ID+" = "+ person_id +
+				" AND o."+ KEY_VOIDED +" = 0 ORDER BY outcome_date ASC ";
+
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		String results [][] = new String[cursor.getCount()][2];
+		
+		if (cursor.moveToFirst()) {
+			for(int i = 0; i < cursor.getCount(); i++)
+			{
+				results[i][0] = cursor.getString(0);
+				results[i][1] = cursor.getString(1);
+				cursor.moveToNext();
+			}
+		}
+		
+		
+		return results;
+	}
+	
+	public String[][] getDirectRelatives(String npid)
+	{
+
+		SQLiteDatabase db = this.getReadableDatabase();
+
+		String selectQuery = "SELECT "+KEY_GIVEN_NAME+","+KEY_FAMILY_NAME + "," + KEY_GENDER +","+ KEY_IDENTIFIER +
+							", (SELECT "+ KEY_RELATION +" from "+TABLE_RELATIONSHIP_TYPES +" where "+ KEY_ID +
+							" = r."+ KEY_PERSON_IS_TO_RELATION +") as relationship FROM "+TABLE_RELATIONSHIPS +
+							" as r inner join "+TABLE_NATIONAL_IDENTIFIERS+" as ni on r."+KEY_RELATION_NATIONAL_ID+
+							" = ni."+ KEY_IDENTIFIER +" inner join "+TABLE_PEOPLE+" as p on p."+KEY_NATIONAL_ID+
+							" = ni."+KEY_ID + " WHERE r."+KEY_PERSON_NATIONAL_ID+" = '" + npid + "' AND r." 
+							+KEY_VOIDED +" = 0 AND ni."+KEY_VOIDED +" =0 AND p."+KEY_VOIDED + " = 0";
+
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		String results [][] = new String[cursor.getCount()][5];
+		
+		if (cursor.moveToFirst()) {
+			for(int i = 0; i < cursor.getCount(); i++)
+			{
+				results[i][0] = cursor.getString(0);
+				results[i][1] = cursor.getString(1);
+				results[i][2] = cursor.getString(2);
+				results[i][3] = cursor.getString(3);
+				results[i][4] = cursor.getString(4);
+				cursor.moveToNext();
+			}
+		}
+		
+		return results;
+	}
+	
+	public String[][] getIndirectRelatives(String npid)
+	{
+
+		SQLiteDatabase db = this.getReadableDatabase();
+
+		String selectQuery = "SELECT "+KEY_GIVEN_NAME+","+KEY_FAMILY_NAME + "," + KEY_GENDER +","+ KEY_PERSON_NATIONAL_ID +
+							" FROM "+TABLE_RELATIONSHIPS +" as r inner join "+TABLE_NATIONAL_IDENTIFIERS+
+							" as ni on r."+KEY_PERSON_NATIONAL_ID+" = ni."+ KEY_IDENTIFIER +
+							" inner join "+TABLE_PEOPLE+" as p on p."+KEY_NATIONAL_ID+" = ni."+KEY_ID + 
+							" WHERE r."+KEY_RELATION_NATIONAL_ID+" = '" + npid + "' AND r." 
+							+KEY_VOIDED +" = 0 AND ni."+KEY_VOIDED +" =0 AND p."+KEY_VOIDED + " = 0";
+
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		String results [][] = new String[cursor.getCount()][4];
+		
+		if (cursor.moveToFirst()) {
+			for(int i = 0; i < cursor.getCount(); i++)
+			{
+				results[i][0] = cursor.getString(0);
+				results[i][1] = cursor.getString(1);
+				results[i][2] = cursor.getString(2);
+				results[i][3] = cursor.getString(3);
+				cursor.moveToNext();
+			}
+		}
+		
+		return results;
+	}
+	
+	public String getPersonAttribute(int person_id, String attribute_type)
+	{
+		SQLiteDatabase db = this.getReadableDatabase();
+		
+		String result = "unknown";
+		
+		String selectQuery = "SELECT "+KEY_VALUE +" FROM " + TABLE_PERSON_ATTRIBUTES +" WHERE " +
+							KEY_PERSON_ID + " = " + person_id +" AND attribute_type_id = " +
+							"(SELECT attribute_type_id FROM " + TABLE_ATTRIBUTES+ 
+							" WHERE UPPER(attribute) = UPPER('"+ attribute_type +"') AND voided = 0)"+
+							" AND " + KEY_VOIDED + " = 0 ";
+		
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		if (cursor.moveToFirst()) {
+			result = cursor.getString(0);
+		}
+		return result;
+	}
+	
+	public String [] updatePerson(int person_id ,String fname ,String lname,String gender, String district, String ta, String village)
+	{
+		SQLiteDatabase db = this.getReadableDatabase();
+		
+		String updateQuery = "UPDATE " + TABLE_PEOPLE + " SET " + KEY_GIVEN_NAME + " = '" + fname +"' ," + 
+				KEY_FAMILY_NAME + " = '" +lname +"', " + KEY_GENDER + " = '" + gender + "',"+
+				KEY_ADDRESS2 + " = '" + ta +"', " + KEY_NEIGHBOURHOOD_CELL + " = '" + village +"',"
+				+ KEY_STATE_PROVINCE + " = '" + district + "' WHERE " + KEY_ID +" = " +person_id;
+		
+		db.execSQL(updateQuery);
+
+		Log.i("UPDATE DEBUGGING", updateQuery);
+		String result[] = { person_id + "", fname,lname, gender, district,ta, village };
 
 		return result;
 		

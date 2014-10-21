@@ -40,7 +40,7 @@ Q.1.17. Relation Last Name [pos => q $$ dynamicLoader => listLastNames(__$('inpu
 
 Q.1.18. Relation Gender [pos => r $$ dynamicLoader => loadGender(__$('inputField').value.trim()) $$ tt_onLoad => loadGender('') $$ tt_showToggleKeyboard => false $$ showKeys => false $$ condition => __$("1.15").value == "Yes"]
 
-Q.1.19. Select Relation From The Following: [pos => s $$ tt_onLoad => listPeopleNames(__$('1.16').value.trim(), __$('1.17').value.trim(), __$('1.18').value.trim(), true); hideInput() $$ showKeys => false $$ condition => __$("1.15").value == "Yes"]
+Q.1.19. Select Relation From The Following [pos => s $$ tt_onLoad => listPeopleNames(__$('1.16').value.trim(), __$('1.17').value.trim(), __$('1.18').value.trim(), true); hideInput() $$ showKeys => false $$ condition => __$("1.15").value == "Yes"]
 
 Q.1.20. Relationship Type [pos => t $$ tt_onLoad => listRelationshipTypes() $$ showKeys => false $$ condition => __$("1.15").value == "Yes"]
 

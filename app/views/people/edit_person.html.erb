@@ -60,47 +60,47 @@
       <tr>
         <td class="title"><%= Vocabulary.search('First Name') %></td>
         <td><%= @person.given_name %></td>
-        <td><div class="link" onmousedown="goTo('given_name')">Edit</div></td>
+        <td><div class="link" onmousedown="goTo('given_name')"><%= Vocabulary.search('Edit') %></div></td>
       </tr>
       <tr>
         <td class="title"><%= Vocabulary.search('Middle Name') %></td>
         <td><%= @person.middle_name %></td>
-        <td><div class="link" onmousedown="goTo('middle_name')">Edit</div></td>
+        <td><div class="link" onmousedown="goTo('middle_name')"><%= Vocabulary.search('Edit') %></div></td>
       </tr>
       <tr>
         <td class="title"><%= Vocabulary.search('Last Name') %></td>
         <td><%= @person.family_name %></td>
-        <td><div class="link" onmousedown="goTo('last_name')">Edit</div></td>
+        <td><div class="link" onmousedown="goTo('last_name')"><%= Vocabulary.search('Edit') %></div></td>
       </tr>
       <tr>
         <td class="title"><%= Vocabulary.search('Gender') %></td>
         <td><%= Vocabulary.search(@person.gender) %></td>
-        <td><div class="link" onmousedown="goTo('gender')">Edit</div></td>
+        <td><div class="link" onmousedown="goTo('gender')"><%= Vocabulary.search('Edit') %></div></td>
       </tr>
       <tr>
         <td class="title"><%= Vocabulary.search('Date of Birth') %></td>
         <td><%= @person.birthdate %></td>
-        <td><div class="link" onmousedown="goTo('dob')">Edit</div></td>
+        <td><div class="link" onmousedown="goTo('dob')"><%= Vocabulary.search('Edit') %></div></td>
       </tr>
       <tr>
         <td class="title"><%= Vocabulary.search('Place of Birth') %></td>
         <td><%= Vocabulary.search(@person.place_of_birth) %></td>
-        <td><div class="link" onmousedown="goTo('place_of_birth')">Edit</div></td>
+        <td><div class="link" onmousedown="goTo('place_of_birth')"><%= Vocabulary.search('Edit') %></div></td>
       </tr>
       <tr>
         <td class="title"><%= Vocabulary.search('Current District') %></td>
         <td><%= @person.state_province %></td>
-        <td><div class="link" onmousedown="goTo('current_district')">Edit</div></td>
+        <td><div class="link" onmousedown="goTo('current_district')"><%= Vocabulary.search('Edit') %></div></td>
       </tr>
       <tr>
         <td class="title"><%= Vocabulary.search('Current Traditional Authority') %></td>
         <td><%= @person.address2 %></td>
-        <td><div class="link" onmousedown="goTo('current_district')">Edit</div></td>
+        <td><div class="link" onmousedown="goTo('current_district')"><%= Vocabulary.search('Edit') %></div></td>
       </tr>
       <tr>
         <td class="title"><%= Vocabulary.search('Current Village') %></td>
         <td><%= @person.village %></td>
-        <td><div class="link" onmousedown="goTo('current_district')">Edit</div></td>
+        <td><div class="link" onmousedown="goTo('current_district')"><%= Vocabulary.search('Edit') %></div></td>
       </tr>
 
     </table>

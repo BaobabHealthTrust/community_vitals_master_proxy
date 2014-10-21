@@ -112,62 +112,62 @@ function updateOutcome(){
         "November":11,
         "December":12
     };
-    switch(__$("1.5").value.trim().toLowerCase()){
+    switch(__$("1.1").value.trim().toLowerCase()){
         case "dead":
+            var yoe = (__$("1.2").value.trim().toLowerCase() == "unknown" || __$("1.2").value.trim().length == 0 ?
+                "0000" : __$("1.2").value);
+            var moe = (__$("1.3").value.trim().toLowerCase() == "unknown" || __$("1.3").value.trim().length == 0 ? 
+                "00" : months[__$("1.3").value.trim()]);
+            var doe = (__$("1.4").value.trim().toLowerCase() == "unknown" || __$("1.4").value.trim().length == 0 ?
+                "00" : __$("1.4").value);
+
+            var date = yoe + "-" + moe + "-" + doe;
+
+            Android.updateOutcome(parseInt(Android.getPref("person id")), "Dead", date, __$("1.5").value.trim());
+            
+            break;
+        case "transfer out":
             var yoe = (__$("1.6").value.trim().toLowerCase() == "unknown" || __$("1.6").value.trim().length == 0 ?
                 "0000" : __$("1.6").value);
-            var moe = (__$("1.7").value.trim().toLowerCase() == "unknown" || __$("1.7").value.trim().length == 0 ? 
+            var moe = (__$("1.7").value.trim().toLowerCase() == "unknown" || __$("1.7").value.trim().length == 0 ?
                 "00" : months[__$("1.7").value.trim()]);
             var doe = (__$("1.8").value.trim().toLowerCase() == "unknown" || __$("1.8").value.trim().length == 0 ?
                 "00" : __$("1.8").value);
 
             var date = yoe + "-" + moe + "-" + doe;
 
-            Android.updateOutcome(parseInt(__$("1.4").value.trim()), "Dead", date, __$("1.9").value.trim());
-            
-            break;
-        case "transfer out":
-            var yoe = (__$("1.10").value.trim().toLowerCase() == "unknown" || __$("1.10").value.trim().length == 0 ?
-                "0000" : __$("1.10").value);
-            var moe = (__$("1.11").value.trim().toLowerCase() == "unknown" || __$("1.11").value.trim().length == 0 ?
-                "00" : months[__$("1.11").value.trim()]);
-            var doe = (__$("1.12").value.trim().toLowerCase() == "unknown" || __$("1.12").value.trim().length == 0 ?
-                "00" : __$("1.12").value);
-
-            var date = yoe + "-" + moe + "-" + doe;
-
-            Android.updateOutcome(parseInt(__$("1.4").value.trim()), "Transfer Out", date, "");
+            Android.updateOutcome(parseInt(Android.getPref("person id")), "Transfer Out", date, "");
             
             break;
         case "transfer back":
-            var yoe = (__$("1.13").value.trim().toLowerCase() == "unknown" || __$("1.13").value.trim().length == 0 ?
-                "0000" : __$("1.13").value);
-            var moe = (__$("1.14").value.trim().toLowerCase() == "unknown" || __$("1.14").value.trim().length == 0 ?
-                "00" : months[__$("1.14").value.trim()]);
-            var doe = (__$("1.15").value.trim().toLowerCase() == "unknown" || __$("1.15").value.trim().length == 0 ?
-                "00" : __$("1.15").value);
+            var yoe = (__$("1.9").value.trim().toLowerCase() == "unknown" || __$("1.9").value.trim().length == 0 ?
+                "0000" : __$("1.9").value);
+            var moe = (__$("1.10").value.trim().toLowerCase() == "unknown" || __$("1.10").value.trim().length == 0 ?
+                "00" : months[__$("1.10").value.trim()]);
+            var doe = (__$("1.11").value.trim().toLowerCase() == "unknown" || __$("1.11").value.trim().length == 0 ?
+                "00" : __$("1.11").value);
 
             var date = yoe + "-" + moe + "-" + doe;
 
-            Android.updateOutcome(parseInt(__$("1.4").value.trim()), "Transfer Back", date, "");
+            Android.updateOutcome(parseInt(Android.getPref("person id")), "Transfer Back", date, "");
 
             break;
     }
 
     showMessage("Outcome Updated!");
 
-    window.location = "index.html";
+    window.location = "person_summary.html";
 }
 
 function savePersonRelationship(){
-    Android.savePersonRelationship(__$("1.4").value.trim(),
-        __$("1.8").value.trim(), __$("1.9").value.trim());
+    Android.savePersonRelationship(Android.getPref("npid"),
+        __$("1.4").value.trim(), __$("1.5").value.trim());
     
     var msg = search("Relationship Saved!");
     
     showMessage(msg);
 
-    window.location = "index.html";
+    window.location = "person_summary.html";
 }
 
 function confirmDelete(msg, id, cat){
@@ -784,8 +784,11 @@ function listOutcomeTypes(){
 
 function setupSite(){
 
-    if(__$("1.1") && __$("1.2") && __$("1.3") && __$("1.4") && __$("1.5") && __$("1.6") && __$("1.7")){
+    if(__$("1.1") && __$("1.2") && __$("1.3") && __$("1.4") && __$("1.5") && __$("1.6") && __$("1.7") && __$("1.8") && __$("1.9")){
     
+        var gvh = "unknown"
+        var vh = "unknown"
+
         Android.setPref("target_username", __$("1.1").value.trim());
         Android.setPref("target_password", __$("1.2").value.trim());
         Android.setPref("target_server", __$("1.3").value.trim());
@@ -793,10 +796,24 @@ function setupSite(){
         Android.setPref("site_code", __$("1.5").value.trim());
         Android.setPref("batch_count", __$("1.6").value.trim());
         Android.setPref("threshold", __$("1.7").value.trim());
+        Android.setPref("dde_mode", __$("1.8").value.trim());
+        Android.setPref("ta", __$("1.9").value.trim());
+
+        if (__$("1.10") != null)
+        {
+          Android.setPref("gvh",__$("1.10").value.trim());
+          gvh = __$("1.10").value.trim();
+        }
+
+        if (__$("1.11") != null)
+        {
+          Android.setPref("vh",__$("1.11").value.trim())
+          vh = __$("1.11").value.trim()
+        }
     
         Android.setSettings(__$("1.1").value.trim(), __$("1.2").value.trim(), 
             __$("1.3").value.trim(), __$("1.4").value.trim(), __$("1.5").value.trim(), 
-            __$("1.6").value.trim(), __$("1.7").value.trim());
+            __$("1.6").value.trim(), __$("1.7").value.trim(), __$("1.8").value.trim(), __$("1.9").value.trim(), gvh, vh);
     
         showMessage("Settings Saved!");
     }
@@ -1140,16 +1157,17 @@ function setCategory(){
     Android.debugPrint("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + mode);
          
     Android.setPref("dde_mode", mode);
-    Android.setPref("ta", __$("1.3").value.trim());
-    Android.setPref("gvh", __$("1.4").value.trim());
-    Android.setPref("vh", __$("1.5").value.trim());
+ //   Android.setPref("ta", __$("1.3").value.trim());
+ //   Android.setPref("gvh", __$("1.4").value.trim());
+ //   Android.setPref("vh", __$("1.5").value.trim());
             
     if(__$("1.1").value.trim().toLowerCase() == "superuser"){
         Android.setPref("advanced", true);
     } else {
         Android.setPref("advanced", false);
     }
-
+    
+    Android.getSettings();
     Android.setPref("current_category", __$("1.1").value);
 
     window.location = "index.html"; 
@@ -1347,4 +1365,53 @@ function loadVillage(filter, ta){
 
     loadSingleSelect(arr);
 
+}
+
+function updatePerson()
+{
+
+	var fname = Android.getPref("first name");
+	var lname= Android.getPref("last name");
+	var gender= Android.getPref("gender");
+	var pvillage= Android.getPref("current_village");
+	var pdistrict= Android.getPref("current_district");
+	var pta= Android.getPref("current_ta");
+
+	if (__$(1.1).value.trim() != "")
+	{
+	
+		fname =  __$(1.1).value.trim()
+	}
+	else if (__$(1.2).value.trim() != "")
+	{
+		fname =  __$(1.1).value.trim()
+	} 
+	else if (__$(1.3).value.trim() != "")
+	{
+		lname =  __$(1.3).value.trim()
+	}
+	else if (__$(1.4).value.trim() != "")
+	{
+		gender =  __$(1.4).value.trim()
+	}
+	else if (__$(1.7).value.trim() != "")
+	{
+		pdistrict = __$(1.7).value.trim()
+	}
+	else if (__$(1.8).value.trim() != "")
+	{
+		pta = __$(1.8).value.trim()
+	}
+	else if (__$(1.9).value.trim() != "")
+	{
+		pvillage = __$(1.9).value.trim()
+	}
+	
+	Android.updatePerson(fname, lname, gender, pvillage, pdistrict, pta)
+	
+	if (__$(1.5).value.trim() != "")
+	{
+		Android.updatePersonAttribute("place of birth", __$(1.5).value.trim())
+	}
+	window.location = "index.html"
 }

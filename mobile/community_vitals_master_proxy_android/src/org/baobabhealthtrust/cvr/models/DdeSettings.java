@@ -12,13 +12,16 @@ public class DdeSettings{
 	int _dde_port;
 	int _id;
 	String _dde_ip;
+	String _ta;
+	String _gvh;
+	String _vh;
 	
 	// Empty constructor
 	public DdeSettings() {
 	}
 
 	// constuctor
-	public DdeSettings(String dde_batch_size, String dde_threshold_size, String dde_site_code, String dde_username, String dde_password, String mode, int dde_port, int id, String dde_ip) {
+	public DdeSettings(String dde_batch_size, String dde_threshold_size, String dde_site_code, String dde_username, String dde_password, String mode,String ta, String gvh, String vh ,int dde_port, int id, String dde_ip) {
 		
 		this._dde_batch_size = dde_batch_size;
 		this._dde_threshold_size = dde_threshold_size;
@@ -29,7 +32,9 @@ public class DdeSettings{
 		this._dde_port = dde_port;
 		this._id = id;
 		this._dde_ip = dde_ip;
-		
+		this._ta = ta;
+		this._gvh = gvh;
+		this._vh = vh;
 	}
 
 	 
@@ -123,5 +128,33 @@ public class DdeSettings{
 		this._dde_ip = dde_ip;
 	}
 
+	// getting traditional authority 
+	public String getTa(){
+		return this._ta;
+	}
 	
+	// setting traditional authority
+	public void setTa(String ta){
+		this._ta = ta;
+	}
+	// getting group village head-man 
+	public String getGvh(){
+		return this._gvh;
+	}
+	
+	// setting group village head-man
+	public void setGvh(String gvh){
+		this._gvh = gvh;
+	}
+
+	// getting village head-man 
+	public String getVh(){
+		return this._vh;
+	}
+	
+	// setting village head-man
+	public void setVh(String vh){
+		this._vh = vh;
+	}
+
 }
