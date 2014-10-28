@@ -60,6 +60,11 @@ ActiveRecord::Schema.define(:version => 201307181255011) do
   add_index "location", ["retired_by"], :name => "user_who_retired_location"
   add_index "location", ["uuid"], :name => "location_uuid_index", :unique => true
 
+  create_table "locations", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "national_identifiers", :force => true do |t|
     t.string   "identifier"
     t.integer  "person_id"

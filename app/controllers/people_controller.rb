@@ -283,6 +283,11 @@ class PeopleController < ApplicationController
 
     end
 
+    attribute_type_id = AttributeType.find_by_attribute("place of birth")
+    PersonAttribute.create({:person_id => person.id,:attribute_type_id => attribute_type_id.id,
+                            :value => (params["facility of birth"].blank? ? params["village of birth"] : params["facility of birth"]),
+                            :creator => params[:creator]})
+
     unless params["remarks"].blank?
       attribute_type_id = AttributeType.find_by_attribute("other")
       PersonAttribute.create({:person_id => person.id,:attribute_type_id => attribute_type_id.id,
@@ -391,6 +396,11 @@ class PeopleController < ApplicationController
                                 :value => value, :creator => params[:creator]})
 
       end
+
+      attribute_type_id = AttributeType.find_by_attribute("place of birth")
+      PersonAttribute.create({:person_id => person.id,:attribute_type_id => attribute_type_id.id,
+                              :value => (params["facility of birth"].blank? ? params["village of birth"] : params["facility of birth"]),
+                              :creator => params[:creator]})
 
       unless params["remarks"].blank?
         attribute_type_id = AttributeType.find_by_attribute("other")
@@ -644,16 +654,27 @@ class PeopleController < ApplicationController
         person.birthdate_estimated = estimated
       when 'place_of_birth'
         attribute_type_id = AttributeType.find_by_attribute('place of birth')
+        attribute_type_id2 = AttributeType.find_by_attribute('place of birth type')
         attribute = PersonAttribute.find(:last, :conditions => ["person_id = ? and attribute_type_id = ?", person.id, attribute_type_id.id ])
 
         if attribute.blank?
           PersonAttribute.create({:person_id => person.id,:attribute_type_id => attribute_type_id.id,
-                                  :value => params["place of birth"], :creator => params[:creator]})
+                                  :value => (params["facility of birth"].blank? ? params["village of birth"] : params["facility of birth"]),
+                                  :creator => params[:creator]})
         else
-          attribute.value = params["place of birth"]
+          attribute.value = (params["facility of birth"].blank? ? params["village of birth"] : params["facility of birth"])
           attribute.save
         end
 
+        attribute2 = PersonAttribute.find(:last, :conditions => ["person_id = ? and attribute_type_id = ?", person.id, attribute_type_id2.id ])
+
+        if attribute2.blank?
+          PersonAttribute.create({:person_id => person.id,:attribute_type_id => attribute_type_id2.id,
+                                  :value => params["place of birth type"], :creator => params[:creator]})
+        else
+          attribute2.value = params["place of birth type"]
+          attribute2.save
+        end
       when 'current_district'
         person.state_province = params[:district]
         person.neighbourhood_cell = params[:village]

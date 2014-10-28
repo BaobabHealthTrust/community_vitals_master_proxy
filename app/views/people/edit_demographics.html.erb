@@ -69,8 +69,30 @@
                                                                    "__$('year_of_birth').value.trim() == '#{Vocabulary.search("Unknown")}'"} %>
 
     <% elsif params[:field] == 'place_of_birth' %>
-        <%= select_tag "place of birth", options_for_select([["#{Vocabulary.search("Hospital")}", "Hospital"],
-                                                                            ["#{Vocabulary.search("Home")}", "Home"]]), {:helpText => Vocabulary.search("Place of Birth"), :tt_onLoad => "$('nextButton').style.display = 'block';"} %>
+        <%= select_tag "place of birth type", options_for_select([["#{Vocabulary.search("Hospital")}", "Hospital"],
+                                                                                     ["#{Vocabulary.search("Home")}", "Home"]]), {:helpText => Vocabulary.search("Place of Birth"),
+                                                                                                                                  :id => 'place_of_birth_type',
+                                                                                                                                  :tt_onLoad => "$('nextButton').style.display = 'block';"} %>
+
+        <%= text_field_tag "facility of birth", nil, {
+                :id => 'placeofbirth',
+                :field_type => 'alpha',
+                :condition => "__$('place_of_birth_type').value.trim() == 'Hospital'",
+                :helpText => Vocabulary.search('Which facility were you born in?'),
+                :tt_requireNextClick => true, :ajaxURL => '',
+                :allowFreeText => true,
+                :tt_onLoad => "set_ajaxURL_for_suggestions('/location/facilities/Facility?filter_value=' ,document.getElementById('placeofbirth').value);" } %>
+
+
+        <%= text_field_tag "village of birth", nil, {
+                :id => 'birthVillage',
+                :field_type => 'alpha',
+                :condition => "__$('place_of_birth_type').value.trim() == 'Home'",
+                :helpText => Vocabulary.search('Which village were you born in?'),
+                :tt_requireNextClick => true, :ajaxURL => '',
+                :allowFreeText => true,
+                :tt_onLoad => "set_ajaxURL_for_suggestions('/location/birth_village/birthVillage?filter_value=' ,document.getElementById('birthVillage').value);" } %>
+
 
     <% elsif params[:field] == 'current_district' %>
         <%= text_field "region" , nil, {:helpText => Vocabulary.search('Current Region'),:id => "region",

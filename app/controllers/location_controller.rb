@@ -44,4 +44,24 @@ class LocationController < ApplicationController
     end
     render :text => villages.join('') + "<li value='Other'>Other</li>" and return
   end
+
+  def facilities
+    facilities = Location.find(:all, :conditions => ["name LIKE ? AND retired = ?", "%#{params[:search_string]}%", false],
+                               :order => 'name').map do |f|
+      "<li value='" + f.name + "'>" + f.name + "</li>"
+    end
+
+    render :text => facilities.join('') and return
+  end
+
+  def birth_village
+
+    village_conditions = ["name LIKE (?) AND retired = ?", "%#{params[:search_string]}%", false]
+
+    villages = Village.find(:all,:conditions => village_conditions, :order => 'name', :limit => 50)
+    villages = villages.map do |v|
+      "<li value='" + v.name + "'>" + v.name + "</li>"
+    end
+    render :text => villages.join('') + "<li value='Other'>Other</li>" and return
+  end
 end
