@@ -1465,10 +1465,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String selectQuery = "SELECT w." + KEY_VALUE + " FROM "
 				+ TABLE_VOCABULARIES + " v LEFT OUTER JOIN " + TABLE_WORDS
 				+ " w ON w." + KEY_VOCABULARY_ID + " = v." + KEY_ID
-				+ " WHERE UPPER(v." + KEY_VALUE + ") = UPPER('" + word + "') AND w."
+				+ " WHERE UPPER(v." + KEY_VALUE + ") = UPPER(?) AND w."
 				+ KEY_LOCALE + " = '" + locale + "'";
 
-		Cursor cursor = db.rawQuery(selectQuery, null);
+		Cursor cursor = db.rawQuery(selectQuery, new String[] {word});
 
 		String term = word;
 
@@ -2290,6 +2290,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return regionList;
 	}
 	
+	public List getFacilities(String filter){
+		List<String> facilityList = new ArrayList();
+		
+		String countQuery = "SELECT name FROM location WHERE name like '%"+ filter+"%' AND COALESCE(retired,0) = 0 LIMIT 25";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+				
+		if (cursor.moveToFirst()) {
+			do {
+				facilityList.add(cursor.getString(0));
+			} while (cursor.moveToNext());
+		}
+		
+		return facilityList;
+	}
+	
 	public List getDistricts(String filter,String region){
 		List<String> districtList = new ArrayList();
 		
@@ -2565,4 +2581,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return result;
 		
 	}
+	
+	public void updateDob(int person_id ,String dob ,int dob_estimated)
+	{
+		SQLiteDatabase db = this.getReadableDatabase();
+		
+		String updateQuery = "UPDATE " + TABLE_PEOPLE + " SET " + KEY_BIRTHDATE + " = '" + dob +"', " 
+				+ KEY_BIRTHDATE_ESTIMATED + " = " + dob_estimated + " WHERE " + KEY_ID +" = " +person_id;
+		
+		db.execSQL(updateQuery);
+
+		Log.i("UPDATE DEBUGGING", updateQuery);
+				
+	}
+
 }

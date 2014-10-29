@@ -17,9 +17,9 @@ function savePerson(){
     var age = (__$("1.5").value.trim().toLowerCase() == "unknown" ?
         parseInt(__$("1.6").value) : "0");
     
-    var relate = (__$("1.14").value.trim().toLowerCase() == "yes" ? "yes" : "no");
-    var person_b = (__$("1.14").value.trim().toLowerCase() == "yes" ? __$("1.18").value.trim() : "");
-    var relation = (__$("1.14").value.trim().toLowerCase() == "yes" ? __$("1.19").value.trim() : "");
+    var relate = (__$("1.15").value.trim().toLowerCase() == "yes" ? "yes" : "no");
+    var person_b = (__$("1.15").value.trim().toLowerCase() == "yes" ? __$("1.19").value.trim() : "");
+    var relation = (__$("1.15").value.trim().toLowerCase() == "yes" ? __$("1.20").value.trim() : "");
     var person_attributes = [];
         
     var months = {
@@ -40,15 +40,15 @@ function savePerson(){
     var mob = (__$("1.5").value.trim().toLowerCase() == "unknown" ? "Unknown" : months[__$("1.7").value]);
     var dob = (__$("1.5").value.trim().toLowerCase() == "unknown" ? "Unknown" : __$("1.8").value);
     var occ = "";
-    var village = __$("1.13").value.trim().toLowerCase();
-    var district = __$("1.11").value.trim().toLowerCase();
-    var ta = __$("1.12").value.trim().toLowerCase();
+    var village = __$("1.14").value.trim().toLowerCase();
+    var district = __$("1.12").value.trim().toLowerCase();
+    var ta = __$("1.13").value.trim().toLowerCase();
     var success = "Person saved!";
     var failed = "Person save failed!";
-	person_attributes = ["place of birth", __$("1.9").value];
-	if (__$("1.14").value.trim().length != 0)
+	person_attributes = ["place of birth type", __$("1.9").value, "place of birth", __$("1.10").value];
+	if (__$("1.15").value.trim().length != 0)
 	{
-		person_attributes.push( "other", __$("1.14").value);
+		person_attributes.push( "other", __$("1.15").value);
 	}
     var result = Android.savePerson(fName, mName, lName, gender, age,
         occ, yob, mob, dob, success, failed, relate, person_b,village, district, ta, relation,person_attributes);
@@ -784,7 +784,7 @@ function listOutcomeTypes(){
 
 function setupSite(){
 
-    if(__$("1.1") && __$("1.2") && __$("1.3") && __$("1.4") && __$("1.5") && __$("1.6") && __$("1.7") && __$("1.8") && __$("1.9")){
+    if(__$("1.1") && __$("1.2") && __$("1.3") && __$("1.4") && __$("1.5") && __$("1.6") && __$("1.7") && __$("1.8") && __$("1.11")){
     
         var gvh = "unknown"
         var vh = "unknown"
@@ -797,23 +797,23 @@ function setupSite(){
         Android.setPref("batch_count", __$("1.6").value.trim());
         Android.setPref("threshold", __$("1.7").value.trim());
         Android.setPref("dde_mode", __$("1.8").value.trim());
-        Android.setPref("ta", __$("1.9").value.trim());
+        Android.setPref("ta", __$("1.11").value.trim());
 
-        if (__$("1.10") != null)
+        if (__$("1.12") != null)
         {
-          Android.setPref("gvh",__$("1.10").value.trim());
-          gvh = __$("1.10").value.trim();
+          Android.setPref("gvh",__$("1.12").value.trim());
+          gvh = __$("1.12").value.trim();
         }
 
-        if (__$("1.11") != null)
+        if (__$("1.13") != null)
         {
-          Android.setPref("vh",__$("1.11").value.trim())
-          vh = __$("1.11").value.trim()
+          Android.setPref("vh",__$("1.13").value.trim())
+          vh = __$("1.13").value.trim()
         }
     
         Android.setSettings(__$("1.1").value.trim(), __$("1.2").value.trim(), 
             __$("1.3").value.trim(), __$("1.4").value.trim(), __$("1.5").value.trim(), 
-            __$("1.6").value.trim(), __$("1.7").value.trim(), __$("1.8").value.trim(), __$("1.9").value.trim(), gvh, vh);
+            __$("1.6").value.trim(), __$("1.7").value.trim(), __$("1.8").value.trim(), __$("1.11").value.trim(), gvh, vh);
     
         showMessage("Settings Saved!");
     }
@@ -1394,24 +1394,69 @@ function updatePerson()
 	{
 		gender =  __$(1.4).value.trim()
 	}
-	else if (__$(1.7).value.trim() != "")
-	{
-		pdistrict = __$(1.7).value.trim()
-	}
 	else if (__$(1.8).value.trim() != "")
 	{
-		pta = __$(1.8).value.trim()
+		pdistrict = __$(1.8).value.trim()
 	}
 	else if (__$(1.9).value.trim() != "")
 	{
-		pvillage = __$(1.9).value.trim()
+		pta = __$(1.9).value.trim()
+	}
+	else if (__$(1.10).value.trim() != "")
+	{
+		pvillage = __$(1.10).value.trim()
 	}
 	
 	Android.updatePerson(fname, lname, gender, pvillage, pdistrict, pta)
 	
 	if (__$(1.5).value.trim() != "")
 	{
-		Android.updatePersonAttribute("place of birth", __$(1.5).value.trim())
+		Android.updatePersonAttribute("place of birth type", __$(1.5).value.trim())
+		Android.updatePersonAttribute("place of birth", __$(1.6).value.trim())
+	}
+	
+	if (__$(1.11).value.trim() != "")
+	{
+	    var yob = (__$("1.11").value.trim().toLowerCase() == "unknown" ?
+	        "Unknown" : __$("1.11").value);
+	    var age = (__$("1.11").value.trim().toLowerCase() == "unknown" ?
+	        parseInt(__$("1.12").value) : "0");
+		
+	    var months = {
+	        "January":"1",
+	        "February":"2",
+	        "March":"3",
+	        "April":"4",
+	        "May":"5",
+	        "June":"6",
+	        "July":"7",
+	        "August":"8",
+	        "September":"9",
+	        "October":"10",
+	        "November":"11",
+	        "December":"12"
+	    };
+	    
+	    var mob = (__$("1.11").value.trim().toLowerCase() == "unknown" ? "Unknown" : months[__$("1.13").value]);
+	    var dob = (__$("1.11").value.trim().toLowerCase() == "unknown" ? "Unknown" : __$("1.14").value);
+		
+		Android.updateDob(yob, mob, dob, age)
 	}
 	window.location = "index.html"
+}
+
+function loadFacilities(filter){
+   
+    var result = Android.getFacilities(filter);
+	var reg_list = JSON.parse(result);    
+    var arr = [];
+
+	for(var el = 0; el < reg_list.length; el++){
+        
+      arr.push([search(reg_list[el]["facility"]),reg_list[el]["facility"]]);
+        
+    }
+
+    loadSingleSelect(arr);
+
 }

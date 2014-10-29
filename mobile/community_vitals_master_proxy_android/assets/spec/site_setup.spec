@@ -20,8 +20,14 @@ Q.1.7. ID Lower Threshold Size [pos => g $$ field_type => number $$ validationRu
 
 Q.1.8. User Type [pos => h $$ tt_showToggleKeyboard => false $$ showKeys => false $$ dynamicLoader => loadChiefs(__$('inputField').value.trim()) $$ tt_onLoad => loadChiefs('')]
 
-Q.1.9. Select Location Traditional Authority [pos => i $$ tt_showToggleKeyboard => false $$ showKeys => false $$ tt_onLoad => listTAs('') $$ dynamicLoader => listTAs(__$('inputField').value.trim())]
+Q.1.9. Select Region [pos => i $$ dynamicLoader => loadRegion(__$('inputField').value.trim()) $$ tt_onLoad => loadRegion('') $$ tt_showToggleKeyboard => true $$ showKeys => false]
 
-Q.1.10. Select Location Group Village Headman [pos => j $$ tt_showToggleKeyboard => false $$ showKeys => false $$ tt_onLoad => listGVHs('') $$ dynamicLoader => listGVHs(__$('inputField').value.trim()) $$ condition => (__$('1.8').value == 'gvh' || __$('1.8').value == 'vh')]
+Q.1.10. Select District [pos => j $$ dynamicLoader => loadDistrict(__$('inputField').value.trim(),__$("1.9").value.trim().toLowerCase()) $$ tt_onLoad => loadDistrict('',__$("1.9").value.trim().toLowerCase()) $$ tt_showToggleKeyboard => false $$ showKeys => false]
 
-Q.1.11. Select Location Village Headman [pos => k $$ tt_showToggleKeyboard => true $$ showKeys => false $$ tt_onLoad => listVH('') $$ dynamicLoader => listVH(__$('inputField').value.trim()) $$ condition => __$('1.8').value == 'vh']
+Q.1.11. Select Traditional Authority [pos => k $$ dynamicLoader => loadTA(__$('inputField').value.trim(),__$("1.10").value.trim().toLowerCase()) $$ tt_onLoad => loadTA('',__$("1.10").value.trim().toLowerCase()) $$ tt_showToggleKeyboard => true $$ showKeys => true]
+
+Q.1.12. Select Location Group Village Headman [pos => m $$ dynamicLoader => loadVillage(__$('inputField').value.trim(),__$("1.11").value.trim().toLowerCase()) $$ tt_onLoad => loadVillage('',__$("1.11").value.trim().toLowerCase()) $$ tt_showToggleKeyboard => true $$ showKeys => false $$ condition => (__$('1.8').value == 'gvh' || __$('1.8').value == 'vh')]
+
+Q.1.13. Select Location Village Headman [pos => m $$ dynamicLoader => loadVillage(__$('inputField').value.trim(),__$("1.11").value.trim().toLowerCase()) $$ tt_onLoad => loadVillage('',__$("1.11").value.trim().toLowerCase()) $$ tt_showToggleKeyboard => true $$ showKeys => false $$ condition => (__$('1.8').value == 'gvh' || __$('1.8').value == 'vh')]
+
+

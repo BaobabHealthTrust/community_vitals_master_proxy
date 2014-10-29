@@ -1844,6 +1844,67 @@ public class WebAppInterface {
 		
 	}
 
+	@JavascriptInterface
+	public String getFacilities(String filter) {
+		List<String> facilities = mDB.getFacilities(filter); 
+		JSONArray details = new JSONArray();
+		try{
+			
+			
+			for (int i = 0; i < facilities.size(); i++) {			
+			
+				String facility = facilities.get(i);
+				JSONObject json = new JSONObject();
+				json.put("facility", facility);
+				
+				details.put(json);
+			}
+			return details.toString();
+		}
+		catch (JSONException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	        return e.toString();
+	    }	
+	}
 	
+	@JavascriptInterface
+	public void updateDob(String yob, String mob, String dob, String age ){
+		String birthdate = "";
+		int birthdate_estimated = 0;
+
+		if (yob.toLowerCase().equals("unknown")) {
+			int yr = Calendar.getInstance().get(Calendar.YEAR)
+					- Integer.parseInt(age);
+
+			birthdate = yr + "-07-15";
+			birthdate_estimated = 1;
+
+		} else {
+
+			birthdate = yob;
+
+			if (mob.trim().toLowerCase() != "unknown") {
+				birthdate = birthdate + "-"
+						+ String.format("%02d", Integer.parseInt(mob));
+
+				if (dob.trim().toLowerCase() != "unknown") {
+					birthdate = birthdate + "-"
+							+ String.format("%02d", Integer.parseInt(dob));
+
+					birthdate_estimated = 0;
+				} else {
+					birthdate = birthdate + "-15";
+
+					birthdate_estimated = 1;
+				}
+			} else {
+				birthdate = birthdate + "-07-15";
+
+				birthdate_estimated = 1;
+			}
+		}
+		mDB.updateDob(Integer.parseInt(getPref("person id")), birthdate, birthdate_estimated);
+	}	
 		
 }
