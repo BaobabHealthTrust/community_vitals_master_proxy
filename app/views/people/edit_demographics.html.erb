@@ -6,6 +6,17 @@
         $('touchscreenInput'+tstCurrentPage).setAttribute('ajaxURL', url + filter_value + "&search_string=");
         listSuggestions(tstCurrentPage);
     }
+    function getYear()
+    {
+        return (__$("year_of_birth").value.trim() == '<%=Vocabulary.search("Unknown") %>' ? __$("estimated_year_of_birth").value.trim() : __$("year_of_birth").value.trim());
+    }
+
+    function getMonth()
+    {
+
+        return (__$("month_of_birth").value.trim() == "Unknown" ? __$("estimated_month_of_birth").value.trim() : __$("month_of_birth").value.trim())
+    }
+
 </script>
 
 <% form_tag (:action => :update_person) do %>
@@ -27,6 +38,11 @@
                                                   [Vocabulary.search("Unknown")]), :helpText => Vocabulary.search("Year of birth"),
                        :field_type => "number", :tt_pageStyleClass => "NumbersOnlyWithUnknown" %>
 
+        <%= select_tag "estimated_year_of_birth",options_for_select(((Date.today.year - 120)..(Date.today.year)).collect{|y| y}.reverse ),
+                       :helpText => Vocabulary.search("Estimated Year of birth"),
+                       :condition => "__$('year_of_birth').value.trim() == '#{Vocabulary.search("Unknown")}'",
+                       :field_type => "number", :tt_pageStyleClass => "NumbersOnly" %>
+
         <% months = [
                 [Vocabulary.search("January"),1],
                 [Vocabulary.search("February"),2],
@@ -45,28 +61,21 @@
         %>
 
         <%= select_tag "month_of_birth", options_for_select(months), :helpText => Vocabulary.search("Month of birth"),
-                       :condition => "__$('year_of_birth').value.trim() != '#{Vocabulary.search("Unknown")}'",
+                       :tt_pageStyleClass => "NoKeyboard" %>
+
+        <%= select_tag "estimated_month_of_birth", options_for_select((months - [[Vocabulary.search("Unknown"),"Unknown"]])), :helpText => Vocabulary.search("Estimated Month of birth"),
+                       :condition => "__$('month_of_birth').value.trim() == 'Unknown'",
                        :tt_pageStyleClass => "NoKeyboard" %>
 
         <%= text_field_tag "day_of_birth", nil, {:helpText => Vocabulary.search("Day of birth"),
-                                                 :tt_onLoad => "getDayOfMonthPicker(__$('year_of_birth').value.trim(), __$('month_of_birth').value.trim())",
-                                                 :condition => "__$('month_of_birth').value.trim() != 'Unknown' && " +
-                                                         "__$('year_of_birth').value.trim() != '#{Vocabulary.search("Unknown")}'"} %>
-
-
-        <%= select_tag "estimated_year_of_birth",options_for_select(((Date.today.year - 120)..(Date.today.year)).collect{|y| y}.reverse ),
-                       :helpText => Vocabulary.search("Estimated Year of birth"),
-                       :condition => "__$('year_of_birth').value.trim() == '#{Vocabulary.search("Unknown")}'",
-                       :field_type => "number", :tt_pageStyleClass => "NumbersOnly" %>
-
-        <%= select_tag "estimated_month_of_birth", options_for_select(months), :helpText => Vocabulary.search("Estimated Month of birth"),
-                       :condition => "__$('year_of_birth').value.trim() == '#{Vocabulary.search("Unknown")}'",
-                       :tt_pageStyleClass => "NoKeyboard" %>
+                                                 :tt_onLoad => "getDayOfMonthPicker(getYear(),getMonth())"
+        } %>
 
         <%= text_field_tag "estimated_day_of_birth", nil, {:helpText => Vocabulary.search("Estimated Day of birth"),
-                                                           :tt_onLoad => "getDayOfMonthPicker(__$('estimated_year_of_birth').value.trim(), __$('estimated_month_of_birth').value.trim())",
-                                                           :condition => "__$('estimated_month_of_birth').value.trim() != 'Unknown' && " +
-                                                                   "__$('year_of_birth').value.trim() == '#{Vocabulary.search("Unknown")}'"} %>
+                                                           :tt_onLoad => "getDayOfMonthPicker(getYear(),getMonth())",
+                                                           :tt_pageStyleClass => "NumbersOnly",
+                                                           :condition => "__$('day_of_birth').value.trim() == '#{Vocabulary.search("Unknown")}'"} %>
+
 
     <% elsif params[:field] == 'place_of_birth' %>
         <%= select_tag "place of birth type", options_for_select([["#{Vocabulary.search("Hospital")}", "Hospital"],

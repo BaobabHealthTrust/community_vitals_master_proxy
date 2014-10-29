@@ -27,6 +27,8 @@ class Person < ActiveRecord::Base
         self.birthdate.strftime("??/???/%Y")
       elsif self.birthdate.day == 15
         self.birthdate.strftime("??/%b/%Y")
+      else
+        self.birthdate.strftime("%d/%b/%Y")
       end
     else
       self.birthdate.strftime("%d/%b/%Y")

@@ -193,44 +193,33 @@ class PeopleController < ApplicationController
 
     ta = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["ta"] rescue nil
 
+    estimated = 0
     month = 7
     day = 15
+    year = 1900
 
     if params[:year_of_birth].to_s.strip.downcase == Vocabulary.search("unknown").downcase
-
-      if params[:estimated_month_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
-        month = params[:estimated_month_of_birth].to_i
-
-        if params[:estimated_day_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
-          day = params[:estimated_day_of_birth].to_i
-
-        end
-
-        dob = "#{params[:estimated_year_of_birth]}-#{"%02d" % month}-#{"%02d" % day}"
-
-      else
-        dob = "#{params[:estimated_year_of_birth]}-07-15"
-      end
-
+      year = params[:estimated_year_of_birth].to_i
       estimated = 1
     else
-
-      estimated = 1
-
-      if params[:month_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
-        month = params[:month_of_birth].to_i
-
-        if params[:day_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
-          day = params[:day_of_birth].to_i
-
-          estimated = 0
-        end
-
-      end
-
-      dob = "#{params[:year_of_birth]}-#{"%02d" % month}-#{"%02d" % day}"
-
+      year = params[:year_of_birth].to_i
     end
+
+    if params[:month_of_birth].to_s.strip.downcase == "unknown"
+      month = params[:estimated_year_of_birth].to_i
+      estimated = 1
+    else
+      month = params[:month_of_birth].to_i
+    end
+
+    if params[:day_of_birth] == Vocabulary.search("unknown").downcase
+      day = params[:estimated_day_of_birth].to_i
+      estimated = 1
+    else
+      day = params[:day_of_birth].to_i
+    end
+
+    dob = "#{year}-#{"%02d" % month}-#{"%02d" % day}"
 
     person = Person.find(:first, :conditions => [" given_name = ? AND middle_name = ? AND family_name =? AND gender = ?
                                                 AND birthdate = ? AND village =? AND gvh = ? AND ta = ? AND voided = 0",
@@ -332,41 +321,33 @@ class PeopleController < ApplicationController
         redirect_to "failed_transfer" and return
     end
 
+    estimated = 0
+    month = 7
+    day = 15
+    year = 1900
+
     if params[:year_of_birth].to_s.strip.downcase == Vocabulary.search("unknown").downcase
-
-      if params[:estimated_month_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
-        month = params[:estimated_month_of_birth].to_i
-
-        if params[:estimated_day_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
-          day = params[:estimated_day_of_birth].to_i
-
-        end
-
-        dob = "#{params[:estimated_year_of_birth]}-#{"%02d" % month}-#{"%02d" % day}"
-
-      else
-        dob = "#{params[:estimated_year_of_birth]}-07-15"
-      end
-
+      year = params[:estimated_year_of_birth].to_i
       estimated = 1
     else
-
-      estimated = 1
-
-      if params[:month_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
-        month = params[:month_of_birth].to_i
-
-        if params[:day_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
-          day = params[:day_of_birth].to_i
-
-          estimated = 0
-        end
-
-      end
-
-      dob = "#{params[:year_of_birth]}-#{"%02d" % month}-#{"%02d" % day}"
-
+      year = params[:year_of_birth].to_i
     end
+
+    if params[:month_of_birth].to_s.strip.downcase == "unknown"
+      month = params[:estimated_year_of_birth].to_i
+      estimated = 1
+    else
+      month = params[:month_of_birth].to_i
+    end
+
+    if params[:day_of_birth] == Vocabulary.search("unknown").downcase
+      day = params[:estimated_day_of_birth].to_i
+      estimated = 1
+    else
+      day = params[:day_of_birth].to_i
+    end
+
+    dob = "#{year}-#{"%02d" % month}-#{"%02d" % day}"
 
     person = Person.find(:first, :conditions => [" given_name = ? AND middle_name = ? AND family_name =? AND gender = ?
                                                 AND birthdate = ? AND village =? AND gvh = ? AND ta = ? AND voided = 0",
@@ -612,44 +593,34 @@ class PeopleController < ApplicationController
       when 'gender'
         person.gender = params[:gender]
       when 'dob'
+        estimated = 0
         month = 7
         day = 15
+        year = 1900
 
         if params[:year_of_birth].to_s.strip.downcase == Vocabulary.search("unknown").downcase
-
-          if params[:estimated_month_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
-            month = params[:estimated_month_of_birth].to_i
-
-            if params[:estimated_day_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
-              day = params[:estimated_day_of_birth].to_i
-
-            end
-
-            dob = "#{params[:estimated_year_of_birth]}-#{"%02d" % month}-#{"%02d" % day}"
-
-          else
-            dob = "#{params[:estimated_year_of_birth]}-07-15"
-          end
-
+          year = params[:estimated_year_of_birth].to_i
           estimated = 1
         else
-
-          estimated = 1
-
-          if params[:month_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
-            month = params[:month_of_birth].to_i
-
-            if params[:day_of_birth].to_s.strip.downcase != Vocabulary.search("unknown").downcase
-              day = params[:day_of_birth].to_i
-
-              estimated = 0
-            end
-
-          end
-
-          dob = "#{params[:year_of_birth]}-#{"%02d" % month}-#{"%02d" % day}"
-
+          year = params[:year_of_birth].to_i
         end
+
+        if params[:month_of_birth].to_s.strip.downcase == "unknown"
+          month = params[:estimated_year_of_birth].to_i
+          estimated = 1
+        else
+          month = params[:month_of_birth].to_i
+        end
+
+        if params[:day_of_birth] == Vocabulary.search("unknown").downcase
+          day = params[:estimated_day_of_birth].to_i
+          estimated = 1
+        else
+          day = params[:day_of_birth].to_i
+        end
+
+        dob = "#{year}-#{"%02d" % month}-#{"%02d" % day}"
+
         person.birthdate = dob
         person.birthdate_estimated = estimated
       when 'place_of_birth'
