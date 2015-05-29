@@ -86,6 +86,7 @@ ActiveRecord::Schema.define(:version => 201307181255011) do
     t.datetime "assigned_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "decimal_num"
   end
 
   create_table "outcome_types", :force => true do |t|

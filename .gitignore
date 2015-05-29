@@ -5,3 +5,5 @@ tmp/
 .idea/
 mobile/community_vitals_master_proxy_android/bin/
 *~
+db/schema.rb
+
