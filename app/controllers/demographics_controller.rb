@@ -365,7 +365,7 @@ class DemographicsController < ApplicationController
                       '35-44'=> [], '45-54' => [], '55-64' => [], '65-74'=> [],'75+'=> []}
     (people || []).each do |person|
       next if person.outcome_date.to_date <= date rescue false
-      age = Date.today.year.to_i - person.birthdate.year.to_i
+      age = Date.today.year.to_i - person.birthdate.year.to_i rescue 0
       if (age >= 0  && age < 1)
         age_groups['0 to < 1'] +=1
         age_groups_ids['0 to < 1'] << person.id
@@ -526,9 +526,9 @@ class DemographicsController < ApplicationController
                       "#{Vocabulary.search(person.gender)} - " +
                       "#{Vocabulary.search("Age")}: #{person.age})".strip, "#{person.id}"]
 
-      year = person.birthdate.to_date.year
-      month = person.birthdate.to_date.month
-      day = person.birthdate.to_date.day
+      year = person.birthdate.to_date.year rescue nil
+      month = person.birthdate.to_date.month rescue nil
+      day = person.birthdate.to_date.day rescue nil
 
       @details[person.id] = {
           Vocabulary.search("Name") => "#{person.given_name} #{person.family_name}",

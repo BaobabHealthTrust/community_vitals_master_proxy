@@ -23,7 +23,9 @@ class Person < ActiveRecord::Base
 
   def birthdate_formatted
     if self.birthdate_estimated==1
-      if self.birthdate.day == 1 and self.birthdate.month == 7
+      if self.birthdate.blank?
+        "??/??/??"
+      elsif self.birthdate.day == 1 and self.birthdate.month == 7
         self.birthdate.strftime("??/???/%Y")
       elsif self.birthdate.day == 15
         self.birthdate.strftime("??/%b/%Y")
@@ -135,7 +137,7 @@ class Person < ActiveRecord::Base
   def outcomes_summary
     outcomes_summary = []
     outcomes = Outcome.find(:all, :conditions => ["person_id = ? AND voided = 0", self.id], :order => "outcome_date asc")
-    outcomes_summary << "#{Vocabulary.search('Alive')} : #{self.birthdate.strftime('%d %b %Y')} - #{(outcomes.first.outcome_date rescue Date.today).strftime('%d %b %Y') }"
+    outcomes_summary << "#{Vocabulary.search('Alive')} : #{self.birthdate_formatted} - #{(outcomes.first.outcome_date rescue Date.today).strftime('%d %b %Y') }"
     (outcomes || []).each do |outcome|
       outcomes_summary << "#{Vocabulary.search(outcome.name)} : #{outcomes.first.outcome_date.strftime('%d %b %Y')}"
     end

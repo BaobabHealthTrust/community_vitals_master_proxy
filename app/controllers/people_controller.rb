@@ -137,9 +137,9 @@ class PeopleController < ApplicationController
                         "#{Vocabulary.search(person.gender)} - " +
                         "#{Vocabulary.search("Age")}: #{person.age})".strip, "#{person.id}"]
 
-        year = person.birthdate.to_date.year
-        month = person.birthdate.to_date.month
-        day = person.birthdate.to_date.day
+        year = person.birthdate.to_date.year rescue nil
+        month = person.birthdate.to_date.month rescue nil
+        day = person.birthdate.to_date.day rescue nil
 
         @details[person.id] = {
             Vocabulary.search("Name") => "#{person.given_name} #{person.family_name}",
@@ -205,14 +205,14 @@ class PeopleController < ApplicationController
       year = params[:year_of_birth].to_i
     end
 
-    if params[:month_of_birth].to_s.strip.downcase == "unknown"
-      month = params[:estimated_year_of_birth].to_i
+    if params[:month_of_birth].to_s.strip.downcase == Vocabulary.search("unknown").downcase
+      month = params[:estimated_month_of_birth].to_i
       estimated = 1
     else
       month = params[:month_of_birth].to_i
     end
 
-    if params[:day_of_birth] == Vocabulary.search("unknown").downcase
+    if params[:day_of_birth].to_s.strip.downcase == Vocabulary.search("unknown").downcase
       day = params[:estimated_day_of_birth].to_i
       estimated = 1
     else
@@ -334,7 +334,7 @@ class PeopleController < ApplicationController
     end
 
     if params[:month_of_birth].to_s.strip.downcase == "unknown"
-      month = params[:estimated_year_of_birth].to_i
+      month = params[:estimated_month_of_birth].to_i
       estimated = 1
     else
       month = params[:month_of_birth].to_i
@@ -606,13 +606,13 @@ class PeopleController < ApplicationController
         end
 
         if params[:month_of_birth].to_s.strip.downcase == "unknown"
-          month = params[:estimated_year_of_birth].to_i
+          month = params[:estimated_month_of_birth].to_i
           estimated = 1
         else
           month = params[:month_of_birth].to_i
         end
 
-        if params[:day_of_birth] == Vocabulary.search("unknown").downcase
+        if params[:day_of_birth].to_s.strip.downcase == Vocabulary.search("unknown").downcase
           day = params[:estimated_day_of_birth].to_i
           estimated = 1
         else
