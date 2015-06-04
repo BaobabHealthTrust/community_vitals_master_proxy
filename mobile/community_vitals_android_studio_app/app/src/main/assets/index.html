@@ -1,0 +1,490 @@
+<html>
+    <head>
+        <title>CVR</title>
+        <link rel="stylesheet" type="text/css" href="css/main.css" />
+
+        <script>        
+            Ext.Loader.setConfig({
+                enabled: true,
+                disableCaching: false
+            });
+
+            Ext.Ajax.setDisableCaching(false);
+        </Script>
+
+        <script type="text/javascript" src="db/seed.js"></script>
+        <script type="text/javascript" src="js/md5.js"></script>
+        <script type="text/javascript" src="js/vocab.js"></script>
+        <script type="text/javascript" src="js/main.js" defer></script>
+        <script type="text/javascript" src="js/google.fastbutton.js" defer></script>
+
+        <style type="text/css">
+            body {
+                background-color: #fff;
+                margin: 20px;
+                margin-top: 0px;
+                margin-bottom: 0px;
+                font-family: "Arial Narrow", "Nimbus Sans L", sans-serif;
+                overflow: hidden;
+                color: #000;
+                -moz-user-select: none;
+            }
+
+        </style>
+
+        <script type="text/javascript" defer>
+            <!--
+          
+            function __$(id){
+                return document.getElementById(id);
+            }
+            
+            function switchTab(tab){
+                var tabs = ["application", "reports", "my_activities", "administration"];
+              
+                for(var i = 0; i < tabs.length; i++){
+                    __$(tabs[i]).style.borderBottom = "1px solid #5496ef";
+                    __$(tabs[i]).style.paddingTop = "40px";
+                }
+              
+                __$(tab).style.borderBottom = "5px solid #5496ef";
+                __$(tab).style.paddingTop = "45px";
+              
+                switch(tab.toLowerCase()){
+                    case "application":
+                        loadApplicationMenu();
+                        break;
+                    case "reports":
+                        loadReportsMenu();
+                        break;
+                    case "my_activities":
+                        loadActivitiesMenu();
+                        break;
+                    case "administration":
+                        loadAdministrationMenu();
+                        break;
+                }
+            }
+          
+            function adjustView(){
+                __$("container").style.height = (__$("nav").offsetTop - 100) + "px";
+            }
+          
+            function loadApplicationMenu(){
+                __$("container").innerHTML = "";
+              
+                var fields = [search("Add Person"), search("Search Person")];
+              
+                var images = ["add_person.png", "find.png"];
+              
+                var paths = ["add_person.html", "search.html"];
+              
+                for(var i = 0; i < fields.length; i++){
+                
+                    var div = document.createElement("div");
+                    div.id = "application_" + i;
+                    div.style.width = "200px";
+                    div.style.height = "160px";
+                    div.style.textAlign = "center";
+                    div.style.cssFloat = "left";
+                    div.style.padding = "5px";
+                    div.style.opacity = "1";
+                    div.style.cursor = "pointer";
+                    div.setAttribute("link", paths[i]);
+                    div.className = "menu_button blue";
+                
+                    div.onclick = function(){
+                        window.location = this.getAttribute("link");
+                    }
+                
+                    __$("container").appendChild(div);
+                
+                    var img = document.createElement("img");
+                    img.src = "images/" + images[i];
+                    img.setAttribute("alt", fields[i]);
+                    img.height = "90";
+                    img.style.margin = "5px";
+                
+                    div.appendChild(img);
+                
+                    div.innerHTML += "<div style='padding: 5px; margin-top: 10px;'>" + fields[i] + "</div>";
+                  
+                }
+            }
+          
+            function loadReportsMenu(){
+                __$("container").innerHTML = "";
+
+                var fields = [
+                    search("Cohort report"),
+                    search("Monthly Outcomes Report"),
+                    search("Monthly Birth Report"),
+                    search("Daily Summary"), 
+                    search("Village Summary"),
+                    search("Village Register")
+                ];
+              
+                var images = [
+                    "report.png",              
+                    "report.png",
+                    "report.png",
+                    "report.png",
+                    "report.png",
+                    "report.png"
+                ];
+
+
+                var paths = ["select_cohort.html", "select_outcome_month.html", "select_birth_month.html",
+                    "select_date.html","village_statistics.html", "village_register.html"];
+
+              			
+                var cat = Android.getPref("dde_mode");
+					      
+                if(cat.trim().length == 0){
+                    cat = "vh";
+                }
+		
+                if(cat == "gvh"){
+                    fields = [
+                        search("Cohort Report"), 
+                        search("Monthly Outcomes Report"),
+                        search("Monthly Birth Report"),
+                        search("Daily Summary"), 
+                        search("Villages Summary"),
+                        search("GVH Register")
+                    ];
+
+                    images = [
+                        "report.png",              
+                        "report.png",
+                        "report.png",
+                        "report.png",
+                        "report.png",
+                        "report.png"
+                    ];
+
+
+                    paths = ["select_cohort.html", "select_outcome_month.html", "select_birth_month.html",
+                        "select_date.html","village_statistics.html", "gvh_register.html"];
+                }
+                
+                for(var i = 0; i < fields.length; i++){
+                
+                    var div = document.createElement("div");
+                    div.id = "btnReport" + i;
+                    div.style.width = "200px";
+                    div.style.height = "160px";
+                    div.style.textAlign = "center";
+                    div.style.cssFloat = "left";
+                    div.style.padding = "5px";
+                    div.style.opacity = "1";
+                    div.style.cursor = "pointer";
+                    div.setAttribute("link", paths[i]);
+                    div.className = "menu_button blue";
+                
+                    /*div.onclick = function(){
+                        window.location = this.getAttribute("link");
+                    }*/
+                
+                    __$("container").appendChild(div);
+                
+                    var img = document.createElement("img");
+                    img.src = "images/" + images[i];
+                    img.setAttribute("alt", fields[i]);
+                    img.height = "90";
+                    img.style.margin = "5px";
+                
+                    div.appendChild(img);
+                
+                    div.innerHTML += "<div style='padding: 5px; margin-top: 10px;'>" + fields[i] + "</div>";
+                  			
+                    new FastButton(document.getElementById("btnReport" + i), function() {
+                        window.location = this.getAttribute("link");				 
+                    });
+			
+                }
+            }
+          
+            function loadActivitiesMenu(){
+                __$("container").innerHTML = "";
+              
+                var fields = [search("Change Language")];
+              
+                var images = [
+                    "default.png"
+                ];
+              
+                var paths = ["change_language.html"];
+              
+                for(var i = 0; i < fields.length; i++){
+                
+                    var div = document.createElement("div");
+                    div.style.width = "200px";
+                    div.style.height = "160px";
+                    div.style.textAlign = "center";
+                    div.style.cssFloat = "left";
+                    div.style.padding = "5px";
+                    div.style.opacity = "1";
+                    div.style.cursor = "pointer";
+                    div.setAttribute("link", paths[i]);
+                    div.className = "menu_button blue";
+                
+                    div.onclick = function(){
+                        window.location = this.getAttribute("link");
+                    }
+                
+                    __$("container").appendChild(div);
+                
+                    var img = document.createElement("img");
+                    img.src = "images/" + images[i];
+                    img.setAttribute("alt", fields[i]);
+                    img.height = "90";
+                    img.style.margin = "5px";
+                
+                    div.appendChild(img);
+                
+                    div.innerHTML += "<div style='padding: 5px; margin-top: 10px;'>" + fields[i] + "</div>";
+                  
+                }
+            }
+          
+            function loadAdministrationMenu(){
+                __$("container").innerHTML = "";
+              
+                var fields = [search("Site Setup"), search("Settings Summary"), 
+                    search("Users")];
+              
+                var images = [
+                    "setup.png",              
+                    "settings.png",            
+                    "users.png"
+                ]
+              
+                var paths = ["site_setup.html", "setup_summary.html", "select_user_task.html"];
+              
+                for(var i = 0; i < fields.length; i++){
+                
+                    var div = document.createElement("div");
+                    div.style.width = "200px";
+                    div.style.height = "160px";
+                    div.style.textAlign = "center";
+                    div.style.cssFloat = "left";
+                    div.style.padding = "5px";
+                    div.style.opacity = "1";
+                    div.style.cursor = "pointer";
+                    div.setAttribute("link", paths[i]);
+                    div.className = "menu_button blue";
+                
+                    div.onclick = function(){
+                        window.location = this.getAttribute("link");
+                    }
+                
+                    __$("container").appendChild(div);
+                
+                    var img = document.createElement("img");
+                    img.src = "images/" + images[i];
+                    img.setAttribute("alt", fields[i]);
+                    img.height = "90";
+                    img.style.margin = "5px";
+                
+                    div.appendChild(img);
+                
+                    div.innerHTML += "<div style='padding: 5px; margin-top: 10px;'>" + fields[i] + "</div>";
+                  
+                }
+            }
+          
+            function load(){
+            
+                new FastButton(document.getElementById('application'), function() {
+                    switchTab(this.id);				 
+                });
+					
+                new FastButton(document.getElementById('reports'), function() {
+                    switchTab(this.id);				 
+                });
+					
+                new FastButton(document.getElementById('my_activities'), function() {
+                    switchTab(this.id);				 
+                });
+					
+                new FastButton(document.getElementById('administration'), function() {
+                    switchTab(this.id);				 
+                });
+					
+                new FastButton(document.getElementById('logout'), function() {
+                    doLogout();				 
+                });
+										
+                new FastButton(document.getElementById('network'), function() {
+                    checkConnection();				 
+                });
+										      
+                setTimeout("checkConnection()", 500);
+						
+                var cat = Android.getPref("dde_mode");
+					      
+                if(cat.trim().length == 0){
+                    cat = "vh";
+                }
+					      
+                var app = search("Application");
+                var reports = search("Reports");
+                var my_activities = search("My Activities");
+                var admin = search("Administration");
+                var reg = search((cat == "gvh" ? "GVH Register" : "Village Register"));
+					      
+                __$("application").innerHTML = app;
+                __$("reports").innerHTML = reports;
+                __$("my_activities").innerHTML = my_activities;
+                __$("administration").innerHTML = admin;
+                __$("reg").innerHTML = reg + "<br/><div style='font-size: 0.5em; margin-left: 3px;'>" + 
+                    (cat == "gvh" ? "GVH " + Android.getPref("gvh") + ", T/A " + Android.getPref("ta") : 
+                    "VH " + Android.getPref("vh") + ", GVH "+ Android.getPref("gvh") + ", T/A " + Android.getPref("ta"));
+				      
+                var advanced = eval(Android.getPref("advanced"));
+					      
+                switch(cat){
+                    case "vh":
+                        __$("application").style.display = "block";
+                        __$("reports").style.display = "block";
+                        __$("my_activities").style.display = "block";
+                        __$("administration").style.display = (advanced ? "block" : "none");
+					          
+                        switchTab("application");	
+                        break;
+                    case "gvh":
+                        __$("application").style.display = "none";
+                        __$("reports").style.display = "block";
+                        __$("my_activities").style.display = "block";
+                        __$("administration").style.display = (advanced ? "block" : "none");
+					          
+                        switchTab("reports");	
+                        break;
+                    case "ta":
+                        __$("application").style.display = "none";
+                        __$("reports").style.display = "block";
+                        __$("my_activities").style.display = "block";
+                        __$("administration").style.display = (advanced ? "block" : "none");
+					          
+                        switchTab("reports");	
+                        break;
+                }
+                
+                var months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "Jul", 
+                    "Aug", "Sep", "Oct", "Nov", "Dec"];
+                
+                var today = new Date();
+                
+                if(__$("date")){
+                    __$("date").innerHTML = today.getDate() + " " + months[today.getMonth()] + 
+                        ", " + today.getFullYear();
+                }
+                
+                setTime();
+            }
+            
+            function padZeros(number, positions){
+                var zeros = parseInt(positions) - String(number).length;
+                var padded = "";
+    
+                for(var i = 0; i < zeros; i++){
+                    padded += "0";
+                }
+    
+                padded += String(number);
+    
+                return padded;
+            }
+
+            function setTime(){
+                if(__$("time")){
+                    var time = new Date();
+                    
+                    var hr = padZeros(time.getHours(), 2);
+                    var min = padZeros(time.getMinutes(), 2);
+                    
+                    if(__$("time").innerHTML.trim().match(/\:/)){
+                        __$("time").innerHTML = hr + " " + min;
+                    } else {
+                        __$("time").innerHTML = hr + ":" + min;
+                    }
+                }
+                
+                setTimeout("setTime()", 500);
+            }
+            
+            //-->
+        </script>
+    </head>
+    <body onresize="adjustView()" onload="adjustView(); loadApplicationMenu(); load();">
+        <table width="100%" cellspacing="0" cellpadding="10">
+            <tr>
+                <td id="application" class="menu" style="border-bottom: 5px solid #5496ef; font-size: 18px; 
+                    padding-top: 45px; width: 130px; cursor: pointer; color: #000;" align="center">
+                    Application
+                </td>
+                <td id="reports" class="menu" style="border-bottom: 1px solid #5496ef; font-size: 18px; 
+                    padding-top: 40px; width: 130px; cursor: pointer; color: #000;" align="center">
+                    Reports
+                </td>
+                <td id="my_activities" class="menu" style="border-bottom: 1px solid #5496ef; font-size: 18px; 
+                    padding-top: 40px; width: 130px; cursor: pointer; color: #000;" align="center">
+                    My Activities
+                </td>
+                <td id="administration" class="menu" style="border-bottom: 1px solid #5496ef; font-size: 18px; 
+                    padding-top: 40px; width: 130px; cursor: pointer; color: #000;" align="center">
+                    Administration
+                </td>
+                <td style="border-bottom: 1px solid #5496ef;">
+                    &nbsp;
+                </td>
+                <td style="width: 100px; border-bottom: 1px solid #5496ef;">
+                    <img id="logout" src="images/close.png" height="65" style="margin-right: -10px;
+                         margin-top: 5px; cursor: pointer; float: right;" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" style="padding: 0px;">
+                    <div id="container" style="width: 100%; overflow: auto;">
+
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" style="border-top: 1px solid #5496ef; background:url(images/pad2.png) left repeat-y;">
+                    &nbsp;
+                </td>
+            </tr>
+        </table>
+
+        <div id="nav" style="width: 100%; height: 90px; background:url(images/pad.png) left repeat-y;
+             left: 0px; position: absolute; bottom: 0px; ">
+            <div id="reg" style="float: left; margin-left: 0px; font-size: 42px; padding: 30px; color: #666; min-width: 50%; 
+                 margin-top: -15px; background-image: -moz-linear-gradient(center right , #FFFFFF, #89b4ef); 
+                 padding-left: 45px; padding-top: 20px;">
+                Village Register
+            </div>
+            <img src="images/baobab.png" height="80" style="margin-right: 20px; float: right;" />
+
+            <img id="network" src="images/ndown.png" height="65" style="margin-right: 20px;
+                 margin-top: 15px; float: right;" />
+
+            <div id="threshold" style="margin-right: -25px; margin-top: 15px; float: right; color: red;
+                 border: 2px solid red; border-radius: 50px; width: 40px; font-size: 18px; padding-bottom: 0px;
+                 height: 30px; text-align: center; vertical-align: middle; padding-top: 10px; background-color: rgba(255,255,255,0.6);">
+            </div>
+
+            <div id="date" style="float: right; width: 100px; color: #666; 
+                 margin-top: -6px; margin-right: -85px; font-size: 1em; text-align: right;">
+                DD MMM, YYYY
+            </div>
+
+            <div id="time" style="float: right; color: #666;  margin-right: -10px;
+                 margin-top: 45px; font-size: 2em; text-align: right;">
+                08:00
+            </div>
+
+        </div>
+    </body>
+</html>

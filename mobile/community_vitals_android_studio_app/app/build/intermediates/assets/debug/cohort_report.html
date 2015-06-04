@@ -1,0 +1,246 @@
+<html>
+<head>
+    <title>CVR</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+
+    <script type="text/javascript" src="js/md5.js"></script>
+    <script type="text/javascript" src="js/vocab.js"></script>
+    <script type="text/javascript" src="js/datasrc.js"></script>
+    <script type="text/javascript" src="js/main.js" defer></script>
+    <script type="text/javascript" src="js/google.fastbutton.js"></script>
+
+    <script type="text/javascript" defer>
+        <!--
+
+        // setTimeout("loadPage('spec/add_person.spec')", 200);
+
+        function load(){
+
+
+            new FastButton(document.getElementById('home'), function() {
+                window.location = "index.html";
+            });
+
+            document.getElementById('title').innerHTML = Android.getPref("cohort_title");
+            document.getElementById('location').innerHTML = Android.getPref("cohort_location");
+
+            var data= Android.cohortReport(Android.getPref("cohort_start"), Android.getPref("cohort_end"));
+            data = JSON.parse(data);
+
+            var fields = ["number alive males", "number alive females", "new births males", "new births females",
+                "deaths males", "deaths females", "transferred males", "transferred females", "under 1 males",
+                "under 1 females", "1-4 males", "1-4 females", "5-14 males", "5-14 females", "15-24 males",
+                "15-24 females", "25-34 males", "25-34 females", "35-44 males", "35-44 females", "45-54 males",
+                "45-54 females", "55-64 males", "55-64 females", "65-74 males", "65-74 females", "75 and above males",
+                "75 and above females"];
+
+            for (var i = 0; i < fields.length; i++)
+            {
+                document.getElementById(fields[i]).innerHTML = data[fields[i]];
+            }
+
+            get_totals();
+            localise();
+
+        }
+
+        function get_totals()
+        {
+            var fields = ["number alive", "new births","deaths", "transferred", "under 1", "1-4", "5-14", "15-24",
+                "25-34", "35-44", "45-54", "55-64", "65-74", "75 and above"];
+
+            for (var i = 0; i < fields.length; i++)
+            {
+                var male = parseInt(document.getElementById(fields[i]+" females").innerHTML);
+                var female = parseInt(document.getElementById(fields[i] +" males").innerHTML);
+
+                document.getElementById(fields[i]).innerHTML = male + female;
+            }
+
+        }
+
+        function localise()
+        {
+            var fields = ["death_header", "birth_header", "transfer_header", "registered", "males","females","total","ages"];
+
+            for (var i =0; i < fields.length; i++)
+            {
+                document.getElementById(fields[i]).innerHTML = search(document.getElementById(fields[i]).innerHTML);
+            }
+
+        }
+
+        //-->
+    </script>
+
+    <style type="text/css">
+        td.heading{
+            background-color: silver;
+            height: 30px;
+            font-size: 20px !important;
+            font-weight: bold;
+            text-align: center !important;
+        }
+
+        td.headings{
+            height: 40px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: left;
+        }
+        tr{
+            font-size: 15px;
+        }
+
+        td.value{
+            text-align: center !important;
+
+        }
+        table.data{
+        }
+
+        .data td{
+            border: 0.1em solid silver;
+            font-size: 17px;
+            text-align:left;
+        }
+    </style>
+
+</head>
+<body onload="load()" style="margin: 0px; padding: 0px;">
+
+<div class="table" style="border-spacing: 0px; width: 100%;">
+
+        <div class="cell center" style="position: relative; width: 100%;">
+            <div class="nav" id="header" style="width: 101%;background-color: #003366; height: 80px;
+            margin: 0px; margin-top: -4px;margin-left:-3.5px;font-weight:bold;">
+                <table style = "width:100%;color:#CCFF33;">
+                    <tr>
+                        <td id="title" style = "text-align:center;font-size:26px;"></td>
+                    </tr>
+                    <tr>
+                        <td id= "location" style="text-align:right;font-size:20px;"></td>
+                    </tr>
+                </table>
+
+            </div>
+            <div id="parent" style="background-color: #f1f1f1; min-height: 30%;max-height: 400px;;
+              width: 100%;overflow: auto; border: 1px #CCCCCC solid;">
+                <table class="data" id="details" style='width: 100%'>
+                    <tr >
+                        <td class='heading' style="width: 25%;">&nbsp;</td>
+                        <td class='heading' style="width: 25%;" id="males">Male</td>
+                        <td class='heading' style="width: 25%;" id="females">Female</td>
+                        <td class='heading' id="total">Total</td>
+                    </tr>
+
+                    <tr>
+                        <td class="headings" id="registered" >Registered People Alive</td>
+                        <td class="value" id="number alive males">&nbsp;</td>
+                        <td class="value" id="number alive females">&nbsp;</td>
+                        <td class="value" id="number alive">&nbsp;</td>
+                    <tr>
+                        <td style="border: 0px" colspan="4">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="headings" style="border: 0px;background-color: #dcdcdc;" colspan="4" id="ages">Age Distribution</td>
+                    </tr>
+                    <tr>
+                        <td>0 to < 1 </td>
+                        <td class="value" id="under 1 males" >&nbsp;</td>
+                        <td class="value" id="under 1 females">&nbsp;</td>
+                        <td class="value" id="under 1">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>1 - 4 </td>
+                        <td class="value" id="1-4 males">&nbsp;</td>
+                        <td class="value" id="1-4 females">&nbsp;</td>
+                        <td class="value" id="1-4">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>5 - 14 </td>
+                        <td class="value" id="5-14 males">&nbsp;</td>
+                        <td class="value" id="5-14 females">&nbsp;</td>
+                        <td class="value" id="5-14">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>12 - 24</td>
+                        <td class="value" id="15-24 males">&nbsp;</td>
+                        <td class="value" id="15-24 females">&nbsp;</td>
+                        <td class="value" id="15-24">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>25 - 34 </td>
+                        <td class="value" id="25-34 males">&nbsp;</td>
+                        <td class="value" id="25-34 females">&nbsp;</td>
+                        <td class="value" id="25-34">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>35 - 44 </td>
+                        <td class="value" id="35-44 males">&nbsp;</td>
+                        <td class="value" id="35-44 females">&nbsp;</td>
+                        <td class="value" id="35-44">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>45 - 54 </td>
+                        <td class="value" id="45-54 males">&nbsp;</td>
+                        <td class="value" id="45-54 females">&nbsp;</td>
+                        <td class="value" id="45-54">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>55 - 64 </td>
+                        <td class="value" id="55-64 males">&nbsp;</td>
+                        <td class="value" id="55-64 females">&nbsp;</td>
+                        <td class="value" id="55-64">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>65 - 74 </td>
+                        <td class="value" id="65-74 males">&nbsp;</td>
+                        <td class="value" id="65-74 females">&nbsp;</td>
+                        <td class="value" id="65-74">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>75 + </td>
+                        <td class="value" id="75 and above males">&nbsp;</td>
+                        <td class="value" id="75 and above females">&nbsp;</td>
+                        <td class="value" id="75 and above">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 0px" colspan="4">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="headings" id="birth_header" >New Births</td>
+                        <td class="value" id="new births males">&nbsp;</td>
+                        <td class="value" id="new births females">&nbsp;</td>
+                        <td class="value" id="new births">&nbsp;</td>
+                    <tr>
+                    <tr>
+                        <td class="headings" id="death_header">Deaths</td>
+                        <td class="value" id="deaths males">&nbsp;</td>
+                        <td class="value" id="deaths females">&nbsp;</td>
+                        <td class="value" id="deaths">&nbsp;</td>
+                    <tr>
+                    <tr>
+                        <td class="headings"  id="transfer_header">Transferred Out</td>
+                        <td class="value" id="transferred males">&nbsp;</td>
+                        <td class="value" id="transferred females">&nbsp;</td>
+                        <td class="value" id="transferred">&nbsp;</td>
+                    <tr>
+                </table>
+
+            </div>
+            <div class="nav" style="position: absolute; bottom: 0px; border: 1px #fff solid; height: 64px;
+              width: 100%; background-color: #666; margin: 0px; margin-bottom: -68px;
+              margin-left: -5px; ">
+
+                <a id="home" style="float: left;">
+                    <img src="images/home.png" alt="Home" style="margin: 0px;
+                  margin-left: 15px;" height="60" />
+                </a>
+
+            </div>
+        </div>
+
+</div>
+</body>
+</html>

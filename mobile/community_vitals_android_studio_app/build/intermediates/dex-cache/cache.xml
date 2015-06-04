@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/home/chimwemwe/projects/work/apps/community_vitals_master_proxy/mobile/community_vitals_android_studio_app/app/libs/android-sqlite-asset-helper.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="20f039a3336c18f93cfddfa1a49ce91a55361c40">
+        <dex dex="/home/chimwemwe/projects/work/apps/community_vitals_master_proxy/mobile/community_vitals_android_studio_app/app/build/intermediates/pre-dexed/debug/android-sqlite-asset-helper-0894ad2ceb2f212f429333fd638a2f0861184182.jar" />
+    </item>
+    <item
+        jar="/home/chimwemwe/Android/Sdk/extras/android/m2repository/com/android/support/support-v4/18.0.0/support-v4-18.0.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="44ec51e9d395a47aab135e5e1b556c0007442156">
+        <dex dex="/home/chimwemwe/projects/work/apps/community_vitals_master_proxy/mobile/community_vitals_android_studio_app/app/build/intermediates/pre-dexed/debug/support-v4-18.0.0-f40ee05e6955fc9899a846c69e8cacb61febd61e.jar" />
+    </item>
+
+</items>
