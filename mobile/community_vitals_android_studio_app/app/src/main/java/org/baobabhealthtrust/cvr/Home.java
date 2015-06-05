@@ -364,9 +364,7 @@ public class Home extends Activity {
 
                 addressl1 = address.substring(0, 30);
 
-                addressl2 = address.substring(30, (address.trim().length() > 30 ? 60 : address.trim().length()));
-
-                Log.i("PRINTING", "addressl1: " + addressl1 + "; addressl2: " + addressl2 + "; address: " + address);
+                addressl2 = address.substring(30, (address.trim().length() > 60 ? 60 : address.trim().length()));
 
             } else {
                 addressl1 = address.trim();
@@ -377,11 +375,11 @@ public class Home extends Activity {
                             "q801\n" +
                             "Q329,026\n" +
                             "ZT\n" +
-                            "B50,180,0,1,4,15,120,N,\"" + npid + "\"\n" +
-                            "A35,30,0,2,2,2,N,\"" + name + "\"\n" +
-                            "A35,76,0,2,2,2,N,\"" + npid + " " + dob + "(" + gender + ")\"\n" +
-                            "A35,122,0,2,2,2,N,\"" + addressl1 + "\"\n" +
-                            "A35,168,0,2,2,2,N,\"" + addressl2 + "\"\n" +
+                            "B50,198,0,1,4,15,80,N,\"" + npid + "\"\n" +
+                            "A35,25,0,2,2,2,N,\"" + name + "\"\n" +
+                            "A35,71,0,2,2,2,N,\"" + npid + " " + dob + "(" + gender + ")\"\n" +
+                            "A35,117,0,2,2,2,N,\"" + addressl1 + "\"\n" +
+                            "A35,163,0,2,2,2,N,\"" + addressl2 + "\"\n" +
                             "P1\n";
 
             byte[] data;
