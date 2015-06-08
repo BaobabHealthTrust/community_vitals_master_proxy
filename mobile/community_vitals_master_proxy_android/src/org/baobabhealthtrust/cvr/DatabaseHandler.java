@@ -1700,7 +1700,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				people.getBirthdateEstimated()+ "", people.getStateProvince(),
 				people.getAddress2(), people.getNeighbourhoodCell() };
 
-        db.close();
+        
 		return result;
 	}
 
