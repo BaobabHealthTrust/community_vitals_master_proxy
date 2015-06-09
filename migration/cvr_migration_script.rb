@@ -61,7 +61,7 @@ rs.each_hash do |person|
 
   puts "Importing person #{person["id"]}..."
   
-  irs = $dstcon.query("INSERT INTO national_identifiers (id, identifier, person_id, site_id, assigned_gvh, assigned_vh, requested_by_vh, created_at, updated_at) VALUES (#{person["id"]}, '#{person["national_id"]}', #{person["id"]}, 'MTA', 'Mtema1', '#{person["village"]}', 1, '#{person["created_at"]}', '#{person["created_at"]}')")
+  irs = $dstcon.query("INSERT INTO national_identifiers (id, identifier, person_id, site_id, assigned_gvh, assigned_vh, requested_by_vh,assigned_at, created_at, updated_at) VALUES (#{person["id"]}, '#{person["national_id"]}', #{person["id"]}, 'MTA', 'Mtema1', '#{person["village"]}', 1,'#{person["created_at"]}' ,'#{person["created_at"]}', '#{person["created_at"]}')")
   
   irs = $dstcon.query("INSERT INTO people (id, national_id, given_name, middle_name, family_name, gender, birthdate, birthdate_estimated, village, gvh, ta, created_at, updated_at) VALUES (#{person["id"]}, #{person["id"]}, \"#{person["given_name"]}\", \"#{person["middle_name"]}\", \"#{person["family_name"]}\", \"#{(person["gender"].match(/F/) ? "Female" : "Male")}\", \"#{person["birthdate"]}\", \"#{person["birthdate_estimated"]}\", \"#{person["village"]}\", \"Mtema1\", \"Mtema\", \"#{person["created_at"]}\", \"#{person["created_at"]}\")")
   
