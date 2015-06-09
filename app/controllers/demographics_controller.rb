@@ -2,7 +2,7 @@ class DemographicsController < ApplicationController
   def daily_summary
     @mode = YAML.load_file("#{Rails.root}/config/application.yml")['dde_mode'] rescue 'vh'
      day = params[:start_date].to_date
-    new_nat_ids = NationalIdentifier.find(:all, :conditions => ["DATE(assigned_at) = ?", day])
+    new_nat_ids = NationalIdentifier.find(:all, :conditions => ["DATE(COALESCE(assigned_at,'#{day}')) <= ?", day])
     people = new_nat_ids.map{|x| x.person}
     @today_count = get_eligible(people,day)
     @today_gender_count,@today_gender_count_id = gender_counter(people, day)
@@ -315,7 +315,7 @@ class DemographicsController < ApplicationController
 
   end
   def cumulative_summarizer(date)
-    nat_ids = NationalIdentifier.find(:all, :conditions => ["DATE(assigned_at) <= ?", date])
+    nat_ids = NationalIdentifier.find(:all, :conditions => ["DATE(COALESCE(assigned_at,'#{date}')) <= ?", date])
     people = nat_ids.map{|x| x.person}
     cumulative_summary = {}
     cumulative_summary['count'] = get_eligible(people, date)
@@ -410,6 +410,7 @@ class DemographicsController < ApplicationController
     age_groups_ids = []
 
     (people || []).each do |person|
+      next if person.birthdate.blank?
       age = date.year.to_i - person.birthdate.year.to_i
       if (age >= 0  && age < 1)
         age_groups['0 to < 1'][gender[person.gender].to_i] +=1
