@@ -1,9 +1,0 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
-    <item
-        android:id="@+id/menu_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/menu_settings"/>
-
-</menu><!-- From: file:/home/chimwemwe/projects/work/apps/community_vitals_master_proxy/mobile/community_vitals_android_studio_app/app/src/main/res/menu/activity_home.xml -->
