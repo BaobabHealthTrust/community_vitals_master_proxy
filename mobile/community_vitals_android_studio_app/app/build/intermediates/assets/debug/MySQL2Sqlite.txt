@@ -1,2 +1,0 @@
-gem install sequel --verbose
-sequel mysql://root:admin@localhost/cvr_vh_development -C sqlite://testing.sqlite

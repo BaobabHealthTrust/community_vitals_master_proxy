@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<resources>
-    <usb-device vendor-id="2655" product-id="10" class="7" subclass="1" protocol="2" />
-    <usb-device vendor-id="2655" product-id="211" class="7" subclass="1" protocol="2" />
-    <!--usb-device vendor-id="1504" product-id="4608" /-->
-</resources><!-- From: file:/home/chimwemwe/projects/work/apps/community_vitals_master_proxy/mobile/community_vitals_android_studio_app/app/src/main/res/xml/device_filter.xml -->

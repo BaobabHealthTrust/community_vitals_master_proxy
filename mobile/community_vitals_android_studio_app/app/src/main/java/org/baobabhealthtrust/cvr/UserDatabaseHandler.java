@@ -1,6 +1,10 @@
 package org.baobabhealthtrust.cvr;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -15,16 +19,22 @@ import org.json.JSONException;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 	// All Static variables
+	private static final String TAG = "User Database Helper";
+
 	// Database Version
 	private static final int DATABASE_VERSION = 1;
+
+	private static final String SP_KEY_DB_VER = "db_ver";
 
 	// Database Name
 	private static final String DATABASE_NAME = "userDemographics";
@@ -73,6 +83,27 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
 		mContext = context;
+		initialize();
+	}
+
+	/**
+	 * Initializes database. Creates database if doesn't exist.
+	 */
+	private void initialize() {
+		if (databaseExists()) {
+			SharedPreferences prefs = PreferenceManager
+					.getDefaultSharedPreferences(mContext);
+			int dbVersion = prefs.getInt(SP_KEY_DB_VER, 1);
+			if (DATABASE_VERSION != dbVersion) {
+				File dbFile = mContext.getDatabasePath(DATABASE_NAME);
+				if (!dbFile.delete()) {
+					Log.w(TAG, "Unable to update database");
+				}
+			}
+		}
+		if (!databaseExists()) {
+			createDatabase();
+		}
 	}
 
 	/**
@@ -85,11 +116,63 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		return dbFile.exists();
 	}
 
+	/**
+	 * Creates database by copying it from assets directory.
+	 */
+	private void createDatabase() {
+		String parentPath = mContext.getDatabasePath(DATABASE_NAME).getParent();
+		String path = mContext.getDatabasePath(DATABASE_NAME).getPath();
+
+		File file = new File(parentPath);
+		if (!file.exists()) {
+			if (!file.mkdir()) {
+				Log.w(TAG, "Unable to create database directory");
+				return;
+			}
+		}
+
+		InputStream is = null;
+		OutputStream os = null;
+		try {
+			is = mContext.getAssets().open(DATABASE_NAME);
+			os = new FileOutputStream(path);
+
+			byte[] buffer = new byte[1024];
+			int length;
+			while ((length = is.read(buffer)) > 0) {
+				os.write(buffer, 0, length);
+			}
+			os.flush();
+			SharedPreferences prefs = PreferenceManager
+					.getDefaultSharedPreferences(mContext);
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putInt(SP_KEY_DB_VER, DATABASE_VERSION);
+			editor.commit();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (os != null) {
+				try {
+					os.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 	// Creating Tables
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 
-		String CREATE_DDE_SETTINGS_TABLE = "CREATE TABLE " + TABLE_DDE_SETTINGS
+		/*String CREATE_DDE_SETTINGS_TABLE = "CREATE TABLE " + TABLE_DDE_SETTINGS
 				+ "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_MODE + " TEXT,"
 				+ KEY_DDE_USERNAME + " TEXT," + KEY_DDE_PASSWORD + " TEXT,"
 				+ KEY_DDE_IP + " TEXT," + KEY_DDE_PORT + " INTEGER,"
@@ -192,7 +275,7 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 				+ KEY_USER_ID + ", " + KEY_ROLE_ID
 				+ ") VALUES (1, 1), (1, 3), (1, 4)";
 
-		db.execSQL(INITIALISE_USER_ROLES);
+		db.execSQL(INITIALISE_USER_ROLES);*/
 
 	}
 
@@ -200,10 +283,10 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// Drop older table if existed
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
+		/*db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
 
 		// Create tables again
-		onCreate(db);
+		onCreate(db);*/
 	}
 
 	/**
@@ -224,9 +307,13 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 			e.printStackTrace();
 		}
 
+		Log.i("login", "$$$$$$$$$$$ got passHash: " + passHash);
+
 		String selectQuery = "SELECT * FROM " + TABLE_USER + " WHERE "
 				+ KEY_USERNAME + " = '" + username + "' AND " + KEY_PASSWORD
 				+ " = '" + passHash + "'";
+
+		Log.i("login", "$$$$$$$$$$$ got selectQuery: " + selectQuery);
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);

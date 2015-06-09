@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<WebView  xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/webview"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="#000000"
-/><!-- From: file:/home/chimwemwe/projects/work/apps/community_vitals_master_proxy/mobile/community_vitals_android_studio_app/app/src/main/res/layout/activity_home.xml -->
