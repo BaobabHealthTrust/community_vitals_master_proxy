@@ -35,7 +35,7 @@ params[:location_id] + (!params[:src].nil? ? "&src=#{params[:src]}" : "") %>';
   ) %>
 
   <label for="confirm">Confirm Password</label>
-  <%= password_field_tag(:confirm, nil, :helpText => "#{Vocabulary.search("Confirm Password")}",
+  <%= password_field_tag(:confirm, nil, :helpText => "#{Vocabulary.search("Password")}",
     :textCase => "lower", :field_type => "password",
     :validationRule => "",
     :validationMessage => "#{Vocabulary.search("Password Mismatch")}"

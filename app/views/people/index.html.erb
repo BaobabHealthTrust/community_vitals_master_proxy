@@ -43,8 +43,22 @@
 
          __$("buttons").appendChild(btnNew3);
 
+         
+
      }
 
+     var btnNew4 = document.createElement("button");
+         btnNew4.id = "btnNew4";
+         btnNew4.className = "button blue";
+         btnNew4.style.cssFloat = "right";
+         btnNew4.innerHTML = "<span><%= Vocabulary.search("Print Barcode") %></span>";
+
+         btnNew4.onmousedown = function () {
+             window.location = "/people/re_print_barcode?person_id=" + <%= @person.id %>;
+
+         }
+
+         __$("buttons").appendChild(btnNew4);
  }
 
  setTimeout("initialize()", 0);
