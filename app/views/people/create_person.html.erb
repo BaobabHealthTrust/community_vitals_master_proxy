@@ -16,6 +16,23 @@
 
         return (__$("month_of_birth").value.trim() == "Unknown" ? __$("estimated_month_of_birth").value.trim() : __$("month_of_birth").value.trim())
     }
+
+    function validateDay(){
+    date = new Date
+    currYear = date.getFullYear();
+    currDay = date.getDate();
+    currMonth = date.getMonth() + 1;
+    selected_month = parseInt(document.getElementsByName('month_of_birth')[0].value)
+    selectYear = parseInt(document.getElementsByName('year_of_birth')[0].value);
+    
+    if (selectYear == currYear) {
+      if (selected_month == currMonth){
+        console.log("Am there")
+        $('touchscreenInput'+tstCurrentPage).setAttribute('absoluteMax',currDay);
+        console.log('Absolute Max=' + $('touchscreenInput'+tstCurrentPage).getAttribute('absoluteMax'));
+      }
+     }
+  }
 </script>
 
 <% form_tag (:action => :save_person) do %>
@@ -60,7 +77,8 @@
                    :tt_pageStyleClass => "NoKeyboard" %>
 
     <%= text_field_tag "day_of_birth", nil, {:helpText => Vocabulary.search("Day of birth"),
-                                             :tt_onLoad => "__$('day_of_birth').value == '',getDayOfMonthPicker(getYear(),getMonth())"
+                                              :field_type => 'number',
+                                             :tt_onLoad => "validateDay(); __$('day_of_birth').value == '',getDayOfMonthPicker(getYear(),getMonth())"
                                              } %>
 
     <%= text_field_tag "estimated_day_of_birth", nil, {:helpText => Vocabulary.search("Estimated Day of birth"),

@@ -417,6 +417,11 @@ class PeopleController < ApplicationController
               :disposition => "inline")
   end
 
+  def re_print_barcode
+    person = Person.find(params[:person_id])
+    print_and_redirect("/people/national_id_label?person_id=#{person.id}", "/people/index?person=#{person.id}")
+  end
+
   def save_relationship
     # raise params.to_yaml
 
