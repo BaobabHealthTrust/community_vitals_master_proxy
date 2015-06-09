@@ -296,6 +296,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		db.execSQL(selectQuery);
+        db.close();
 
 		int pid = person.getId();
 
@@ -336,6 +337,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				cursor.getString(26), cursor.getString(27),
 				cursor.getString(28));
 
+        cursor.close();
+        db.close();
 		// return people
 		return people;
 	}
@@ -490,6 +493,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				Integer.parseInt(cursor.getString(4)), cursor.getString(5),
 				cursor.getString(6));
 
+        cursor.close();
+        db.close();
+
 		// return sites
 		return sites;
 	}
@@ -528,6 +534,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				cursor.getString(26), cursor.getString(27),
 				cursor.getString(28));
 
+        cursor.close();
+        db.close();
 		// return people
 		return people;
 	}
@@ -568,6 +576,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				Integer.parseInt(cursor.getString(16)), cursor.getString(17),
 				Integer.parseInt(cursor.getString(18)));
 
+        cursor.close();
+        db.close();
 		// return national_identifiers
 		return national_identifiers;
 	}
@@ -590,6 +600,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 						.getString(6)), Integer.parseInt(cursor.getString(7)),
 				cursor.getString(8));
 
+        cursor.close();
+        db.close();
 		// return words
 		return words;
 	}
@@ -610,6 +622,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				Integer.parseInt(cursor.getString(3)), Integer.parseInt(cursor
 						.getString(4)));
 
+
+        cursor.close();
+        db.close();
 		// return relationship_types
 		return relationship_types;
 	}
@@ -629,6 +644,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				cursor.getString(1), Integer.parseInt(cursor.getString(2)),
 				Integer.parseInt(cursor.getString(3)), cursor.getString(4));
 
+        cursor.close();
+        db.close();
 		// return outcome_types
 		return outcome_types;
 	}
@@ -652,6 +669,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 						.getString(6)), Integer.parseInt(cursor.getString(7)),
 				cursor.getString(8), cursor.getString(9));
 
+        cursor.close();
+        db.close();
 		// return outcomes
 		return outcomes;
 	}
@@ -676,6 +695,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 						.getString(6)), cursor.getString(7),
 				cursor.getString(8));
 
+        cursor.close();
+        db.close();
 		// return relationships
 		return relationships;
 	}
@@ -696,6 +717,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				Integer.parseInt(cursor.getString(4)), Integer.parseInt(cursor
 						.getString(5)), cursor.getString(6));
 
+        cursor.close();
+        db.close();
 		// return vocabularies
 		return vocabularies;
 	}
@@ -725,6 +748,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 
+        cursor.close();
+        db.close();
 		// return sites list
 		return sitesList;
 	}
@@ -790,6 +815,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 
+        cursor.close();
+        db.close();
 		// return people list
 		return peopleList;
 	}
@@ -847,6 +874,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 
+        cursor.close();
+        db.close();
 		// return national_identifiers list
 		return national_identifiersList;
 	}
@@ -876,6 +905,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 
+        cursor.close();
+        db.close();
 		// return words list
 		return wordsList;
 	}
@@ -902,6 +933,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 
+        cursor.close();
+        db.close();
 		// return relationship_types list
 		return relationship_typesList;
 	}
@@ -928,6 +961,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 
+        cursor.close();
+        db.close();
 		// return outcome_types list
 		return outcome_typesList;
 	}
@@ -959,6 +994,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 
+        cursor.close();
+        db.close();
 		// return outcomes list
 		return outcomesList;
 	}
@@ -989,6 +1026,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 
+        cursor.close();
+        db.close();
 		// return relationships list
 		return relationshipsList;
 	}
@@ -1016,6 +1055,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 
+        cursor.close();
+        db.close();
 		// return vocabularies list
 		return vocabulariesList;
 	}
@@ -1033,8 +1074,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_VOID_REASON, sites.getVoidReason());
 
 		// updating row
-		return db.update(TABLE_SITES, values, KEY_ID + " = ?",
+		int result =  db.update(TABLE_SITES, values, KEY_ID + " = ?",
 				new String[] { String.valueOf(sites.getId()) });
+
+        db.close();
+
+        return result;
 	}
 
 	public int updatePeople(People people) {
@@ -1072,8 +1117,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_MIDDLE_NAME, people.getMiddleName());
 
 		// updating row
-		return db.update(TABLE_PEOPLE, values, KEY_ID + " = ?",
+		int result =  db.update(TABLE_PEOPLE, values, KEY_ID + " = ?",
 				new String[] { String.valueOf(people.getId()) });
+
+        db.close();
+
+        return  result;
 	}
 
 	public int updateNationalIdentifiers(
@@ -1107,8 +1156,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_POSTED_BY_GVH, national_identifiers.getPostedByGvh());
 
 		// updating row
-		return db.update(TABLE_NATIONAL_IDENTIFIERS, values, KEY_ID + " = ?",
+		int result =  db.update(TABLE_NATIONAL_IDENTIFIERS, values, KEY_ID + " = ?",
 				new String[] { String.valueOf(national_identifiers.getId()) });
+
+        db.close();
+
+        return  result;
 	}
 
 	public int updateWords(Words words) {
@@ -1126,8 +1179,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_VOID_REASON, words.getVoidReason());
 
 		// updating row
-		return db.update(TABLE_WORDS, values, KEY_ID + " = ?",
+		int result =  db.update(TABLE_WORDS, values, KEY_ID + " = ?",
 				new String[] { String.valueOf(words.getId()) });
+
+        db.close();
+        return result;
 	}
 
 	public int updateRelationshipTypes(RelationshipTypes relationship_types) {
@@ -1141,8 +1197,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_ID, relationship_types.getId());
 
 		// updating row
-		return db.update(TABLE_RELATIONSHIP_TYPES, values, KEY_ID + " = ?",
+		int result =  db.update(TABLE_RELATIONSHIP_TYPES, values, KEY_ID + " = ?",
 				new String[] { String.valueOf(relationship_types.getId()) });
+
+        db.close();
+
+        return  result;
 	}
 
 	public int updateOutcomeTypes(OutcomeTypes outcome_types) {
@@ -1156,8 +1216,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_NAME, outcome_types.getName());
 
 		// updating row
-		return db.update(TABLE_OUTCOME_TYPES, values, KEY_ID + " = ?",
+		int result = db.update(TABLE_OUTCOME_TYPES, values, KEY_ID + " = ?",
 				new String[] { String.valueOf(outcome_types.getId()) });
+
+        db.close();
+
+        return result;
 	}
 
 	public int updateOutcomes(Outcomes outcomes) {
@@ -1176,8 +1240,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_OUTCOME_DATE, outcomes.getOutcomeDate());
 
 		// updating row
-		return db.update(TABLE_OUTCOMES, values, KEY_ID + " = ?",
+		int result = db.update(TABLE_OUTCOMES, values, KEY_ID + " = ?",
 				new String[] { String.valueOf(outcomes.getId()) });
+
+        db.close();
+
+        return result;
 	}
 
 	public int updateRelationships(Relationships relationships) {
@@ -1197,8 +1265,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				relationships.getRelationNationalId());
 
 		// updating row
-		return db.update(TABLE_RELATIONSHIPS, values, KEY_ID + " = ?",
+		int result = db.update(TABLE_RELATIONSHIPS, values, KEY_ID + " = ?",
 				new String[] { String.valueOf(relationships.getId()) });
+
+        db.close();
+
+        return  result;
 	}
 
 	public int updateVocabularies(Vocabularies vocabularies) {
@@ -1214,8 +1286,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_VOID_REASON, vocabularies.getVoidReason());
 
 		// updating row
-		return db.update(TABLE_VOCABULARIES, values, KEY_ID + " = ?",
+		int result = db.update(TABLE_VOCABULARIES, values, KEY_ID + " = ?",
 				new String[] { String.valueOf(vocabularies.getId()) });
+
+        db.close();
+
+        return  result;
 	}
 
 	public void deleteSites(Sites sites) {
@@ -1288,7 +1364,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
+		int result =  cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 
 	public int getPeopleCount() {
@@ -1298,7 +1379,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
+		int result =  cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 
 	public int getPeopleCount(String date) {
@@ -1315,7 +1401,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
+		int result =  cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 
 	public int getPeopleCount(String date, String village) {
@@ -1334,7 +1425,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
+		int result =  cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 
 	
@@ -1345,7 +1441,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
+		int result =  cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 
 	public int getWordsCount() {
@@ -1354,7 +1455,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 
 	public int getRelationshipTypesCount() {
@@ -1363,7 +1469,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
+		int result =  cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 
 	public int getOutcomeTypesCount() {
@@ -1372,7 +1483,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 
 	public int getOutcomesCount() {
@@ -1381,7 +1497,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
+		int result =  cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 
 	public int getRelationshipsCount() {
@@ -1390,7 +1511,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 
 	public int getVocabulariesCount() {
@@ -1399,7 +1525,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 
 	public int getBlankNPID() {
@@ -1414,6 +1545,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		if (cursor.moveToFirst()) {
 			id = cursor.getInt(0);
 		}
+
+        cursor.close();
+        db.close();
 
 		return id;
 	}
@@ -1435,6 +1569,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 
+        cursor.close();
+        db.close();
+
 		// return relationship_type list
 		return namesList;
 	}
@@ -1455,6 +1592,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				namesList.add(cursor.getString(0));
 			} while (cursor.moveToNext());
 		}
+
+        cursor.close();
+        db.close();
 
 		return namesList;
 	}
@@ -1480,7 +1620,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			}
 		}
 
-		return term;
+        cursor.close();
+        db.close();
+
+        return term;
 	}
 
 	public List<People> getPeopleNames(String fname, String lname, String gender) {
@@ -1515,7 +1658,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 
-		// return relationship_type list
+        cursor.close();
+        db.close();
+
+        // return relationship_type list
 		return namesList;
 	}
 
@@ -1534,7 +1680,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			result = Integer.parseInt(cursor.getString(0));
 		}
 
-		return result;
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 
 	public String[] getPersonById(int id) {
@@ -1551,6 +1700,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				people.getBirthdateEstimated()+ "", people.getStateProvince(),
 				people.getAddress2(), people.getNeighbourhoodCell() };
 
+        
 		return result;
 	}
 
@@ -1569,7 +1719,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			result = Integer.parseInt(cursor.getString(0));
 		}
 
-		return result;
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 
 	public int getAvailableIds(String mode) {
@@ -1587,7 +1740,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			result = Integer.parseInt(cursor.getString(0));
 		}
 
-		return result;
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 
 	public int getTakenIds(String mode) {
@@ -1605,7 +1761,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			result = Integer.parseInt(cursor.getString(0));
 		}
 
-		return result;
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 
 	public int getAssignedByDate(String min_date, String max_date) {
@@ -1622,7 +1781,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		// looping through all rows and adding to list
 		
 		result = cursor.getCount();
-		
+
+        cursor.close();
+        db.close();
 
 		return result;
 	}
@@ -1645,7 +1806,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
 
-		// return count
+        cursor.close();
+        db.close();
+
+        // return count
 		return cursor.getCount();
 
 	}
@@ -1664,8 +1828,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
-	}
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
+    }
 
 	public int getCountInAgeGroup(int min, int max, String date_min, String date_max){
 
@@ -1680,9 +1849,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
-		
-	}
+		int result =  cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return  result;
+    }
 	
 	public int getCountInAgeGroup(int min, int max, String date_min, String date_max, String gender)
 	{
@@ -1698,9 +1871,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
-		
-	}
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return  result;
+    }
 	public int getOutcomeCount(String date_min,String date_max, String outcome) {
 		
 		// Select All Query
@@ -1709,8 +1886,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		//return count
-		return cursor.getCount();
-	}
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
+    }
 
 	public int getOutcomesOnDate(String date, String outcome)
 	{
@@ -1721,8 +1903,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		//return count
-		return cursor.getCount();
-	}
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
+
+    }
 
 	public int getOutcomesByDate(String date, String outcome){
 		String selectQuery = "SELECT * FROM " + TABLE_PEOPLE + " WHERE UPPER(" + KEY_OUTCOME + ") = UPPER('" + outcome +"')" + 
@@ -1732,9 +1920,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		//return count
-		return cursor.getCount();
+		int result = cursor.getCount();
 
-	}
+        cursor.close();
+        db.close();
+
+        return result;
+    }
 	
 	public int getOutcomesInMonth(String date, String outcome)
 	{
@@ -1746,8 +1938,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		//return count
-		return cursor.getCount();
-	}
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
+    }
 
 	public int getOutcomesInRangeByGender(String start, String end, String gender, String outcome)
 	{
@@ -1763,8 +1960,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		//return count
-		return cursor.getCount();
-	}
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
+    }
 	
 	public int getOutcomesInMonth(String date, String outcome, String village)
 	{
@@ -1779,8 +1981,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		//return count
-		return cursor.getCount();
-	}
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
+    }
 
 	
 	public int getOutcomesByMonth(String date, String outcome){
@@ -1791,9 +1998,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		//return count
-		return cursor.getCount();
+		int result = cursor.getCount();
 
-	}
+        cursor.close();
+        db.close();
+
+        return  result;
+    }
 
 	public int getOutcomesByMonth(String date, String outcome, String village){
 		String selectQuery = "SELECT * FROM " + TABLE_PEOPLE + " INNER JOIN " + TABLE_NATIONAL_IDENTIFIERS +
@@ -1806,9 +2017,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		//return count
-		return cursor.getCount();
+		int result = cursor.getCount();
 
-	}
+        cursor.close();
+        db.close();
+
+        return result;
+    }
 
 	
 	public int getAlive(String date_min,String date_max) {
@@ -1826,8 +2041,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		//return count
-		return cursor.getCount();
-	}
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return  result;
+    }
 	
 	public int getAliveInMonth(String date_min,String date_max) {
 		
@@ -1842,7 +2062,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		//return count
-		return cursor.getCount();
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return  result;
 	}
 	
 	public int getAlive(String date_min,String date_max, String village) {
@@ -1860,7 +2085,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		//return count
-		return cursor.getCount();
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return  result;
 	}
 
 	public int getAgegroupCount(String date_selected, String[] age_group) {
@@ -1876,7 +2106,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			result = Integer.parseInt(cursor.getString(0));
 		}
 
-		return result;
+        cursor.close();
+        db.close();
+
+        return  result;
 	}
 
 	public List<People> getUnSyncedVillagePeople() {
@@ -1926,6 +2159,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 
+        cursor.close();
+        db.close();
+
 		// return relationship_type list
 		return namesList;
 	}
@@ -1958,6 +2194,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 
+        cursor.close();
+        db.close();
+
 		// return outcomes list
 		return outcomesList;
 	}
@@ -1989,6 +2228,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				relationshipsList.add(relationships);
 			} while (cursor.moveToNext());
 		}
+
+        cursor.close();
+        db.close();
 
 		// return relationships list
 		return relationshipsList;
@@ -2029,6 +2271,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 						.getString(15)),
 				Integer.parseInt(cursor.getString(16)), cursor.getString(17),
 				Integer.parseInt(cursor.getString(18)));
+
+
+        cursor.close();
+        db.close();
 
 		// return national_identifiers
 		return national_identifiers;
@@ -2088,6 +2334,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 
+        cursor.close();
+        db.close();
+
 		// return national_identifiers list
 		return national_identifiersList;
 	}
@@ -2099,8 +2348,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
-		
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return  result;
 	}
 	
 	public int getBirthsInMonth(String duration, String village){
@@ -2112,8 +2365,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
-		
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return  result;
 	}
 	
 	public int getBirthsInMonthGender(String duration, String gender)
@@ -2126,7 +2383,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 		
 		// return count
-		return cursor.getCount();
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return  result;
 	}
 
 	public int getBirthsInMonthGender(String duration, String gender, String village)
@@ -2141,7 +2403,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 		
 		// return count
-		return cursor.getCount();
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return  result;
 	}
 	
 	public int getBirthsInRange(String start, String end, String gender)
@@ -2156,7 +2423,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 		
 		// return count
-		return cursor.getCount();
+		int result =  cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return  result;
 	}
 	
 	public int getBirthsInMonthOutcome(String duration, String outcome)
@@ -2167,7 +2439,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 		
 		// return count
-		return cursor.getCount();
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 	
 	public int getBirthsInMonthOutcome(String duration, String outcome, String village)
@@ -2181,7 +2458,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 		
 		// return count
-		return cursor.getCount();
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 	
 	public int getBirthsInMonthAlive(String duration)
@@ -2193,7 +2475,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 		
 		// return count
-		return cursor.getCount();
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 	
 	public int getBirthsInMonthAlive(String duration, String village)
@@ -2207,7 +2494,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 		
 		// return count
-		return cursor.getCount();
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 	
 	public int getCulAlive(){
@@ -2217,8 +2509,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 		
 		// return count
-		return 100;
-		
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+		return result;
 	}
 	
 	public int getCulAlive(String date){
@@ -2228,7 +2524,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 		
 		// return count
-		return cursor.getCount();
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 		
 	}
 	
@@ -2239,8 +2540,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 		
 		// return count
-		return cursor.getCount();
-		
+		int result = cursor.getCount();
+
+        cursor.close();
+        db.close();
+
+        return result;
 	}
 	
 	public List getVillages(){
@@ -2253,7 +2558,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		if (cursor.moveToNext())
 		{
 			villageList.add(cursor.getString(0));
-		}	
+		}
+
+        cursor.close();
+        db.close();
+
 		return villageList;
 	}
 	
@@ -2266,9 +2575,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		
 		if (cursor.getCount() > 0)
 		{
+            cursor.close();
+            db.close();
 			return true; 
 		}	
 		else{
+            cursor.close();
+            db.close();
 			return false;	
 		}
 		
@@ -2286,7 +2599,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				regionList.add(cursor.getString(0));
 			} while (cursor.moveToNext());
 		}
-		
+
+        cursor.close();
+        db.close();
+
 		return regionList;
 	}
 	
@@ -2302,7 +2618,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				facilityList.add(cursor.getString(0));
 			} while (cursor.moveToNext());
 		}
-		
+
+        cursor.close();
+        db.close();
+
 		return facilityList;
 	}
 	
@@ -2320,7 +2639,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				districtList.add(cursor.getString(0));
 			} while (cursor.moveToNext());
 		}
-		
+
+        cursor.close();
+        db.close();
+
 		return districtList;
 	}
 	
@@ -2332,14 +2654,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		"COALESCE(retired,0) = 0 AND TRIM(UPPER(name)) = TRIM(UPPER('" + district + "')))";
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
-		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$ number of traditional authorities: " + cursor.getCount());
-		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$ number of traditional authorities: " + countQuery);
+
 		if (cursor.moveToFirst()) {
 			do {
 				taList.add(cursor.getString(0));
 			} while (cursor.moveToNext());
 		}
-		
+
+        cursor.close();
+        db.close();
+
 		return taList;
 	}
 	
@@ -2358,6 +2682,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				villageList.add(cursor.getString(0));
 			} while (cursor.moveToNext());
 		}
+
+        cursor.close();
+        db.close();
 		
 		return villageList;
 	}
@@ -2390,6 +2717,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		db.execSQL(selectQuery);
 
+        db.close();
 	}
 
 	
@@ -2407,6 +2735,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		if (cursor.moveToFirst()) {
 			result = Integer.parseInt(cursor.getString(0));
 		}
+
+        cursor.close();
+        db.close();
 
 		return result;
 		
@@ -2426,6 +2757,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		if (cursor.moveToFirst()) {
 			result = Integer.parseInt(cursor.getString(0));
 		}
+
+        cursor.close();
+        db.close();
 
 		return result;
 		
@@ -2451,6 +2785,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				// Log.i("SEARCH DEBUGGING", selectQuery);
 			}
 		}
+        cursor.close();
+        db.close();
 
 		return status;
 	}	
@@ -2477,7 +2813,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				cursor.moveToNext();
 			}
 		}
-		
+        cursor.close();
+        db.close();
 		
 		return results;
 	}
@@ -2510,7 +2847,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				cursor.moveToNext();
 			}
 		}
-		
+
+        cursor.close();
+        db.close();
+
 		return results;
 	}
 	
@@ -2540,7 +2880,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				cursor.moveToNext();
 			}
 		}
-		
+
+        cursor.close();
+        db.close();
+
 		return results;
 	}
 	
@@ -2561,6 +2904,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		if (cursor.moveToFirst()) {
 			result = cursor.getString(0);
 		}
+        cursor.close();
+        db.close();
 		return result;
 	}
 	
@@ -2575,9 +2920,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		
 		db.execSQL(updateQuery);
 
-		Log.i("UPDATE DEBUGGING", updateQuery);
 		String result[] = { person_id + "", fname,lname, gender, district,ta, village };
 
+        db.close();
 		return result;
 		
 	}
@@ -2591,7 +2936,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		
 		db.execSQL(updateQuery);
 
-		Log.i("UPDATE DEBUGGING", updateQuery);
+        db.close();
+
 				
 	}
 

@@ -258,9 +258,13 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 			cursor.close();
 
+			db.close();
+
 			return output;
 		} else {
 			cursor.close();
+
+			db.close();
 
 			return "";
 		}
@@ -290,6 +294,9 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 		}
 		cursor.close();
+
+		db.close();
+
 	}
 
 	// Getting All Users
@@ -323,6 +330,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 		cursor.close();
 
+		db.close();
+
 		// return person list
 		return userList;
 	}
@@ -338,9 +347,13 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		if (cursor.moveToFirst()) {
 			cursor.close();
 
+			db.close();
+
 			return true;
 		} else {
 			cursor.close();
+
+			db.close();
 
 			return false;
 		}
@@ -357,9 +370,13 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		if (cursor.moveToFirst()) {
 			cursor.close();
 
+			db.close();
+
 			return true;
 		} else {
 			cursor.close();
+
+			db.close();
 
 			return false;
 		}
@@ -403,6 +420,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 		cursor.close();
 
+		db.close();
+
 		// return user
 		return user;
 	}
@@ -429,6 +448,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 			}
 
 		cursor.close();
+
+		db.close();
 
 		// return user
 		return user;
@@ -458,6 +479,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 
+		db.close();
+
 		// return user list
 		return userList;
 	}
@@ -477,8 +500,12 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_USER_STATUS, user.getStatus());
 
 		// updating row
-		return db.update(TABLE_USER, values, KEY_USER_ID + " = ?",
+		int result = db.update(TABLE_USER, values, KEY_USER_ID + " = ?",
 				new String[] { String.valueOf(user.getUserId()) });
+
+		db.close();
+
+		return result;
 	}
 
 	public void deleteUser(User user) {
@@ -494,7 +521,13 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery(countQuery, null);
 
 		// return count
-		return cursor.getCount();
+		int result = cursor.getCount();
+
+		cursor.close();
+
+		db.close();
+
+		return result;
 	}
 
 	DdeSettings getDdeSettingsByMode(String mode) {
@@ -505,10 +538,6 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 				KEY_DDE_USERNAME, KEY_DDE_PASSWORD, KEY_MODE, KEY_DDE_PORT,
 				KEY_ID, KEY_DDE_IP, KEY_TA, KEY_GVH, KEY_VH }, KEY_MODE + "=?",
 				new String[] { String.valueOf(mode) }, null, null, null, null);
-
-		Log.i("",
-				"$$$$$$$$$$$$$$$$$$$$$$$$$$$$ in settings " + cursor.getCount()
-						+ " mode: " + mode);
 
 		if (cursor != null) {
 			if (cursor.moveToFirst()) {
@@ -523,11 +552,15 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 				cursor.close();
 
+				db.close();
+
 				return dde_settings;
 			}
 		}
 
 		cursor.close();
+
+		db.close();
 
 		// return dde_settings
 		return null;
@@ -575,6 +608,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 		cursor.close();
 
+		db.close();
+
 		// return dde_settings
 		return dde_settings;
 	}
@@ -609,6 +644,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 		cursor.close();
 
+		db.close();
+
 		// return dde_settings list
 		return dde_settingsList;
 	}
@@ -631,8 +668,12 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_VH, dde_settings.getVh());
 
 		// updating row
-		return db.update(TABLE_DDE_SETTINGS, values, KEY_ID + " = ?",
+		int result = db.update(TABLE_DDE_SETTINGS, values, KEY_ID + " = ?",
 				new String[] { String.valueOf(dde_settings.getId()) });
+
+		db.close();
+
+		return result;
 	}
 
 	public void deleteDdeSettings(DdeSettings dde_settings) {
@@ -650,6 +691,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		int count = cursor.getCount();
 
 		cursor.close();
+
+		db.close();
 
 		// return count
 		return count;
@@ -672,6 +715,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 
 		cursor.close();
 
+		db.close();
+
 		return result;
 	}
 
@@ -691,6 +736,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		}
 
 		cursor.close();
+
+		db.close();
 
 		return result;
 	}
@@ -714,6 +761,8 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
 		}
 
 		cursor.close();
+
+		db.close();
 
 		return roles.toString();
 	}

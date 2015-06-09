@@ -2332,8 +2332,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		"COALESCE(retired,0) = 0 AND TRIM(UPPER(name)) = TRIM(UPPER('" + district + "')))";
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
-		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$ number of traditional authorities: " + cursor.getCount());
-		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$ number of traditional authorities: " + countQuery);
 		if (cursor.moveToFirst()) {
 			do {
 				taList.add(cursor.getString(0));
@@ -2575,7 +2573,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		
 		db.execSQL(updateQuery);
 
-		Log.i("UPDATE DEBUGGING", updateQuery);
 		String result[] = { person_id + "", fname,lname, gender, district,ta, village };
 
 		return result;
@@ -2590,8 +2587,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				+ KEY_BIRTHDATE_ESTIMATED + " = " + dob_estimated + " WHERE " + KEY_ID +" = " +person_id;
 		
 		db.execSQL(updateQuery);
-
-		Log.i("UPDATE DEBUGGING", updateQuery);
 				
 	}
 
