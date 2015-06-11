@@ -1670,7 +1670,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				" AND COALESCE("+KEY_OUTCOME+",0) == 0 AND " +" ((julianday('" + date_max + "') - julianday(birthdate))/30/12) BETWEEN "
 				+ min +	" AND " +max +" AND DATE("+KEY_BIRTHDATE+") <= '" + date_max + "' UNION " +
 				"SELECT  * FROM " + TABLE_PEOPLE +" WHERE "+KEY_VOIDED +"== 0 AND COALESCE("+KEY_OUTCOME+",0) != 0 AND " +
-				"DATE('" + date_max + "') - DATE(birthdate) BETWEEN "+ min +" AND " +max +
+				"((julianday('" + date_max + "') - julianday(birthdate))/30/12) BETWEEN "+ min +" AND " +max +
 				" AND DATE("+KEY_BIRTHDATE+") <= '" + date_max + "'  AND DATE("+ KEY_OUTCOME_DATE +") > '" + date_max + "' ";
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
