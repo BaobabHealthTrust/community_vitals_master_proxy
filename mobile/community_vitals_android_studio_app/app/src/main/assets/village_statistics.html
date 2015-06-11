@@ -26,7 +26,12 @@
           {
               day = "0" + currentTime.getDate().toString();
           }
-          var date = currentTime.getFullYear() +"-"+ (currentTime.getMonth() + 1) +"-" + day;
+
+          currentMonth = currentTime.getMonth() + 1
+          if (parseInt(currentMonth) < 10 ){
+            currentMonth = "0" + currentMonth.toString();
+          }
+          var date = currentTime.getFullYear() +"-"+ currentMonth +"-" + day;
 
           __$("parent").innerHTML =
             "<table style='width: 100%'><tr class='heading'><td colspan='2'>"+
