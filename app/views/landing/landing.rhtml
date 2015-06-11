@@ -280,7 +280,6 @@
           ];
           
           var paths = ["administration/national_id_management","administration/change_language"];
-
         <% if @mode == "vh" %>
               fields.push("<%= Vocabulary.search('Acknowledge Received IDs') %>");
               images.push("<%= (File.exists?("#{Rails.root}/public/images/receiveids.png") ? "receiveids.png" : "default.png") %>");
@@ -434,11 +433,16 @@
             onclick="switchTab(this.id)">
           <%= Vocabulary.search("My Activities") %>
         </td>
-        <td id="administration" class="menu" style="border-bottom: 1px solid #5496ef; font-size: 18px; 
-            padding-top: 60px; width: 130px; cursor: pointer;" align="center"
-            onclick="switchTab(this.id)">
-          <%= Vocabulary.search("Administration") %>
-        </td>
+        <% if @user.admin? %>
+          <td id="administration" class="menu" style="border-bottom: 1px solid #5496ef; font-size: 18px;
+              padding-top: 60px; width: 130px; cursor: pointer;" align="center"
+              onclick="switchTab(this.id)">
+            <%= Vocabulary.search("Administration") %>
+          </td>
+        <% else %>
+          <div id="administration" style="display:none;">
+          </div>
+        <% end %>
         <td style="border-bottom: 1px solid #5496ef;">
           &nbsp;
         </td>

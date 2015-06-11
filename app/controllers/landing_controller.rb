@@ -30,9 +30,8 @@ class LandingController < ApplicationController
         end
       end    
     end
-    
-    # raise @links.inspect
-    
+    @user = CoreUser.find(session[:user_id]) rescue nil
+
     render :layout => false    
   end
 

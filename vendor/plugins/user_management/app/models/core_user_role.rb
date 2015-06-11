@@ -1,3 +1,4 @@
+require "composite_primary_keys"
 class CoreUserRole < ActiveRecord::Base
   set_table_name :user_role
   set_primary_keys :role, :user_id
