@@ -32,6 +32,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
 import android.content.res.AssetManager;
 import android.os.Handler;
 import android.os.Looper;
@@ -159,12 +160,12 @@ public class WebAppInterface {
 			public void onClick(DialogInterface dialog, int which) {
 
 				switch (mCategory) {
-				case KEY_PERSON:
-					deletePerson(mID);
-					break;
-				case KEY_USER:
-					deleteUser(mID);
-					break;
+					case KEY_PERSON:
+						deletePerson(mID);
+						break;
+					case KEY_USER:
+						deleteUser(mID);
+						break;
 				}
 
 				dialog.dismiss();
@@ -908,7 +909,7 @@ public class WebAppInterface {
 	@JavascriptInterface
 	public int getOutcomeCount(String date_selected, String outcome) {
 		
-		return mDB.getOutcomeCount("1900-01-01",date_selected, outcome);	
+		return mDB.getOutcomeCount("1900-01-01", date_selected, outcome);
 	}
 	
 	@JavascriptInterface
@@ -1475,13 +1476,13 @@ public class WebAppInterface {
 	
 	@JavascriptInterface
 	public int getCulAlive(String date){
-		return mDB.getAlive("1900-01-01",date);
+		return mDB.getAlive("1900-01-01", date);
 	}
 	
 	@JavascriptInterface
 	public int getCulOutcome(String date, String outcome){
 		
-		return mDB.getOutcomeCount(date,date,outcome);
+		return mDB.getOutcomeCount(date, date, outcome);
 		
 	}
 	
@@ -1538,11 +1539,11 @@ public class WebAppInterface {
 				JSONObject json = new JSONObject();
 				json.put("village", village);
 				json.put("alive", getAlive(date,village));
-				json.put("dead", getOutcomesInMonth(date, "dead",village));
-				json.put("trans", getOutcomesInMonth(date, "transfer out",village));
-				json.put("cul_alive", getAlive(date,village));
-				json.put("cul_dead", getOutcomesByMonth(date,"dead",village));
-				json.put("cul_trans", getOutcomesByMonth(date,"transfer out",village));
+				json.put("dead", getOutcomesInMonth(date, "dead", village));
+				json.put("trans", getOutcomesInMonth(date, "transfer out", village));
+				json.put("cul_alive", getAlive(date, village));
+				json.put("cul_dead", getOutcomesByMonth(date, "dead", village));
+				json.put("cul_trans", getOutcomesByMonth(date, "transfer out", village));
 				json.put("total", getPeople(date, village));
 				details.put(json);
 			}
@@ -1633,7 +1634,7 @@ public class WebAppInterface {
 	@JavascriptInterface
 	public String getDistricts(String filter,String region) {
 		
-		List<String> districts = mDB.getDistricts(filter,region); 
+		List<String> districts = mDB.getDistricts(filter, region);
 		JSONArray details = new JSONArray();
 		try{
 			
@@ -1658,7 +1659,7 @@ public class WebAppInterface {
 	@JavascriptInterface
 	public String getTAs(String filter,String district) {
 		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$ district: " + district);
-		List<String> tas = mDB.getTraditionalAuthorities(filter,district); 
+		List<String> tas = mDB.getTraditionalAuthorities(filter, district);
 		JSONArray details = new JSONArray();
 		try{
 			
@@ -1683,7 +1684,7 @@ public class WebAppInterface {
 	@JavascriptInterface
 	public String listVillages(String filter, String ta) {
 		Log.i("", "$$$$$$$$$$$$$$$$$$$$$$$$ traditional authority: " + ta);
-		List<String> villages = mDB.listVillages(filter,ta); 
+		List<String> villages = mDB.listVillages(filter, ta);
 		JSONArray details = new JSONArray();
 		try{
 			
@@ -1724,7 +1725,7 @@ public class WebAppInterface {
 	
 	public int getMonthBirthsOutcomeSnr(String duration, String outcome, String village)
 	{
-		return mDB.getBirthsInMonthOutcome(duration, outcome,village);
+		return mDB.getBirthsInMonthOutcome(duration, outcome, village);
 	}
 	
 	public int getMonthBirthsAliveSnr(String duration, String village)
@@ -1816,7 +1817,7 @@ public class WebAppInterface {
 	public void updatePerson(String fname, String lname, String gender,
 			String pvillage,String pdistrict, String pta) {
 			
-			String result[] = mDB.updatePerson(Integer.parseInt(getPref("person id")),fname, lname,gender,pdistrict, pta, pvillage );
+			String result[] = mDB.updatePerson(Integer.parseInt(getPref("person id")), fname, lname, gender, pdistrict, pta, pvillage);
 /*
 			setPref("person id", String.valueOf(mDB.getPersonWithNpid(result[3])));
 
@@ -1917,6 +1918,13 @@ public class WebAppInterface {
 		String address = getPref("current_district") + ", " + getPref("current_ta") + ", " + getPref("current_village");
 
 		mParent.printBarcode(name, npid, dob, gender, address);
+
+	}
+
+	@JavascriptInterface
+	public String getAppVersion(){
+
+		return mParent.getAppVersion();
 
 	}
 

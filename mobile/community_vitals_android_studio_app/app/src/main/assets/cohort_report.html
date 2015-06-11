@@ -70,6 +70,16 @@
 
         }
 
+        function localResize() {
+
+            if (__$("parent")) {
+
+                __$("parent").style.height = (window.innerHeight - 153) + "px";
+
+            }
+
+        }
+
         //-->
     </script>
 
@@ -80,6 +90,7 @@
             font-size: 20px !important;
             font-weight: bold;
             text-align: center !important;
+            color: #333 !important;
         }
 
         td.headings{
@@ -107,19 +118,19 @@
     </style>
 
 </head>
-<body onload="load()" style="margin: 0px; padding: 0px;">
+<body onload="load(); localResize(); " onresize="localResize()" style="margin: 0px; padding: 0px;">
 
 <div class="table" style="border-spacing: 0px; width: 100%;">
 
         <div class="cell center" style="position: relative; width: 100%;">
-            <div class="nav" id="header" style="width: 101%;background-color: #003366; height: 80px;
+            <div class="nav" id="header" style="width: 101%;background-color: #41608f; height: 80px;
             margin: 0px; margin-top: -4px;margin-left:-3.5px;font-weight:bold;">
-                <table style = "width:100%;color:#CCFF33;">
+                <table style = "width:100%;color:#eee;">
                     <tr>
                         <td id="title" style = "text-align:center;font-size:26px;"></td>
                     </tr>
                     <tr>
-                        <td id= "location" style="text-align:right;font-size:20px;"></td>
+                        <td id= "location" style="text-align:center;font-size:18px;"></td>
                     </tr>
                 </table>
 

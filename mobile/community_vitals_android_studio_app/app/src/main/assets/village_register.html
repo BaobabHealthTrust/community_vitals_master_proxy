@@ -31,7 +31,7 @@
                 
                 __$("reg").innerHTML = reg;
 					      
-                var page = (window.location.href.match(/\?/) ? window.location.href.match(/page=(\d+)/i) : [0,1])[1];
+                var page = (Android.getPref("param") ? (String(Android.getPref("f")).match(/page=(\d+)/i) ? String(Android.getPref("f")).match(/page=(\d+)/i) : [0,1]) : [0,1])[1];
 
                 var result = Android.listVillagePeopleNames(page);
 
@@ -59,7 +59,7 @@
                 if(__$("first")){     
                     
                     __$("first").onclick = function(){
-                        window.location = "village_register.html?page=1";
+                        setPath("village_register.html", "page=1");
                     }
                     
                     /*new FastButton(document.getElementById('first'), function() {
@@ -70,7 +70,7 @@
                 if(__$("prev")){        
                     
                     __$("prev").onclick = function(){
-                        window.location = "village_register.html?page=" + result[1];
+                        setPath("village_register.html", "page=" + result[1]);
                     }
                                     			
                     /*new FastButton(document.getElementById('prev'), function() {
@@ -81,7 +81,7 @@
                 if(__$("last")){       
                     
                     __$("last").onclick = function(){
-                        window.location = "village_register.html?page=" + result[3];
+                        setPath("village_register.html", "page=" + result[3]);
                     }
                                      			
                     /* new FastButton(document.getElementById('last'), function() {
@@ -92,7 +92,7 @@
                 if(__$("next")){        
                     
                     __$("next").onclick = function(){
-                        window.location = "village_register.html?page=" + result[2];
+                        setPath("village_register.html", "page=" + result[2]);
                     }
                                     			
                     /*new FastButton(document.getElementById('next'), function() {
@@ -156,6 +156,17 @@
                 }
 
             }
+
+            function localResize() {
+
+                if (__$("parent")) {
+
+                    __$("parent").style.height = (window.innerHeight - 160) + "px";
+
+                }
+
+            }
+
             //-->
         </script>
 
@@ -163,7 +174,7 @@
 
         </style>
     </head>
-    <body onload="load()" style="margin: 0px; padding: 0px;">
+    <body onload="load(); localResize(); " onresize="localResize()" style="margin: 0px; padding: 0px;">
 
         <div class="table" style="border-spacing: 0px; width: 100%;">            
             <div class="row">

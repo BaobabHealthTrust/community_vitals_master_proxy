@@ -319,6 +319,7 @@ function showKeyboard(numeric, showAgain){
     keyboard.className = "keyboard";
     keyboard.id = "keyboard";
     keyboard.style.display = "block";
+    keyboard.style.width = "765px";
     
     var unknown = search("Unknown");
     var del = search("Delete");
@@ -389,11 +390,11 @@ function showKeyboard(numeric, showAgain){
                     btn.style.minWidth = "70px";
 
                 } else if(groups[j][i].toLowerCase() == "space"){
-                    btn.innerHTML = "<img src='images/space.png' height='32' alt='Space' style='margin: -6px;' />";
+                    btn.innerHTML = "<img src='images/space.png' height='32' alt='Space' style='margin: -10px;' />";
                     btn.setAttribute("tag", "space");
                     cell.style.verticalAlign = "middle";
                 } else if(groups[j][i].toLowerCase() == "enter"){
-                    btn.innerHTML = "<img src='images/enter.png' height='32' alt='Enter' style='margin: -6px;' />";
+                    btn.innerHTML = "<img src='images/enter.png' height='32' alt='Enter' style='margin: -10px;' />";
                     btn.setAttribute("tag", "enter");
                     cell.style.verticalAlign = "middle";
                 } else if(groups[j][i].toLowerCase() == cap.toLowerCase()){
@@ -453,8 +454,8 @@ function showKeyboard(numeric, showAgain){
 
                 var cell = document.createElement("div");
                 cell.style.display = "table-cell";
-                cell.style.minWidth = "50px";
-                cell.style.minHeight = "50px";
+                cell.style.minWidth = "40px";
+                cell.style.minHeight = "40px";
 
                 krow.appendChild(cell);
 
@@ -464,6 +465,7 @@ function showKeyboard(numeric, showAgain){
                 var btn = document.createElement("button");
                 btn.className = "keyboard_button blue";
                 btn.id = "lbl_" + rows[j][i].trim().toLowerCase();
+                btn.style.width = "54px";
 
                 if(rows[j][i].toLowerCase() != cap.toLowerCase() && rows[j][i].toLowerCase() != unknown.toLowerCase() &&
                     rows[j][i].toLowerCase() != del.toLowerCase() && rows[j][i].toLowerCase() != "abc" &&
@@ -471,16 +473,19 @@ function showKeyboard(numeric, showAgain){
                     rows[j][i].toLowerCase() != "enter"){
 
                     btn.innerHTML = (current_case_upper ? rows[j][i] : rows[j][i].toLowerCase());
-                    btn.style.minWidth = "70px";
+                    btn.style.minWidth = "40px";
+                    btn.style.paddingLeft = "22px";
                     
                 } else if(rows[j][i].toLowerCase() == "space"){
                     btn.innerHTML = "<img src='images/space.png' height='32' alt='Space' style='margin: -6px;' />";
                     btn.setAttribute("tag", "space");
                     cell.style.verticalAlign = "middle";
+                    btn.style.paddingLeft = "18px";
                 } else if(rows[j][i].toLowerCase() == "enter"){
                     btn.innerHTML = "<img src='images/enter.png' height='32' alt='Enter' style='margin: -6px;' />";
                     btn.setAttribute("tag", "enter");
                     cell.style.verticalAlign = "middle";
+                    btn.style.paddingLeft = "18px";
                 } else if(rows[j][i].toLowerCase() == cap.toLowerCase()){
                     btn.innerHTML = (!current_case_upper ? rows[j][i].toUpperCase() : rows[j][i].toLowerCase());
                     btn.style.minWidth = "120px";
@@ -492,7 +497,7 @@ function showKeyboard(numeric, showAgain){
                 cell.appendChild(btn);
                 
                 new FastButton(document.getElementById(btn.id), function() {
-					        
+
                     if(this.innerHTML == del){
                         if(__$("inputField").value.trim().toLowerCase() == unknown.toLowerCase()){
                             __$("inputField").value = "";
@@ -571,7 +576,7 @@ function showKeyboard(numeric, showAgain){
                     if(dynamicLoader){                        
                         eval(dynamicLoader);
                     }	 
-                });									
+                });
 
             }
         }
@@ -773,7 +778,7 @@ function showPage(s, back){
         __$("keyboard").style.display = "none";
     }
 
-    __$("parent").style.minHeight = "500px";
+    // __$("parent").style.minHeight = "500px";
 
     __$("parent").innerHTML = "";
 
@@ -990,7 +995,25 @@ function showPage(s, back){
     } else {
         showKeyboard(kybdnumeric, showKeys);
     }
-    
+
+    if(showKeys){
+
+        if(__$("keyboard_container")){
+
+            __$("keyboard_container").style.display = "block";
+
+        }
+
+    } else {
+
+        if(__$("keyboard_container")){
+
+            __$("keyboard_container").style.display = "none";
+
+        }
+
+    }
+
     return "";
 }
 
@@ -1040,8 +1063,10 @@ function generateDays(year, month){
     var calendar = document.createElement("div");
     calendar.id = "calendar";
     calendar.style.position = "absolute";
-    calendar.style.bottom = "25px";
+    calendar.style.top = "5px";
+    calendar.style.right = "5px";
     calendar.style.width = "98%";
+    calendar.style.zIndex = 1001;
 
     __$("parent").appendChild(calendar);
 
@@ -1268,8 +1293,6 @@ function loadNumbers(startYr, endYr){
 }
 
 function loadSingleSelect(values, selected, initialtext){
-    Android.debugPrint("$$$$$$$$$$$$$$$$$$$$$$$$$$$$ got in single select");
-    
     __$("dropdowns").innerHTML = "";
     
     var panel = document.createElement("div");
@@ -1280,7 +1303,7 @@ function loadSingleSelect(values, selected, initialtext){
 
     var contain = document.createElement("div");
     contain.style.width = "100%";
-    contain.style.height = "380px";
+    contain.style.height = "280px";
     contain.style.overflow = "auto";
     contain.style.border = "1px solid #6281A7"
     contain.style.borderRadius = "10px";
@@ -1369,7 +1392,7 @@ function loadMultipleSelect(values, selected){
 
     var contain = document.createElement("div");
     contain.style.width = "100%";
-    contain.style.height = "380px";
+    contain.style.height = "280px";
     contain.style.overflow = "auto";
     contain.style.border = "1px solid #6281A7"
     contain.style.borderRadius = "10px";
@@ -1528,7 +1551,7 @@ function goBackwards(){
         } else {
             __$('prev').style.display = 'none';
         }
-    } 
+    }
 }
 
 function listMessages(){
@@ -1586,7 +1609,7 @@ function search(word){
 }
 
 function checkConnection(){
-  
+
     var host = Android.getPref("target_server");
     var timeOut = 3000;
   
@@ -1628,6 +1651,34 @@ function checkConnection(){
     __$("threshold").innerHTML = availableIDs;
 					      
     setTimeout("checkConnection()", 5000);
+}
+
+function resize(){
+
+    if(__$("mContent")){
+
+        __$("mContent").style.height = (window.innerHeight - 50) + "px";
+
+    }
+
+}
+
+function setPath(path, params) {
+
+    Android.setPref("f", params);
+
+    Android.setPref("param", true);
+
+    window.location = path;
+
+}
+
+function clearPath(){
+
+    Android.setPref("f", null);
+
+    Android.setPref("param", false);
+
 }
 
 // loadLocale();
