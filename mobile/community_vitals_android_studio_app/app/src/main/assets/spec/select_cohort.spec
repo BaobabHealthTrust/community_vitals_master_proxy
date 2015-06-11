@@ -1,4 +1,4 @@
-P.1. Select Cohort [program: COMMUNITY VITALS REGISTRATION $$ action => javascript:cohort_report()()]
+P.1. Select Cohort [program: COMMUNITY VITALS REGISTRATION $$ action => javascript:cohort_report()]
 C.1. Community Vitals Registration get parameters for cohort report
 C.1. Special characters are:
 C.1. "=>" for association

@@ -8,6 +8,8 @@ android {
         applicationId "org.baobabhealthtrust.cvr"
         minSdkVersion 15
         targetSdkVersion 17
+        versionCode 1
+        versionName "1.2.0"
     }
 
     buildTypes {

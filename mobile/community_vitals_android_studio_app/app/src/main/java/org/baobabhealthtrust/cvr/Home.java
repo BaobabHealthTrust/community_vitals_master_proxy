@@ -18,6 +18,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
@@ -143,7 +145,7 @@ public class Home extends Activity {
         myWebView.addJavascriptInterface(new WebAppInterface(this, this),
                 "Android");
 
-        myWebView.loadUrl("file:///android_asset/login.html");
+        myWebView.loadUrl("file:///android_asset/index.html");
 
         // use this to start and trigger a service
         // Intent i = new Intent(this, CVRSync.class);
@@ -446,4 +448,21 @@ public class Home extends Activity {
 
     }
 
+    public String getAppVersion(){
+
+        try {
+
+            PackageInfo pinfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            int versionNumber = pinfo.versionCode;
+            String versionName = pinfo.versionName;
+
+            return versionName;
+
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+
+            return null;
+        }
+
+    }
 }

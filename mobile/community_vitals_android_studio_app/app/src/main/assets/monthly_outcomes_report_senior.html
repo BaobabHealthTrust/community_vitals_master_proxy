@@ -94,6 +94,17 @@
             }
 
         }
+
+        function localResize() {
+
+            if (__$("parent")) {
+
+                __$("parent").style.height = (window.innerHeight - 154) + "px";
+
+            }
+
+        }
+
         //-->
     </script>
 
@@ -103,29 +114,28 @@
             height: 45px;
             font-size: 17px;
             text-align: center;
+            color: #333;
         }
         tr.headings{
-            background-color: #dcdcdc;
-            font-size: 17px;
+            background-color: #cccccc;
+            height: 40px;
+            font-size: 16px;
             text-align: left;
+            color: #333333;
         }
         tr{
             font-size: 15px;
         }
 
-        table.data{
-        }
-
-        .data td{
-            border: 0.1em solid silver;
-            font-size: 17px;
-            text-align:center;
+        td.count{
+            text-align: center;
+            cursor: pointer;
         }
 
     </style>
 
 </head>
-<body onload="load()" style="margin: 0px; padding: 0px;">
+<body onload="load(); localResize(); " onresize="localResize()" style="margin: 0px; padding: 0px;">
 
 <div class="table" style="border-spacing: 0px; width: 100%;">
     <div class="row">
