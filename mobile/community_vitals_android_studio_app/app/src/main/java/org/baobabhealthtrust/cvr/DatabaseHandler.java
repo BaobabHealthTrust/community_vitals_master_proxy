@@ -1460,12 +1460,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	public String search(String word, String locale) {
 		SQLiteDatabase db = this.getReadableDatabase();
 
-		String selectQuery = "SELECT w." + KEY_VALUE + " FROM "
-				+ TABLE_VOCABULARIES + " v LEFT OUTER JOIN " + TABLE_WORDS
-				+ " w ON w." + KEY_VOCABULARY_ID + " = v." + KEY_ID
-				+ " WHERE UPPER(v." + KEY_VALUE + ") = UPPER(?) AND w."
-				+ KEY_LOCALE + " = '" + locale + "'";
-
+        String selectQuery = "SELECT w." + KEY_VALUE + " FROM "
+                + TABLE_VOCABULARIES + " v LEFT OUTER JOIN " + TABLE_WORDS
+                + " w ON w." + KEY_VOCABULARY_ID + " = v." + KEY_ID
+                + " WHERE UPPER(v." + KEY_VALUE + ") = UPPER(?) AND w."
+                + KEY_LOCALE + " = '" + locale + "' ORDER BY w." +  KEY_ID + " DESC";
+        Log.i("VOCABULARY QUERY", selectQuery);
 		Cursor cursor = db.rawQuery(selectQuery, new String[] {word});
 
 		String term = word;
