@@ -3,6 +3,7 @@
 require "rubygems"
 require "json"
 require "mysql"
+require 'bantu_soundex'
 
 def colorize(text, color_code)
   "\e[#{color_code}m#{text}\e[0m"
@@ -49,7 +50,7 @@ system("clear")
 
 $host = "localhost"
 
-query = `mysql -u #{$user} -p#{$pass} #{$dst} < initial.sql`
+#query = `mysql -u #{$user} -p#{$pass} #{$dst} < initial.sql`
 
 $con = Mysql.connect($host, $user, $pass, $db)
 
@@ -63,7 +64,7 @@ rs.each_hash do |person|
   
   irs = $dstcon.query("INSERT INTO national_identifiers (id, identifier, person_id, site_id, assigned_gvh, assigned_vh, requested_by_vh,assigned_at, created_at, updated_at) VALUES (#{person["id"]}, '#{person["national_id"]}', #{person["id"]}, 'MTA', 'Mtema1', '#{person["village"]}', 1,'#{person["created_at"]}' ,'#{person["created_at"]}', '#{person["created_at"]}')")
   
-  irs = $dstcon.query("INSERT INTO people (id, national_id, given_name, middle_name, family_name, gender, birthdate, birthdate_estimated, village, gvh, ta, created_at, updated_at) VALUES (#{person["id"]}, #{person["id"]}, \"#{person["given_name"]}\", \"#{person["middle_name"]}\", \"#{person["family_name"]}\", \"#{(person["gender"].match(/F/) ? "Female" : "Male")}\", \"#{person["birthdate"]}\", \"#{person["birthdate_estimated"]}\", \"#{person["village"]}\", \"Mtema1\", \"Mtema\", \"#{person["created_at"]}\", \"#{person["created_at"]}\")")
+  irs = $dstcon.query("INSERT INTO people (id, national_id, given_name, middle_name, family_name,given_name_code, family_name_code, gender, birthdate, birthdate_estimated, village, gvh, ta, created_at, updated_at) VALUES (#{person["id"]}, #{person["id"]}, \"#{person["given_name"]}\", \"#{person["middle_name"]}\", \"#{person["family_name"]}\", \"#{person["given_name"].soundex}\", \"#{person["family_name"].soundex}\", \"#{(person["gender"].match(/F/) ? "Female" : "Male")}\", \"#{person["birthdate"]}\", \"#{person["birthdate_estimated"]}\", \"#{person["village"]}\", \"Mtema1\", \"Mtema\", \"#{person["created_at"]}\", \"#{person["created_at"]}\")")
   
   puts ".. Done."
   
