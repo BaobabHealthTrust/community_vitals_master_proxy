@@ -1022,13 +1022,13 @@ public class WebAppInterface {
 
 	@JavascriptInterface
 	public String listVillagePeopleNames(String page) {
-
-		List<String> result = new ArrayList<String>();
+        Log.i("PEOPLE", "You data here");
+        List<String> result = new ArrayList<String>();
 
 		JSONObject json = new JSONObject();
 
 		int count = mDB.getPeopleCount();
-
+        Log.i("MY COUNT = ", String.valueOf(count));
 		int current_page = Integer.parseInt(page);
 
 		int next_page = ((current_page * mDB.PAGE_SIZE) < count ? current_page + 1
@@ -1044,7 +1044,7 @@ public class WebAppInterface {
 			JSONObject pjson = new JSONObject();
 
 			People person = people.get(i);
-
+            Log.i("My Name", "ernest");
 			try {
 
 				NationalIdentifiers identifier = mDB
