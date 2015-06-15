@@ -87,11 +87,24 @@ class NationalIdentifiersController < ApplicationController
 
     ids = []
     records = JSON.parse(params[:details])
+    settings = YAML.load_file("#{Rails.root}/config/application.yml")["dde_ta"]
+    site_code = settings["site_code"]
     (records || {}).each do |pnid, details|
 
       ActiveRecord::Base.transaction do
 
-        nat_id = NationalIdentifier.find_by_identifier(pnid)
+        nat_id = NationalIdentifier.find_by_identifier(pnid) rescue nil
+
+        if nat_id.blank?
+
+            nat_id = NationalIdentifier.create({:identifier => pnid.upcase,
+                                                :site_id => site_code,
+                                                :assigned_gvh => records[pnid]["person_details"]['gvh'],
+                                                :assigned_vh => records[pnid]["person_details"]['village'],
+                                                :requested_by_gvh => 1,
+                                                :requested_by_vh => 1
+                                              })
+        end
         outcome = (records[pnid]["person_details"]['outcome'].upcase == "NULL" ? nil : records[pnid]["person_details"]['outcome']) rescue nil
         if nat_id.person_id.blank?
           person = Person.create(
