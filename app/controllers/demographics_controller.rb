@@ -32,7 +32,7 @@ class DemographicsController < ApplicationController
     @mode = YAML.load_file("#{Rails.root}/config/application.yml")['dde_mode'] rescue 'vh'
     @gvh = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["gvh"] rescue nil
     @ta = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["ta"] rescue nil
-    @outcomes, @ids = specific_outcome_sorter(NationalIdentifier.find(:all,:conditions => ['person_id IS NOT NULL']),date.end_of_month,'assigned_vh')
+    @outcomes, @ids = specific_outcome_sorter(NationalIdentifier.find(:all,:conditions => ['person_id IS NOT NULL']),date.end_of_month,'village')
     render :layout => 'report'
   end
 
@@ -196,9 +196,9 @@ class DemographicsController < ApplicationController
     @ta = YAML.load_file("#{Rails.root}/config/application.yml")[Rails.env]["ta"] rescue nil
     people = NationalIdentifier.find(:all,
                                      :joins => "INNER JOIN people on national_identifiers.person_id = people.id",
-                                     :conditions => [' DATE(people.birthdate) <= ?',date.end_of_month])
+                                     :conditions => ["DATE(COALESCE(people.birthdate, '#{date.end_of_month}')) <= ?" ,date.end_of_month])
 
-    @outcomes,@ids = specific_outcome_sorter(people,date.end_of_month,'assigned_gvh')
+    @outcomes,@ids = specific_outcome_sorter(people,date.end_of_month,'gvh')
     render :layout => 'report'
   end
 
@@ -468,22 +468,23 @@ class DemographicsController < ApplicationController
 
     (ids || []).each do |x|
       outcome = x.person.outcome_by_date(end_date).name rescue 'Alive'
-      if collection[x[mode]].blank?
-        collection[x[mode]] =  {"Alive" => 0, "Transferred" => 0, "Dead" => 0, "Total" => 0}
-        collection_ids[x[mode]] =  {"Alive" => [], "Transferred" => [], "Dead" => [], "Total" => []}
+
+      if collection[x.person[mode]].blank?
+        collection[x.person[mode]] =  {"Alive" => 0, "Transferred" => 0, "Dead" => 0, "Total" => 0}
+        collection_ids[x.person[mode]] =  {"Alive" => [], "Transferred" => [], "Dead" => [], "Total" => []}
       end
       if outcome == 'Dead'
-        collection[x[mode]]['Dead'] += 1
-        collection_ids[x[mode]]['Dead'] << x.id
+        collection[x.person[mode]]['Dead'] += 1
+        collection_ids[x.person[mode]]['Dead'] << x.id
       elsif outcome == 'Transfer Out'
-        collection[x[mode]]['Transferred'] += 1
-        collection_ids[x[mode]]['Transferred'] << x.id
+        collection[x.person[mode]]['Transferred'] += 1
+        collection_ids[x.person[mode]]['Transferred'] << x.id
       else
-        collection[x[mode]]['Alive'] += 1
-        collection_ids[x[mode]]['Alive'] << x.id
+        collection[x.person[mode]]['Alive'] += 1
+        collection_ids[x.person[mode]]['Alive'] << x.id
       end
-      collection[x[mode]]["Total"] += 1
-      collection_ids[x[mode]]["Total"] << x.id
+      collection[x.person[mode]]["Total"] += 1
+      collection_ids[x.person[mode]]["Total"] << x.id
     end
     [collection, collection_ids]
   end
