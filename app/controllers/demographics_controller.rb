@@ -2,7 +2,7 @@ class DemographicsController < ApplicationController
   def daily_summary
     @mode = YAML.load_file("#{Rails.root}/config/application.yml")['dde_mode'] rescue 'vh'
      day = params[:start_date].to_date
-    new_nat_ids = NationalIdentifier.find(:all, :conditions => ["DATE(COALESCE(assigned_at,'#{day}')) <= ?", day])
+    new_nat_ids = NationalIdentifier.find(:all, :conditions => ["DATE(COALESCE(assigned_at,'#{day}')) <= ? AND person_id IS NOT NULL", day])
     people = new_nat_ids.map{|x| x.person}
     @today_count = get_eligible(people,day)
     @today_gender_count,@today_gender_count_id = gender_counter(people, day)
