@@ -315,7 +315,7 @@ class DemographicsController < ApplicationController
 
   end
   def cumulative_summarizer(date)
-    nat_ids = NationalIdentifier.find(:all, :conditions => ["DATE(COALESCE(assigned_at,'#{date}')) <= ?", date])
+    nat_ids = NationalIdentifier.find(:all, :conditions => ["DATE(COALESCE(assigned_at,'#{date}')) <= ? AND person_id IS NOT NULL", date])
     people = nat_ids.map{|x| x.person}
     cumulative_summary = {}
     cumulative_summary['count'] = get_eligible(people, date)
