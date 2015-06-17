@@ -750,74 +750,40 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		// looping through all rows and adding to list
 		if (cursor.moveToFirst()) {
-            Log.i("DATA", "available");
-            Log.d("col 0", cursor.getString(4));
 			do {
-                Log.d("col 1", "here");
 				People people = new People();
 
 				people.setId(Integer.parseInt(cursor.getString(0)));
-                Log.i("Field = ", "0");
 				people.setNationalId(cursor.getString(1));
-                Log.i("Field = ", "1");
 				people.setCreatorSiteId(Integer.parseInt(cursor.getString(2)));
-                Log.i("Field = ", "2");
 				people.setCreatorId(Integer.parseInt(cursor.getString(3)));
-                Log.i("Field = ", "3");
 				people.setGivenName(cursor.getString(4));
-                Log.i("Field = ", "4");
 				people.setMiddleName(cursor.getString(5));
-                Log.i("Field = ", "5");
 				people.setFamilyName(cursor.getString(6));
-                Log.i("Field = ", "6");
 				people.setMaidenName(cursor.getString(7));
-                Log.i("Field = ", "7");
-				people.setGender(cursor.getString(8));
-                Log.i("Field = ", "8");
-				people.setBirthdate(cursor.getString(9));
-                Log.i("Field = ", "9");
-				//people.setBirthdateEstimated(Integer.parseInt(cursor.getString(10)));
-                Log.i("Field = ", "10");
-				people.setCountyDistrict(cursor.getString(11));
-                Log.i("Field = ", "11");
-				people.setStateProvince(cursor.getString(12));
-                Log.i("Field = ", "12");
-				people.setAdrress1(cursor.getString(13));
-                Log.i("Field = ", "13");
-				people.setAddress2(cursor.getString(14));
-                Log.i("Field = ", "14");
-				people.setCityVillage(cursor.getString(15));
-                Log.i("Field = ", "15");
-				people.setNeighbourhoodCell(cursor.getString(16));
-                Log.i("Field = ", "16");
-				people.setCellPhoneNumber(cursor.getString(17));
-                Log.i("Field = ", "17");
-				people.setOccupation(cursor.getString(18));
-                Log.i("Field = ", "18");
-				people.setOutcome(cursor.getString(19));
-                Log.i("Field = ", "19");
-				people.setOutcomeDate(cursor.getString(20));
-                Log.i("Field = ", "20");
-				people.setVillage(cursor.getString(21));
-                Log.i("Field = ", "21");
-				people.setGvh(cursor.getString(22));
-                Log.i("Field = ", "22");
-				people.setTa(cursor.getString(23));
-                Log.i("Field = ", "23");
-				//people.setVoided(Integer.parseInt(cursor.getString(24)));
-                Log.i("Field = ", "24");
-				people.setVoidReason(cursor.getString(25));
-                Log.i("Field = ", "25");
-				people.setDateVoided(cursor.getString(26));
-                Log.i("Field = ", "26");
-				people.setCreatedAt(cursor.getString(27));
-                Log.i("Field = ", "27");
-				people.setUpdatedAt(cursor.getString(28));
-                Log.i("Field = ", "28");
-                Log.i("People Var", "ddd");
+				people.setGender(cursor.getString(10));
+				people.setBirthdate(cursor.getString(11));
+				people.setBirthdateEstimated(Integer.parseInt(cursor.getString(12)));
+				people.setCountyDistrict(cursor.getString(13));
+				people.setStateProvince(cursor.getString(14));
+				people.setAdrress1(cursor.getString(15));
+				people.setAddress2(cursor.getString(16));
+				people.setCityVillage(cursor.getString(17));
+				people.setNeighbourhoodCell(cursor.getString(18));
+				people.setCellPhoneNumber(cursor.getString(19));
+				people.setOccupation(cursor.getString(20));
+				people.setOutcome(cursor.getString(21));
+				people.setOutcomeDate(cursor.getString(22));
+				people.setVillage(cursor.getString(23));
+				people.setGvh(cursor.getString(24));
+				people.setTa(cursor.getString(25));
+				people.setVoided(Integer.parseInt(cursor.getString(26)));
+				people.setVoidReason(cursor.getString(27));
+				people.setDateVoided(cursor.getString(28));
+				people.setCreatedAt(cursor.getString(29));
+				people.setUpdatedAt(cursor.getString(30));
 				// Adding people to list
 				peopleList.add(people);
-                Log.i("FAMILY NAME", people.getFamilyName());
 			} while (cursor.moveToNext());
 		}
 
