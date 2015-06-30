@@ -20,10 +20,21 @@ ActiveRecord::Schema.define(:version => 201307181255011) do
     t.string   "void_reason"
   end
 
-  create_table "district", :force => true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table "district", :primary_key => "district_id", :force => true do |t|
+    t.string   "name",          :default => "",    :null => false
+    t.integer  "region_id",     :default => 0,     :null => false
+    t.integer  "creator",       :default => 0,     :null => false
+    t.datetime "date_created",                     :null => false
+    t.boolean  "retired",       :default => false, :null => false
+    t.integer  "retired_by"
+    t.datetime "date_retired"
+    t.string   "retire_reason"
   end
+
+  add_index "district", ["creator"], :name => "user_who_created_district"
+  add_index "district", ["region_id"], :name => "region_for_district"
+  add_index "district", ["retired"], :name => "retired_status"
+  add_index "district", ["retired_by"], :name => "user_who_retired_district"
 
   create_table "location", :primary_key => "location_id", :force => true do |t|
     t.string   "name",                            :default => "",    :null => false
@@ -87,6 +98,9 @@ ActiveRecord::Schema.define(:version => 201307181255011) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "decimal_num"
+    t.string   "allocated_gvh"
+    t.string   "allocated_vh"
+    t.boolean  "allocated_to_vh",      :default => false
   end
 
   create_table "outcome_types", :force => true do |t|
@@ -221,10 +235,19 @@ ActiveRecord::Schema.define(:version => 201307181255011) do
 
   add_index "privilege", ["uuid"], :name => "privilege_uuid_index", :unique => true
 
-  create_table "region", :force => true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table "region", :primary_key => "region_id", :force => true do |t|
+    t.string   "name",          :default => "",    :null => false
+    t.integer  "creator",       :default => 0,     :null => false
+    t.datetime "date_created",                     :null => false
+    t.boolean  "retired",       :default => false, :null => false
+    t.integer  "retired_by"
+    t.datetime "date_retired"
+    t.string   "retire_reason"
   end
+
+  add_index "region", ["creator"], :name => "user_who_created_region"
+  add_index "region", ["retired"], :name => "retired_status"
+  add_index "region", ["retired_by"], :name => "user_who_retired_region"
 
   create_table "relationship_types", :force => true do |t|
     t.string   "relation"
@@ -279,10 +302,21 @@ ActiveRecord::Schema.define(:version => 201307181255011) do
     t.datetime "updated_at"
   end
 
-  create_table "traditional_authority", :force => true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table "traditional_authority", :primary_key => "traditional_authority_id", :force => true do |t|
+    t.string   "name",          :default => "",    :null => false
+    t.integer  "district_id",   :default => 0,     :null => false
+    t.integer  "creator",       :default => 0,     :null => false
+    t.datetime "date_created",                     :null => false
+    t.boolean  "retired",       :default => false, :null => false
+    t.integer  "retired_by"
+    t.datetime "date_retired"
+    t.string   "retire_reason"
   end
+
+  add_index "traditional_authority", ["creator"], :name => "user_who_created_traditional_authority"
+  add_index "traditional_authority", ["district_id"], :name => "district_for_ta"
+  add_index "traditional_authority", ["retired"], :name => "retired_status"
+  add_index "traditional_authority", ["retired_by"], :name => "user_who_retired_traditional_authority"
 
   create_table "user_property", :id => false, :force => true do |t|
     t.integer "user_id",                       :default => 0,  :null => false
@@ -322,10 +356,21 @@ ActiveRecord::Schema.define(:version => 201307181255011) do
   add_index "users", ["retired_by"], :name => "user_who_retired_this_user"
   add_index "users", ["username"], :name => "username_UNIQUE", :unique => true
 
-  create_table "village", :force => true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table "village", :primary_key => "village_id", :force => true do |t|
+    t.string   "name",                     :default => "",    :null => false
+    t.integer  "traditional_authority_id", :default => 0,     :null => false
+    t.integer  "creator",                  :default => 0,     :null => false
+    t.datetime "date_created",                                :null => false
+    t.boolean  "retired",                  :default => false, :null => false
+    t.integer  "retired_by"
+    t.datetime "date_retired"
+    t.string   "retire_reason"
   end
+
+  add_index "village", ["creator"], :name => "user_who_created_village"
+  add_index "village", ["retired"], :name => "retired_status"
+  add_index "village", ["retired_by"], :name => "user_who_retired_village"
+  add_index "village", ["traditional_authority_id"], :name => "ta_for_village"
 
   create_table "vocabularies", :force => true do |t|
     t.string   "value"

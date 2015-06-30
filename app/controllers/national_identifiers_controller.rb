@@ -44,11 +44,15 @@ class NationalIdentifiersController < ApplicationController
     if !params[:site_code].nil? and !params[:gvh].nil? and !params[:vh].nil? and !params[:count].nil?
     
       NationalIdentifier.all(:limit => params[:count],
-        :conditions => ["site_id = ? AND requested_by_gvh = 0 AND requested_by_vh = 0", 
+        :conditions => ["site_id = ? AND COALESCE(allocated_gvh,0) = 0 AND COALESCE(allocated_vh,0) = 0 AND allocated_to_vh = 0",
         params[:site_code]]).each{|id|
 
         result << id.identifier
-        
+        id.update_attributes({:allocated_gvh => params[:gvh],
+                              :allocated_vh => params[:vh],
+                              :allocated_to_vh => 1
+                             })
+
       }
     
     end
