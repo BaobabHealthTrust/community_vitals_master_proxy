@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :check_user, :except => [:user_login, :user_logout, :missing_program,
     :missing_concept, :no_user, :no_patient, :project_users_list, :check_role_activities,
-    :login, :logout, :authenticate, :verify]
+    :login, :logout, :authenticate, :verify, :query, :log]
   
   def print_and_redirect(print_url, redirect_url, 
       message = Vocabulary.search("Printing, please wait..."), show_next_button = false, patient_id = nil)

@@ -42,6 +42,10 @@ ActionController::Routing::Routes.draw do |map|
   map.location_update  '/location_update',  :controller => 'core_user_management', :action => 'location_update'
 
   map.user_demographics  '/user_demographics',  :controller => 'core_user_management', :action => 'user_demographics'
+
+  map.query '/query', :controller => 'settings', :action => 'query'
+
+  map.log '/log', :controller => 'settings', :action => 'log'
   
 	map.resources :national_identifiers, :collection => {
 	  :request_gvh_ids => [:get, :post], 
