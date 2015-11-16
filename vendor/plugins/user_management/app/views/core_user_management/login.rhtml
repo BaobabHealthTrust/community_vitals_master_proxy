@@ -3,9 +3,14 @@
   tt_cancel_destination = '/login';
   tt_cancel_show = '/login';
   function inform() {
-      $('infoBar'+tstCurrentPage).innerHTML = "<%= welcome_message %>";
+    $('infoBar'+tstCurrentPage).innerHTML = "<%= welcome_message %>";
   }
-</script> padding-top: 10px;
+</script>
+<style type="text/css">
+  .infoBarClass{
+    padding-top: 25px;
+  }
+</style>
 
 <form id='sessions' action="/authenticate" method='post'>
 
