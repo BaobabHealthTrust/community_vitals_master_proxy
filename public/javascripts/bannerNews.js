@@ -132,7 +132,7 @@ function bhtNewsShrinkViewer() {
             bhtNewsClicked = false;
 
         }, 60 * 1000
-    );
+        );
 
     if (__$("bhtNewsBtnHome")) {
 
@@ -251,13 +251,13 @@ function bhtNewsCreateBanner() {
     // #ccc => rgba(204,204,204,1)
 
     var html = "<body><style>body{-moz-user-select:none;}.news {background-color: rgba(238,238,238,1); color: rgba(51,51,51,1); padding: 30px; font-size: 32px; cursor: pointer; " +
-        "width: 200px; text-align: center; border: 2px outset rgba(238,238,238,1); border-radius: 8px; min-height: 210px;} " +
-        ".sports {background-color: rgba(238,238,238,1); color: rgba(51,51,51,1); padding: 30px; min-height: 210px; " +
-        "font-size: 32px; cursor: pointer; width: 200px; text-align: center; border: 2px outset rgba(238,238,238,1); border-radius: 8px;}</style>" +
-        "<table style='margin: auto; margin-top: 100px;' cellpadding='20'><tr><td><div class='news' onclick='window.parent.bhtNewsExpandViewer(\"news\");'><img src='" + bhtNewsIcoNews +
-        "' /><label id='lblNews'>Nkhani (" + (bhtNewsCounts['news'] ? bhtNewsCounts['news'].length : '?') + ")</label></div></td><td><div class='sports' onclick='window.parent.bhtNewsExpandViewer(\"sports\");'><img src='" +
-        bhtNewsIcoSports + "' /><label id='lblSports'>Zamasewera (" + (bhtNewsCounts['sports'] ? bhtNewsCounts['sports'].length : '?') + ")</label></div></td></tr>" +
-        "</table><img src='" + bhtNewsIcoLogo + "' style='position: absolute; bottom: 10px; left: 30%; width: 40%; z-index: 2015;' /></body>";
+    "width: 200px; text-align: center; border: 2px outset rgba(238,238,238,1); border-radius: 8px; min-height: 210px;} " +
+    ".sports {background-color: rgba(238,238,238,1); color: rgba(51,51,51,1); padding: 30px; min-height: 210px; " +
+    "font-size: 32px; cursor: pointer; width: 200px; text-align: center; border: 2px outset rgba(238,238,238,1); border-radius: 8px;}</style>" +
+    "<table style='margin: auto; margin-top: 100px;' cellpadding='20'><tr><td><div class='news' onclick='window.parent.bhtNewsExpandViewer(\"news\");'><img src='" + bhtNewsIcoNews +
+    "' /><label id='lblNews'>Nkhani (" + (bhtNewsCounts['news'] ? bhtNewsCounts['news'].length : '?') + ")</label></div></td><td><div class='sports' onclick='window.parent.bhtNewsExpandViewer(\"sports\");'><img src='" +
+    bhtNewsIcoSports + "' /><label id='lblSports'>Zamasewera (" + (bhtNewsCounts['sports'] ? bhtNewsCounts['sports'].length : '?') + ")</label></div></td></tr>" +
+    "</table><img src='" + bhtNewsIcoLogo + "' style='position: absolute; bottom: 10px; left: 30%; width: 40%; z-index: 2015;' /></body>";
 
     iframe.src = 'data:text/html;charset=utf-8,' + encodeURI(html);
 
@@ -292,20 +292,20 @@ function bhtNewsCreateBanner() {
 function bhtNewsShowHeadlines(category) {
 
     var html = "<body onresize='window.parent.bhtNewsResize()'><style>body{margin:0px;font:14px'LucidaGrande',Helvetica,Arial,sans-serif;-moz-user-select:none;" +
-        "color:rgba(51,51,51,1);}.active{background-color:rgba(51,51,51,1);color:rgba(238,238,238,1);}.inactive{" +
-        "background-color:rgba(255,255,255,1);color:rgba(51,51,51,1);cursor:pointer;}li{cursor:pointer;}li:hover{" +
-        "background-color:rgba(238,238,238,1);}</style>";
+    "color:rgba(51,51,51,1);}.active{background-color:rgba(51,51,51,1);color:rgba(238,238,238,1);}.inactive{" +
+    "background-color:rgba(255,255,255,1);color:rgba(51,51,51,1);cursor:pointer;}li{cursor:pointer;}li:hover{" +
+    "background-color:rgba(238,238,238,1);}</style>";
 
     html += "<table style='width: 100%; border-collapse: collapse; border: 1px solid rgba(153,153,153,1);' cellspacing=0 " +
-        "cellpadding=0 border=1><tr><th style='width: 50%; padding: 20px; cursor: pointer; font-size: 28px;' id='news' " +
-        "onmousedown='window.parent.bhtNewsSwitchTab(this);'><img src='" + bhtNewsIcoNews + "' style='position: absolute; top: 10px; " +
-        "left: 10px; z-index: 2015;' height='60' />MITU YANKHANI</th><th style='width: 50%; padding: 20px; cursor: pointer; font-size: 28px;' " +
-        "id='sports' onmousedown='window.parent.bhtNewsSwitchTab(this);'><img src='" + bhtNewsIcoSports + "' style='position: absolute; top: 10px; " +
-        "right: 45%; z-index: 2015;' height='60' />ZAMASEWERA</th></tr><tr><td colspan='2'><div id='mainContent' " +
-        "style='width: 100%; border: none;'></div></td></tr></table>";
+    "cellpadding=0 border=1><tr><th style='width: 50%; padding: 20px; cursor: pointer; font-size: 28px;' id='news' " +
+    "onmousedown='window.parent.bhtNewsSwitchTab(this);'><img src='" + bhtNewsIcoNews + "' style='position: absolute; top: 10px; " +
+    "left: 10px; z-index: 2015;' height='60' />MITU YANKHANI</th><th style='width: 50%; padding: 20px; cursor: pointer; font-size: 28px;' " +
+    "id='sports' onmousedown='window.parent.bhtNewsSwitchTab(this);'><img src='" + bhtNewsIcoSports + "' style='position: absolute; top: 10px; " +
+    "right: 45%; z-index: 2015;' height='60' />ZAMASEWERA</th></tr><tr><td colspan='2'><div id='mainContent' " +
+    "style='width: 100%; border: none;'></div></td></tr></table>";
 
     html += "<script>if(document.getElementById('" + category.trim().toLowerCase() +
-        "')){window.parent.bhtNewsSwitchTab(document.getElementById('" + category.trim().toLowerCase() + "'));} window.parent.bhtNewsResize();</script></body>";
+    "')){window.parent.bhtNewsSwitchTab(document.getElementById('" + category.trim().toLowerCase() + "'));} window.parent.bhtNewsResize();</script></body>";
 
     var page = 'data:text/html;charset=utf-8,' + encodeURI(html);
 
@@ -494,8 +494,8 @@ function bhtNewsShowArticle(id) {
         "<img></img>"
     }
     html += "<table style='width: 100%;' cellpadding=10 ><tr><th style='text-align: left; font-size: 28px;' colspan='3'>" +
-        doc.title + "</th><td align='right'>" + published + "</td></tr><tr><td colspan='2' style='border-top: 1px solid rgba(204,204,204,1); font-size: 26px;'>" +
-        doc.body + "</td>";
+    doc.title + "</th><td align='right'>" + published + "</td></tr><tr><td colspan='2' style='border-top: 1px solid rgba(204,204,204,1); font-size: 26px;'>" +
+    doc.body + "</td>";
     html+= "<td style='width: 400px;'><img style='width: 26%; height: auto; float:right; position:fixed; top: 69px; right: 10px;' src='data:image/png; base64, " + files[0] + "'></img></td>";
     html+= "</tr></table>";
 
@@ -512,12 +512,12 @@ function bhtNewsShowArticle(id) {
 function bhtNewsFlipHeadlines() {
 
     var html = "<body><style>body{margin:0px;font:14px'LucidaGrande',Helvetica,Arial,sans-serif;-moz-user-select:none;" +
-        "overflow:hidden;}.news{background-color:red;}.sports{background-color:blue;}.none{background-color:black;}</style>";
+    "overflow:hidden;}.news{background-color:red;}.sports{background-color:blue;}.none{background-color:black;}</style>";
 
     html += "<div style='width: 100%; height: 70px; overflow: hidden; border: 1px solid black; text-align: center; vertical-align: " +
-        "middle; cursor: pointer;' id='mainLink'><table width='100%' style='border-collapse: collapse;' cellpadding=15 " +
-        "cellspacing=0 border=1><tr><th style='color: white; font-size: 32px; width: 240px; font-style: italic;' " +
-        "id='category' class='none'>&nbsp;</th><td style='font-size: 28px;' id='body'><b>Loading:</b> ..please wait...</td></tr></table></div></body>";
+    "middle; cursor: pointer;' id='mainLink'><table width='100%' style='border-collapse: collapse;' cellpadding=15 " +
+    "cellspacing=0 border=1><tr><th style='color: white; font-size: 32px; width: 240px; font-style: italic;' " +
+    "id='category' class='none'>&nbsp;</th><td style='font-size: 28px;' id='body'><b>Loading:</b> ..please wait...</td></tr></table></div></body>";
 
     var page = 'data:text/html;charset=utf-8,' + encodeURI(html);
 
@@ -594,6 +594,41 @@ function bhtNewsAjaxLogClick(news_id) {
         httpRequest.send(null);
     } catch (e) {
     }
+}
+
+function showGallery(){
+    div = document.createElement('div');
+    div.id = "gallery";
+    
+    html = '<ul id="pg">';
+    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
+    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
+    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
+    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
+    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
+    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
+    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
+    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
+    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
+    html += '</ul>';
+    body = document.getElementsByTagName("body")[0];
+    body.appendChild(div);
+    div.innerHTML = html;
+
+    jQuery('#pg').jphotogrid({
+        baseCSS: {
+            width: '175px',
+            height: '117px',
+            padding: '0px'
+        },
+        selectedCSS: {
+            top: '50px',
+            left: '100px',
+            width: '500px',
+            height: '360px',
+            padding: '10px'
+        }
+    });
 }
 
 if (Array.prototype.includes == null) Array.prototype.includes = function (term) {
