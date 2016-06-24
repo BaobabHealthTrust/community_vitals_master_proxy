@@ -36,6 +36,8 @@ var bhtNewsTmrInterval;
 
 var bhtNewsClicked = false;
 
+var jphotogridInitialized = false;
+
 var bhtNewsHeadings = {
     "news": "Mitu Ya Nkhani",
     "sports": "Zamasewera"
@@ -496,7 +498,7 @@ function bhtNewsShowArticle(id) {
     html += "<table style='width: 100%;' cellpadding=10 ><tr><th style='text-align: left; font-size: 28px;' colspan='3'>" +
     doc.title + "</th><td align='right'>" + published + "</td></tr><tr><td colspan='2' style='border-top: 1px solid rgba(204,204,204,1); font-size: 26px;'>" +
     doc.body + "</td>";
-    html+= "<td style='width: 400px;'><img style='width: 26%; height: auto; float:right; position:fixed; top: 69px; right: 10px;' src='data:image/png; base64, " + files[0] + "'></img></td>";
+    html+= "<td style='width: 400px;'><img onclick='window.parent.showGallery();' style='cursor: pointer; width: 26%; height: auto; float:right; position:fixed; top: 69px; right: 10px;' src='data:image/png; base64, " + files[0] + "'></img></td>";
     html+= "</tr></table>";
 
     var page = 'data:text/html;charset=utf-8,' + encodeURI(html);
@@ -597,6 +599,9 @@ function bhtNewsAjaxLogClick(news_id) {
 }
 
 function showGallery(){
+    modalDiv = document.createElement('div');
+    modalDiv.id = 'modalDiv';
+
     div = document.createElement('div');
     div.id = "gallery";
     
@@ -613,9 +618,11 @@ function showGallery(){
     html += '</ul>';
     body = document.getElementsByTagName("body")[0];
     body.appendChild(div);
+    body.appendChild(modalDiv)
     div.innerHTML = html;
 
-    jQuery('#pg').jphotogrid({
+    jQuery('#pg').jphotogrid(
+    {
         baseCSS: {
             width: '175px',
             height: '117px',
@@ -628,7 +635,14 @@ function showGallery(){
             height: '360px',
             padding: '10px'
         }
+    }
+    );
+
+    jQuery('#modalDiv').click(function(e) {
+        jQuery('#modalDiv').remove();
+        jQuery('#gallery').remove();
     });
+
 }
 
 if (Array.prototype.includes == null) Array.prototype.includes = function (term) {
