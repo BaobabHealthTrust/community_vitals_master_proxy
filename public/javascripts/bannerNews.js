@@ -43,6 +43,8 @@ var bhtNewsHeadings = {
     "sports": "Zamasewera"
 }
 
+var images = [];
+
 function __$(id) {
     return document.getElementById(id);
 }
@@ -490,7 +492,8 @@ function bhtNewsShowArticle(id) {
     var date = new Date(parseInt(doc.datetime));
     var published = date.getDate() + "/" + months[date.getMonth()] + "/" + date.getFullYear();
     newsImage = "";
-    files = doc.files
+    files = doc.files;
+    images = files;
     if (files.length == 1){
         imgSrc = files[0];
         "<img></img>"
@@ -606,16 +609,15 @@ function showGallery(){
     div.id = "gallery";
     
     html = '<ul id="pg">';
-    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
-    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
-    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
-    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
-    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
-    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
-    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
-    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
-    html+='<li><img src="http://farm4.static.flickr.com/3647/3435384001_9ed9864bb4.jpg" alt="DSC_0660"><p>DSC_0660</p></li>';
+
+    for (var i=0; i<=images.length - 1; i++){
+        html+='<li>';
+        html+="<img src='data:image/png; base64, " + images[i] + "' alt='DSC_0660'><p>DSC_0660</p>"
+        html+='</li>';
+    }
+    
     html += '</ul>';
+    
     body = document.getElementsByTagName("body")[0];
     body.appendChild(div);
     body.appendChild(modalDiv)
