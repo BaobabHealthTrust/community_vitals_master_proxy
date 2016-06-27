@@ -32,7 +32,9 @@ class CoreUserManagementController < ApplicationController
       # File.delete(file)
 
     end
-
+    
+    settings = YAML.load_file("#{Rails.root}/config/application.yml") rescue {}
+    @evr_app_url = settings["#{Rails.env}"]["evr.app.url"] rescue (raise "Please set evr.app.url in config/application.yml")
 		redirect_to "clinic/index/#{params[:user_id]}" if !params[:user_id].blank?
 
   end
