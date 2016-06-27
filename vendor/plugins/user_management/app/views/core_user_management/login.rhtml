@@ -5,15 +5,16 @@
 <script language="javascript">
   tt_cancel_destination = '/login';
   tt_cancel_show = '/login';
+  evr_app_url = '<%= @evr_app_url %>';
   function inform() {
     $('infoBar'+tstCurrentPage).innerHTML = "<%= welcome_message %>";
   }
 
   function changeUrl(){
-    bhtNewsBtnLogin = document.getElementById("bhtNewsBtnLogin")
+    bhtNewsBtnLogin = document.getElementById("bhtNewsBtnLogin");
     if (bhtNewsBtnLogin){
       bhtNewsBtnLogin.onmousedown = function(){
-        window.location = "http://localhost:8000"
+        window.location = evr_app_url;
       }
     }
   }
