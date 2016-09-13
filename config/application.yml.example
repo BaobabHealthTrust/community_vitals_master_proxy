@@ -1,0 +1,51 @@
+--- 
+dde_ta: 
+  batch_count: 10
+  threshold: 5
+  target_server: 192.168.5.6:3000
+  username: admin
+  site_code: cvr
+  password: admin
+production: 
+  locale: ny
+  gvh: Mphonde
+  district: lilongwe
+  ta: Mtema
+  village: Mtema
+  user.management.url: http://localhost:3004
+  news.app.url: http://localhost:3000
+  evr.app.url: http://localhost:4000
+development: 
+  locale: ny
+  gvh: Mphonde
+  district: lilongwe
+  ta: Mtema
+  village: Mtema
+  user.management.url: http://localhost:3004
+  news.app.url: http://localhost:2000
+  evr.app.url: http://localhost:4000
+dde_mode: ta
+dde_vh: 
+  batch_count: 10
+  gvh: Mphonde
+  threshold: 8
+  target_server: 192.168.5.6:3000
+  vh: Thandazya
+  username: admin
+  site_code: MTA
+  password: test
+test: 
+  locale: ny
+  gvh: Mphonde
+  ta: Mtema
+  village: Mtema
+  user.management.url: http://localhost:3004
+  evr.app.url: http://localhost:4000
+dde_gvh: 
+  batch_count: 10
+  gvh: Mphonde
+  threshold: 5
+  target_server: localhost:3003
+  username: admin
+  site_code: 009
+  password: test
