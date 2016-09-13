@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   
   before_filter :start_session
 
-  before_filter :user_activity, :except => [:start_session]
+  after_filter :user_activity
 
   before_filter :check_user, :except => [:user_login, :user_logout, :missing_program,
     :missing_concept, :no_user, :no_patient, :project_users_list, :check_role_activities,
@@ -108,14 +108,18 @@ protected
         ipmap["#{ent[1].gsub(/\(|\)/, "")}"] = ent[3]
       end
 
-      mac_adr = ipmap["#{request.ip}"]
+      mac_adr = ipmap["#{request.remote_ip}"]
+
       if mac_adr.present?
+				file_name = `ls ../lastseennews/#{mac_adr}*`.split(/\n/).last rescue nil
+				return if file_name.blank?
+				site = file_name.split(/\@/).last rescue nil
+				File.open("#{file_name}", 'w') { |file| file.write(DateTime.now.to_s(:db)); file.close } rescue nil
+      end 
+	end
 
-				Dir.entries("../lastseennews/#{mac_adr}_#{site}")
-				File.open("../lastseennews/#{mac_adr}_#{site}", 'w') { |file| file.write("your text") }
-        FileUtils.touch "../lastseennews/#{mac_adr}_#{site}"
-      end  
-
-  end
+	def dashboard 
+		
+	end
 
 end
