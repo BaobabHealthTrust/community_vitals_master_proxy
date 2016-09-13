@@ -26,4 +26,5 @@ gem 'minitest', '4.7.5'
 gem 'multi_json', '1.7.7'
 gem 'thread_safe', '0.1.0'
 gem 'tzinfo', '0.3.37'
-
+gem 'rdoc'
+gem 'will_paginate', '2.3.16' 

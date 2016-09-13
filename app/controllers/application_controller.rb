@@ -9,6 +9,8 @@ class ApplicationController < ActionController::Base
   
   before_filter :start_session
 
+  before_filter :user_activity, :except => [:start_session]
+
   before_filter :check_user, :except => [:user_login, :user_logout, :missing_program,
     :missing_concept, :no_user, :no_patient, :project_users_list, :check_role_activities,
     :login, :logout, :authenticate, :verify, :query, :log]
@@ -88,6 +90,31 @@ protected
     if session[:token].nil?
       redirect_to "/login?internal=true" and return
     end
+
+  end
+
+  def user_activity
+
+      if !File.exist?("../lastseennews")
+        Dir.mkdir "../lastseennews"
+      end
+      
+      #Hack to get remote mac address
+      arptable = `arp -a`
+      entries = arptable.split("\n")
+      ipmap = {}
+      entries.each do |e|
+        ent = e.split(" ")
+        ipmap["#{ent[1].gsub(/\(|\)/, "")}"] = ent[3]
+      end
+
+      mac_adr = ipmap["#{request.ip}"]
+      if mac_adr.present?
+
+				Dir.entries("../lastseennews/#{mac_adr}_#{site}")
+				File.open("../lastseennews/#{mac_adr}_#{site}", 'w') { |file| file.write("your text") }
+        FileUtils.touch "../lastseennews/#{mac_adr}_#{site}"
+      end  
 
   end
 
